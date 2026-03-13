@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Your Site — mystudiopage</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0c;
+    --bg2: #141414;
+    --bg3: #1c1c1c;
+    --bg4: #242424;
+    --text: #f0ece4;
+    --muted: #686460;
+    --muted2: #908c88;
+    --accent: #c8a96e;
+    --accent2: #e8c98e;
+    --accent-dim: rgba(200,169,110,0.12);
+    --border: rgba(200,169,110,0.2);
+    --border2: rgba(240,236,228,0.07);
+    --green: #6fcf97;
+    --green-dim: rgba(111,207,151,0.1);
+    --red: #eb5757;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRAIN */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    background: rgba(12,12,12,0.95);
+    border-bottom: 1px solid var(--border2);
+    backdrop-filter: blur(8px);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+
+  .logo span { color: var(--muted2); font-size: 14px; font-family: 'DM Mono', monospace; letter-spacing: 0.05em; margin-left: 10px; }
+
+  .header-step-indicator {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .header-step-indicator span { color: var(--accent); }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: fixed;
+    top: 56px; left: 0; right: 0;
+    height: 2px;
+    background: var(--border2);
+    z-index: 100;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* LAYOUT */
+  .wizard {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+    padding-top: 58px;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--bg2);
+    border-right: 1px solid var(--border2);
+    padding: 40px 0;
+    position: fixed;
+    top: 58px;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    padding: 0 24px;
+    margin-bottom: 32px;
+  }
+
+  .sidebar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding: 0 8px;
+  }
+
+  .step-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .step-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+  }
+
+  .step-nav-item:hover { background: var(--bg3); }
+  .step-nav-item.active { background: var(--accent-dim); border-color: var(--border); }
+  .step-nav-item.completed .step-dot { background: var(--green); }
+  .step-nav-item.completed .step-dot::after { content: '✓'; font-size: 8px; color: #0c0c0c; display: flex; align-items: center; justify-content: center; height: 100%; }
+
+  .step-dot {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--bg4);
+    border: 1px solid var(--border2);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    transition: background 0.2s;
+  }
+
+  .step-nav-item.active .step-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0c0c0c;
+    font-weight: 500;
+  }
+
+  .step-nav-label {
+    font-size: 13px;
+    color: var(--muted2);
+    transition: color 0.15s;
+  }
+
+  .step-nav-item.active .step-nav-label { color: var(--text); font-weight: 400; }
+  .step-nav-item.completed .step-nav-label { color: var(--muted2); }
+
+  /* MAIN CONTENT */
+  .main {
+    margin-left: 260px;
+    padding: 48px 64px 120px;
+    max-width: 900px;
+  }
+
+  /* STEP PANEL */
+  .step-panel { display: none; }
+  .step-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-header { margin-bottom: 48px; }
+
+  .step-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .step-eyebrow::before {
+    content: '';
+    display: block;
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+
+  .step-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .step-desc {
+    font-size: 15px;
+    color: var(--muted2);
+    line-height: 1.7;
+    max-width: 560px;
+  }
+
+  /* EXAMPLE BOX */
+  .example-box {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .example-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .example-text {
+    font-size: 13px;
+    color: var(--muted2);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .example-text strong { color: var(--text); font-style: normal; font-weight: 400; }
+
+  /* FORM ELEMENTS */
+  .field-group { margin-bottom: 32px; }
+
+  .field-label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    margin-bottom: 8px;
+  }
+
+  .field-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="url"],
+  textarea {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    padding: 14px 18px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input:focus, textarea:focus {
+    border-color: var(--accent);
+    background: var(--bg3);
+  }
+
+  input::placeholder, textarea::placeholder { color: var(--muted); font-style: italic; }
+  textarea { height: 140px; resize: vertical; }
+
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* ENGINEER TYPE CARDS */
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .type-card {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 28px 22px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    position: relative;
+  }
+
+  .type-card:hover { background: var(--bg3); border-color: var(--border); }
+
+  .type-card.selected {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+  }
+
+  .type-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 20px; height: 20px;
+    background: var(--accent);
+    color: #0c0c0c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .type-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .type-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .type-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* SOUNDCLOUD GUIDE */
+  .sc-decision {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .sc-option {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .sc-option:hover { background: var(--bg3); border-color: var(--border); }
+  .sc-option.selected { background: var(--accent-dim); border-color: var(--accent); }
+
+  .sc-option-icon { font-size: 28px; margin-bottom: 10px; }
+  .sc-option-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .sc-option-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  .sc-guide {
+    display: none;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 28px;
+    margin-bottom: 28px;
+  }
+
+  .sc-guide.visible { display: block; }
+
+  .guide-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .guide-steps { display: flex; flex-direction: column; gap: 16px; }
+
+  .guide-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .guide-step-num {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    color: #0c0c0c;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+  }
+
+  .guide-step-content { flex: 1; padding-top: 4px; }
+  .guide-step-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; color: var(--text); }
+  .guide-step-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .guide-step-desc a { color: var(--accent); text-decoration: none; }
+  .guide-step-desc a:hover { text-decoration: underline; }
+
+  .guide-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--green);
+    background: var(--green-dim);
+    padding: 4px 10px;
+    margin-bottom: 20px;
+  }
+
+  /* TRACK FIELDS */
+  .track-fields { display: flex; flex-direction: column; gap: 16px; }
+
+  .track-field {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 20px 24px;
+  }
+
+  .track-field-header {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .track-input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* SERVICE CARDS */
+  .service-fields { display: flex; flex-direction: column; gap: 16px; }
+
+  .service-field {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+
+  .service-field:focus-within { border-color: var(--border); }
+
+  .service-field-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .service-field-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--muted);
+    line-height: 1;
+  }
+
+  .service-field-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+  }
+
+  .service-input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .stat-field {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 20px;
+  }
+
+  .stat-preview {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  /* COLOR THEMES */
+  .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+
+  .theme-card {
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+    overflow: hidden;
+  }
+
+  .theme-card.selected { border-color: var(--accent); }
+
+  .theme-preview {
+    height: 80px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 8px;
+  }
+
+  .theme-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px;
+    background: var(--bg2);
+    text-align: center;
+    border-top: 1px solid var(--border2);
+  }
+
+  .theme-card.selected .theme-name { color: var(--accent); }
+
+  .theme-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  /* SOCIALS */
+  .social-fields { display: flex; flex-direction: column; gap: 12px; }
+
+  .social-field {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    align-items: center;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .social-field:focus-within { border-color: var(--border); }
+
+  .social-platform {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    border-right: 1px solid var(--border2);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--muted2);
+    background: var(--bg3);
+  }
+
+  .social-field input {
+    border: none;
+    background: transparent;
+    padding: 14px 16px;
+  }
+
+  /* SUBDOMAIN */
+  .subdomain-preview {
+    display: flex;
+    align-items: center;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    overflow: hidden;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .subdomain-preview:focus-within { border-color: var(--accent); }
+
+  .subdomain-prefix {
+    padding: 14px 16px;
+    background: var(--bg3);
+    border-right: 1px solid var(--border2);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .subdomain-suffix {
+    padding: 14px 16px;
+    background: var(--bg3);
+    border-left: 1px solid var(--border2);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .subdomain-preview input {
+    border: none;
+    background: transparent;
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    color: var(--accent);
+    padding: 14px 12px;
+    flex: 1;
+  }
+
+  .url-live {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--green);
+    background: var(--green-dim);
+    padding: 10px 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  /* PHOTO UPLOAD */
+  .photo-upload {
+    border: 2px dashed var(--border2);
+    background: var(--bg2);
+    padding: 48px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 24px;
+  }
+
+  .photo-upload:hover { border-color: var(--accent); background: var(--bg3); }
+
+  .photo-upload-icon { font-size: 32px; margin-bottom: 12px; }
+
+  .photo-upload-title { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+
+  .photo-upload-hint { font-size: 13px; color: var(--muted); }
+
+  .photo-tips {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .photo-tip {
+    padding: 16px;
+    border: 1px solid var(--border2);
+    background: var(--bg2);
+  }
+
+  .photo-tip-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .photo-tip.good .photo-tip-label { color: var(--green); }
+  .photo-tip.bad .photo-tip-label { color: var(--red); }
+
+  .photo-tip-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border2);
+    margin: 36px 0;
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.05em;
+    color: var(--muted2);
+    margin-bottom: 20px;
+  }
+
+  /* NAV BUTTONS */
+  .step-nav-buttons {
+    position: fixed;
+    bottom: 0; left: 260px; right: 0;
+    background: rgba(12,12,12,0.97);
+    border-top: 1px solid var(--border2);
+    padding: 16px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(8px);
+    z-index: 50;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted2);
+  }
+
+  .btn-ghost:hover { border-color: var(--border); color: var(--text); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0c0c0c;
+  }
+
+  .btn-primary:hover { background: var(--accent2); }
+
+  .btn-publish {
+    background: var(--green);
+    color: #0c0c0c;
+    font-size: 13px;
+    padding: 14px 36px;
+  }
+
+  .btn-publish:hover { background: #82d9a6; }
+
+  .step-progress-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ADVANCED OPTIONS */
+  .advanced-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    margin-bottom: 1px;
+  }
+
+  .advanced-header:hover { background: var(--bg3); border-color: var(--border); }
+
+  .advanced-header-left { display: flex; align-items: center; gap: 14px; }
+
+  .advanced-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #0c0c0c;
+    background: var(--muted2);
+    padding: 3px 8px;
+    flex-shrink: 0;
+  }
+
+  .advanced-header-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .advanced-header-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .advanced-chevron {
+    font-size: 11px;
+    color: var(--muted);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .advanced-chevron.open { transform: rotate(180deg); }
+
+  .advanced-body {
+    display: none;
+    border: 1px solid var(--border2);
+    border-top: none;
+    margin-bottom: 0;
+  }
+
+  .advanced-body.open { display: block; }
+
+  .advanced-option {
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .advanced-option:last-child { border-bottom: none; }
+
+  .advanced-option-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .advanced-option-header:hover { background: var(--bg3); }
+
+  .advanced-option-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .advanced-option-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .advanced-option-toggle {
+    font-size: 11px;
+    color: var(--muted);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .advanced-option-toggle.open { transform: rotate(90deg); }
+
+  .advanced-option-body {
+    display: none;
+    padding: 8px 24px 28px;
+    background: var(--bg2);
+  }
+
+  .advanced-option-body.open { display: block; }
+
+  .advanced-option-intro {
+    font-size: 13px;
+    color: var(--muted2);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    padding-top: 8px;
+  }
+
+  .adv-guide-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+
+  .adv-guide-num {
+    width: 24px; height: 24px;
+    background: var(--bg4);
+    border: 1px solid var(--border2);
+    color: var(--muted2);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    margin-top: 2px;
+  }
+
+  .adv-guide-content { flex: 1; }
+
+  .adv-guide-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .adv-guide-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .adv-guide-desc a { color: var(--accent); text-decoration: none; }
+  .adv-guide-desc a:hover { text-decoration: underline; }
+  .adv-guide-desc strong { color: var(--muted2); font-weight: 500; }
+
+  .dns-table {
+    margin-top: 12px;
+    border: 1px solid var(--border2);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+  }
+
+  .dns-row {
+    display: grid;
+    grid-template-columns: 80px 120px 1fr;
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .dns-row:last-child { border-bottom: none; }
+
+  .dns-row div { padding: 8px 12px; color: var(--muted2); }
+
+  .dns-header div { color: var(--muted); background: var(--bg3); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .dns-type { color: var(--accent) !important; }
+
+  @media (max-width: 900px) {
+    .wizard { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 24px 24px 100px; }
+    .step-nav-buttons { left: 0; padding: 16px 24px; }
+    .type-grid { grid-template-columns: 1fr 1fr; }
+    .theme-grid { grid-template-columns: repeat(3, 1fr); }
+    .input-row, .track-input-row, .service-input-row { grid-template-columns: 1fr; }
+    .advanced-header-left { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .dns-row { grid-template-columns: 60px 90px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">mystudiopage <span>/ builder</span></div>
+  <div class="header-step-indicator">Step <span id="headerStepNum">1</span> of 9</div>
+</header>
+
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill" style="width:11%"></div>
+</div>
+
+<div class="wizard">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Your Setup</div>
+      <div class="step-nav" id="stepNav">
+        <div class="step-nav-item active" data-step="1">
+          <div class="step-dot">1</div>
+          <span class="step-nav-label">Engineer Type</span>
+        </div>
+        <div class="step-nav-item" data-step="2">
+          <div class="step-dot">2</div>
+          <span class="step-nav-label">Basic Info</span>
+        </div>
+        <div class="step-nav-item" data-step="3">
+          <div class="step-dot">3</div>
+          <span class="step-nav-label">Your Photo</span>
+        </div>
+        <div class="step-nav-item" data-step="4">
+          <div class="step-dot">4</div>
+          <span class="step-nav-label">SoundCloud</span>
+        </div>
+        <div class="step-nav-item" data-step="5">
+          <div class="step-dot">5</div>
+          <span class="step-nav-label">Services & Rates</span>
+        </div>
+        <div class="step-nav-item" data-step="6">
+          <div class="step-dot">6</div>
+          <span class="step-nav-label">Your Stats</span>
+        </div>
+        <div class="step-nav-item" data-step="7">
+          <div class="step-dot">7</div>
+          <span class="step-nav-label">Socials</span>
+        </div>
+        <div class="step-nav-item" data-step="8">
+          <div class="step-dot">8</div>
+          <span class="step-nav-label">Color Scheme</span>
+        </div>
+        <div class="step-nav-item" data-step="9">
+          <div class="step-dot">9</div>
+          <span class="step-nav-label">Preview & Publish</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- STEP 1: ENGINEER TYPE -->
+    <div class="step-panel active" id="step1">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 1 of 9</div>
+        <div class="step-title">What Kind of<br>Engineer Are You?</div>
+        <p class="step-desc">This shapes your services section and how your site talks about your work. Pick the one that best describes what you do most.</p>
+      </div>
+
+      <div class="type-grid" id="typeGrid">
+        <div class="type-card" data-type="mastering" onclick="selectType(this)">
+          <div class="type-icon">🎛</div>
+          <div class="type-name">Mastering</div>
+          <p class="type-desc">You take finished mixes and prepare them for release — streaming, vinyl, CD. Your clients send you a stereo file.</p>
+        </div>
+        <div class="type-card" data-type="mixing" onclick="selectType(this)">
+          <div class="type-icon">🎚</div>
+          <div class="type-name">Mixing</div>
+          <p class="type-desc">You balance, shape, and process individual tracks from stems. Your clients send you a session or stem folder.</p>
+        </div>
+        <div class="type-card" data-type="mixmaster" onclick="selectType(this)">
+          <div class="type-icon">🎧</div>
+          <div class="type-name">Mix + Master</div>
+          <p class="type-desc">You do both in one package. Common for engineers who want to own the full process from stems to release.</p>
+        </div>
+        <div class="type-card" data-type="production" onclick="selectType(this)">
+          <div class="type-icon">🎹</div>
+          <div class="type-name">Production</div>
+          <p class="type-desc">You create the music from scratch — beats, arrangements, full instrumentals. Artists come to you to build their sound.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: BASIC INFO -->
+    <div class="step-panel" id="step2">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 2 of 9</div>
+        <div class="step-title">Tell Us About<br>Yourself</div>
+        <p class="step-desc">This is what shows up at the top of your site and in your about section. Write it how you'd introduce yourself to a new client.</p>
+      </div>
+
+      <div class="input-row">
+        <div class="field-group">
+          <label class="field-label">Your Name</label>
+          <input type="text" placeholder="e.g. Jordan Lee">
+          <div class="field-hint">Your real name or the name you go by professionally</div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Studio / Business Name</label>
+          <input type="text" placeholder="e.g. Black Fox Mastering">
+          <div class="field-hint">Leave blank to just use your name</div>
+        </div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-label">Studio Name Examples</div>
+        <div class="example-text">
+          <strong>Black Fox Mastering</strong> · <strong>Redline Audio</strong> · <strong>Studio 44</strong> · <strong>Waveline Mix</strong> · <strong>Hollow Road Productions</strong> — keep it short, memorable, and something you'd be comfortable putting on an invoice.
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Tagline</label>
+        <input type="text" placeholder="e.g. Warm, detailed masters for independent artists">
+        <div class="field-hint">One sentence. What do you do and who do you do it for?</div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-label">Tagline Examples</div>
+        <div class="example-text">
+          <strong>Mastering:</strong> "Warm, detailed masters for independent artists" <br>
+          <strong>Mixing:</strong> "Mixes that make your record sound like it belongs on the radio" <br>
+          <strong>Mix+Master:</strong> "From stems to streaming — one engineer, one vision" <br>
+          <strong>Production:</strong> "Custom beats and full productions for artists who take their sound seriously" <br>
+          <strong>Prod+Mix:</strong> "I build the track and mix it. You just show up and perform."
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Your Bio</label>
+        <textarea placeholder="Write 2–3 sentences about your experience, your approach, and who you work with..."></textarea>
+        <div class="field-hint">Keep it personal and specific. Clients want to know there's a real person on the other side.</div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-label">Bio Example</div>
+        <div class="example-text">
+          "I've been mastering records for 10 years out of my studio in Nashville. I work mostly with independent artists across genres — from bedroom pop to jazz — who want a professional sound without the major label price tag. Every project gets my full attention and as many revisions as it takes to get it right."
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Contact Email</label>
+        <input type="email" placeholder="e.g. hello@blackfoxmastering.com">
+        <div class="field-hint">This is how clients will reach you. It'll appear on your contact section.</div>
+      </div>
+    </div>
+
+    <!-- STEP 3: PHOTO -->
+    <div class="step-panel" id="step3">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 3 of 9</div>
+        <div class="step-title">Add Your<br>Photo</div>
+        <p class="step-desc">A photo builds trust. Clients want to know there's a real person behind the work. You don't need a professional photographer — a good phone photo works fine.</p>
+      </div>
+
+      <div class="photo-upload" onclick="this.querySelector('input').click()">
+        <input type="file" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+        <div class="photo-upload-icon">📷</div>
+        <div class="photo-upload-title">Click to upload your photo</div>
+        <div class="photo-upload-hint">JPG or PNG · At least 800×800px recommended</div>
+      </div>
+
+      <div class="photo-tips">
+        <div class="photo-tip good">
+          <div class="photo-tip-label">✓ What works</div>
+          <div class="photo-tip-text">Well-lit face shot. Plain or blurred background. You're in focus. Studio setting is a bonus but not required.</div>
+        </div>
+        <div class="photo-tip bad">
+          <div class="photo-tip-label">✗ What to avoid</div>
+          <div class="photo-tip-text">Blurry, dark, or cropped badly. Group photos. Overly filtered. Photos where you're not the obvious subject.</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="example-box">
+        <div class="example-label">No photo yet?</div>
+        <div class="example-text">
+          Set your phone against a wall, open portrait mode, stand in a well-lit spot (facing a window works great), and take 10 shots. You'll get at least one usable one. It takes 5 minutes and makes a real difference.
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: SOUNDCLOUD -->
+    <div class="step-panel" id="step4">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 4 of 9</div>
+        <div class="step-title">Your Audio<br>Samples</div>
+        <p class="step-desc">Your work section lets clients hear what you do before they reach out. We use SoundCloud links so you're not paying to host audio files.</p>
+      </div>
+
+      <div class="sc-decision">
+        <div class="sc-option" onclick="selectSCOption('yes', this)">
+          <div class="sc-option-icon">✅</div>
+          <div class="sc-option-title">I Have SoundCloud</div>
+          <div class="sc-option-desc">I already have tracks uploaded and ready to link</div>
+        </div>
+        <div class="sc-option" onclick="selectSCOption('no', this)">
+          <div class="sc-option-icon">🆕</div>
+          <div class="sc-option-title">I Need To Set It Up</div>
+          <div class="sc-option-desc">I don't have a SoundCloud yet — show me how</div>
+        </div>
+      </div>
+
+      <!-- GUIDE for new users -->
+      <div class="sc-guide" id="scGuide">
+        <div class="guide-title">Setting Up SoundCloud</div>
+        <div class="guide-time">⏱ Takes about 5–10 minutes</div>
+        <div class="guide-steps">
+          <div class="guide-step">
+            <div class="guide-step-num">1</div>
+            <div class="guide-step-content">
+              <div class="guide-step-title">Create a free account</div>
+              <div class="guide-step-desc">Go to <a href="https://soundcloud.com" target="_blank">soundcloud.com</a> and sign up. Use your studio name as your username — e.g. <em>blackfoxmastering</em>. This becomes part of your profile URL.</div>
+            </div>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">2</div>
+            <div class="guide-step-content">
+              <div class="guide-step-title">Upload your best work</div>
+              <div class="guide-step-desc">Click the orange Upload button. Pick 2–3 tracks that show the range of your work. MP3 at 320kbps is fine. Give each track a clear title like <em>"Artist Name — Song Title (Mastered by Black Fox)"</em></div>
+            </div>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">3</div>
+            <div class="guide-step-content">
+              <div class="guide-step-title">Copy the track link</div>
+              <div class="guide-step-desc">Once a track is uploaded, click on it and copy the URL from your browser. It'll look like <em>soundcloud.com/blackfoxmastering/midnight-circuit</em>. Paste that below.</div>
+            </div>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">4</div>
+            <div class="guide-step-content">
+              <div class="guide-step-title">Come back and paste your links</div>
+              <div class="guide-step-desc">Once you have at least one link ready, fill in the fields below. You can always add more later.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRACK INPUT FIELDS -->
+      <div class="track-fields" id="trackFields" style="display:none">
+        <div class="track-field">
+          <div class="track-field-header">Track 1</div>
+          <div class="field-group" style="margin-bottom:12px">
+            <input type="url" placeholder="e.g. https://soundcloud.com/blackfoxmastering/midnight-circuit">
+          </div>
+          <div class="track-input-row">
+            <div>
+              <input type="text" placeholder="Track title  e.g. Midnight Circuit — EP">
+            </div>
+            <div>
+              <input type="text" placeholder="Genre  e.g. Electronic">
+            </div>
+          </div>
+        </div>
+        <div class="track-field">
+          <div class="track-field-header">Track 2</div>
+          <div class="field-group" style="margin-bottom:12px">
+            <input type="url" placeholder="e.g. https://soundcloud.com/blackfoxmastering/hollow-road">
+          </div>
+          <div class="track-input-row">
+            <div><input type="text" placeholder="Track title"></div>
+            <div><input type="text" placeholder="Genre"></div>
+          </div>
+        </div>
+        <div class="track-field">
+          <div class="track-field-header">Track 3 <span style="color:var(--muted);font-size:11px;font-family:'DM Mono',monospace;margin-left:6px">optional</span></div>
+          <div class="field-group" style="margin-bottom:12px">
+            <input type="url" placeholder="e.g. https://soundcloud.com/blackfoxmastering/solstice">
+          </div>
+          <div class="track-input-row">
+            <div><input type="text" placeholder="Track title"></div>
+            <div><input type="text" placeholder="Genre"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: SERVICES -->
+    <div class="step-panel" id="step5">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 5 of 9</div>
+        <div class="step-title">Services<br>& Rates</div>
+        <p class="step-desc">We've pre-filled these based on your engineer type. Edit the names, descriptions, and prices to match what you actually offer. Don't undercharge — clients expect to pay for quality.</p>
+      </div>
+
+      <div class="example-box">
+        <div class="example-label">Pricing Guidance — Mastering</div>
+        <div class="example-text">
+          Starting out: <strong>$50–75/track</strong> is fair while building your roster. Mid-level: <strong>$85–150/track</strong> once you have a body of work. Established: <strong>$150–300/track</strong>. Don't start too low — it's harder to raise prices than to offer a limited-time discount.
+        </div>
+      </div>
+
+      <div class="service-fields" id="serviceFields">
+        <div class="service-field">
+          <div class="service-field-header">
+            <div class="service-field-num">01</div>
+            <div class="service-field-type">Service 1</div>
+          </div>
+          <div class="service-input-row">
+            <div class="field-group" style="margin-bottom:0">
+              <label class="field-label">Service Name</label>
+              <input type="text" value="Streaming Master">
+            </div>
+            <div class="field-group" style="margin-bottom:0">
+              <label class="field-label">Price</label>
+              <input type="text" placeholder="e.g. $85 / track">
+            </div>
+          </div>
+          <div class="field-group" style="margin-top:12px;margin-bottom:0">
+            <label class="field-label">Description</label>
+            <textarea style="height:80px" placeholder="What's included? What do they send you? What do they get back?">Optimized for Spotify, Apple Music, Tidal, and all major platforms. LUFS-compliant with maximum perceived loudness.</textarea>
+          </div>
+        </div>
+        <div class="service-field">
+          <div class="service-field-header">
+            <div class="service-field-num">02</div>
+            <div class="service-field-type">Service 2</div>
+          </div>
+          <div class="service-input-row">
+            <div class="field-group" style="margin-bottom:0">
+              <label class="field-label">Service Name</label>
+              <input type="text" value="Vinyl Master">
+            </div>
+            <div class="field-group" style="margin-bottom:0">
+              <label class="field-label">Price</label>
+              <input type="text" placeholder="e.g. $150 / side">
+            </div>
+          </div>
+          <div class="field-group" style="margin-top:12px;margin-bottom:0">
+            <label class="field-label">Description</label>
+            <textarea style="height:80px">Lacquer masters to the highest standard. RIAA curve, side sequencing, and cutting notes included.</textarea>
+          </div>
+        </div>
+        <div class="service-field">
+          <div class="service-field-header">
+            <div class="service-field-num">03</div>
+            <div class="service-field-type">Service 3</div>
+          </div>
+          <div class="service-input-row">
+            <div class="field-group" style="margin-bottom:0">
+              <label class="field-label">Service Name</label>
+              <input type="text" value="Album Package">
+            </div>
+            <div class="field-group" style="margin-bottom:0">
+              <label class="field-label">Price</label>
+              <input type="text" placeholder="e.g. From $600 / album">
+            </div>
+          </div>
+          <div class="field-group" style="margin-top:12px;margin-bottom:0">
+            <label class="field-label">Description</label>
+            <textarea style="height:80px">Full album mastering with cohesive sequencing, DDP delivery, and streaming and CD-ready files.</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6: STATS -->
+    <div class="step-panel" id="step6">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 6 of 9</div>
+        <div class="step-title">Your Four<br>Stats</div>
+        <p class="step-desc">Four quick facts that tell clients what working with you looks like. Pick things that are genuinely true and that matter to your clients.</p>
+      </div>
+
+      <div class="example-box">
+        <div class="example-label">Examples by engineer type</div>
+        <div class="example-text">
+          <strong>Mastering:</strong> 48hr · Turnaround &nbsp;|&nbsp; ∞ · Revisions &nbsp;|&nbsp; All · Genres &nbsp;|&nbsp; Free · Proof Session <br>
+          <strong>Mixing:</strong> 5 Day · Turnaround &nbsp;|&nbsp; 3 · Revision Rounds &nbsp;|&nbsp; WAV+MP3 · Delivery &nbsp;|&nbsp; Free · Rough Mix <br>
+          <strong>Production:</strong> Custom · Every Beat &nbsp;|&nbsp; Excl. · Rights Available &nbsp;|&nbsp; All · Genres &nbsp;|&nbsp; Free · Demo Session <br>
+          <strong>Mix+Master:</strong> 7 Day · Turnaround &nbsp;|&nbsp; Full · Stem Mix &nbsp;|&nbsp; DDP · Delivery &nbsp;|&nbsp; ∞ · Revisions
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-field">
+          <div class="stat-preview" id="statPreview1">—</div>
+          <div class="field-group" style="margin-bottom:8px">
+            <label class="field-label">Value</label>
+            <input type="text" placeholder="e.g. 48hr" oninput="updateStatPreview(1, this.value)">
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <label class="field-label">Label</label>
+            <input type="text" placeholder="e.g. Turnaround">
+          </div>
+        </div>
+        <div class="stat-field">
+          <div class="stat-preview" id="statPreview2">—</div>
+          <div class="field-group" style="margin-bottom:8px">
+            <label class="field-label">Value</label>
+            <input type="text" placeholder="e.g. ∞" oninput="updateStatPreview(2, this.value)">
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <label class="field-label">Label</label>
+            <input type="text" placeholder="e.g. Revisions">
+          </div>
+        </div>
+        <div class="stat-field">
+          <div class="stat-preview" id="statPreview3">—</div>
+          <div class="field-group" style="margin-bottom:8px">
+            <label class="field-label">Value</label>
+            <input type="text" placeholder="e.g. All" oninput="updateStatPreview(3, this.value)">
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <label class="field-label">Label</label>
+            <input type="text" placeholder="e.g. Genres Welcome">
+          </div>
+        </div>
+        <div class="stat-field">
+          <div class="stat-preview" id="statPreview4">—</div>
+          <div class="field-group" style="margin-bottom:8px">
+            <label class="field-label">Value</label>
+            <input type="text" placeholder="e.g. Free" oninput="updateStatPreview(4, this.value)">
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <label class="field-label">Label</label>
+            <input type="text" placeholder="e.g. Proof Session">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 7: SOCIALS -->
+    <div class="step-panel" id="step7">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 7 of 9</div>
+        <div class="step-title">Social<br>Links</div>
+        <p class="step-desc">Add any social profiles you want clients to find. Leave any blank and it simply won't appear on your site — no harm done.</p>
+      </div>
+
+      <div class="example-box">
+        <div class="example-label">Tip</div>
+        <div class="example-text">
+          You don't need to be everywhere. Even just one or two links is enough. SoundCloud is the most important one for audio engineers — clients will often check it before reaching out.
+        </div>
+      </div>
+
+      <div class="social-fields">
+        <div class="social-field">
+          <div class="social-platform">📸 Instagram</div>
+          <input type="url" placeholder="https://instagram.com/yourhandle">
+        </div>
+        <div class="social-field">
+          <div class="social-platform">🔊 SoundCloud</div>
+          <input type="url" placeholder="https://soundcloud.com/yourpage">
+        </div>
+        <div class="social-field">
+          <div class="social-platform">▶️ YouTube</div>
+          <input type="url" placeholder="https://youtube.com/@yourchannel">
+        </div>
+        <div class="social-field">
+          <div class="social-platform">🐦 Twitter/X</div>
+          <input type="url" placeholder="https://twitter.com/yourhandle">
+        </div>
+        <div class="social-field">
+          <div class="social-platform">👥 Facebook</div>
+          <input type="url" placeholder="https://facebook.com/yourpage">
+        </div>
+        <div class="social-field">
+          <div class="social-platform">💼 LinkedIn</div>
+          <input type="url" placeholder="https://linkedin.com/in/yourname">
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 8: COLOR SCHEME -->
+    <div class="step-panel" id="step8">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 8 of 9</div>
+        <div class="step-title">Pick Your<br>Color Scheme</div>
+        <p class="step-desc">Each theme is a complete look — colors, feel, the whole thing. Pick the one that feels most like you and how you want clients to perceive your work.</p>
+      </div>
+
+      <div class="theme-grid" id="themeGrid">
+
+        <div class="theme-card selected" data-theme="dark-gold" onclick="selectTheme(this)">
+          <div class="theme-preview" style="background:#0a0a0a;">
+            <div style="width:100%;padding:8px;">
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:#c8a96e;letter-spacing:.1em;">STUDIO</div>
+              <div style="width:40%;height:2px;background:#c8a96e;margin-top:3px;"></div>
+            </div>
+          </div>
+          <div class="theme-name" style="color:var(--muted2)">Dark Gold</div>
+        </div>
+
+        <div class="theme-card" data-theme="dark-blue" onclick="selectTheme(this)">
+          <div class="theme-preview" style="background:#080c12;">
+            <div style="width:100%;padding:8px;">
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:#5b9cf6;letter-spacing:.1em;">STUDIO</div>
+              <div style="width:40%;height:2px;background:#5b9cf6;margin-top:3px;"></div>
+            </div>
+          </div>
+          <div class="theme-name" style="color:var(--muted2)">Midnight Blue</div>
+        </div>
+
+        <div class="theme-card" data-theme="warm-cream" onclick="selectTheme(this)">
+          <div class="theme-preview" style="background:#f5f0e8;">
+            <div style="width:100%;padding:8px;">
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:#2c2420;letter-spacing:.1em;">STUDIO</div>
+              <div style="width:40%;height:2px;background:#8b6f4e;margin-top:3px;"></div>
+            </div>
+          </div>
+          <div class="theme-name" style="color:var(--muted2)">Warm Cream</div>
+        </div>
+
+        <div class="theme-card" data-theme="deep-green" onclick="selectTheme(this)">
+          <div class="theme-preview" style="background:#080f0b;">
+            <div style="width:100%;padding:8px;">
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:#4caf7d;letter-spacing:.1em;">STUDIO</div>
+              <div style="width:40%;height:2px;background:#4caf7d;margin-top:3px;"></div>
+            </div>
+          </div>
+          <div class="theme-name" style="color:var(--muted2)">Deep Green</div>
+        </div>
+
+        <div class="theme-card" data-theme="monochrome" onclick="selectTheme(this)">
+          <div class="theme-preview" style="background:#0a0a0a;">
+            <div style="width:100%;padding:8px;">
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:#f0ece4;letter-spacing:.1em;">STUDIO</div>
+              <div style="width:40%;height:2px;background:#f0ece4;margin-top:3px;"></div>
+            </div>
+          </div>
+          <div class="theme-name" style="color:var(--muted2)">Monochrome</div>
+        </div>
+
+      </div>
+
+      <div class="example-box">
+        <div class="example-label">Which should I pick?</div>
+        <div class="example-text">
+          <strong>Dark Gold</strong> — classic, warm, premium. Works for any genre. <br>
+          <strong>Midnight Blue</strong> — modern, cool, technical. Great for electronic or pop. <br>
+          <strong>Warm Cream</strong> — light, organic, approachable. Great for folk, jazz, singer-songwriter. <br>
+          <strong>Deep Green</strong> — earthy, distinct, unexpected. Good for standing out. <br>
+          <strong>Monochrome</strong> — clean, minimal, confident. Lets the work speak.
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 9: PREVIEW & PUBLISH -->
+    <div class="step-panel" id="step9">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 9 of 9</div>
+        <div class="step-title">Almost<br>Live.</div>
+        <p class="step-desc">Choose your subdomain and hit Publish. Your site will be live within seconds at your mystudiopage.com address.</p>
+      </div>
+
+      <div class="section-title">Your URL</div>
+
+      <div class="subdomain-preview">
+        <div class="subdomain-prefix">https://</div>
+        <input type="text" id="subdomainInput" placeholder="blackfox" oninput="updateSubdomainPreview()">
+        <div class="subdomain-suffix">.mystudiopage.com</div>
+      </div>
+
+      <div class="url-live" id="urlPreview">
+        🟢 &nbsp;Your site will be live at: <strong>blackfox.mystudiopage.com</strong>
+      </div>
+
+      <div class="field-hint" style="margin-top:8px;margin-bottom:40px">Use your studio name, no spaces or special characters. e.g. <em>blackfoxmastering</em> or <em>blackfox</em></div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">Summary</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:40px" id="summaryGrid">
+        <div style="background:var(--bg2);border:1px solid var(--border2);padding:20px;">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Engineer Type</div>
+          <div style="font-size:15px;color:var(--text)" id="summaryType">—</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border2);padding:20px;">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Color Scheme</div>
+          <div style="font-size:15px;color:var(--text)" id="summaryTheme">Dark Gold</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border2);padding:20px;">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Studio Name</div>
+          <div style="font-size:15px;color:var(--text)" id="summaryName">—</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border2);padding:20px;">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Contact Email</div>
+          <div style="font-size:15px;color:var(--text)" id="summaryEmail">—</div>
+        </div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-label">What happens when you publish</div>
+        <div class="example-text">
+          Your site goes live instantly. Share the link with anyone — clients, collaborators, anyone you want to check out your work. You can come back and edit anything at any time and changes go live immediately. If you buy your own domain later, we'll walk you through connecting it in about 5 minutes.
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ADVANCED OPTIONS -->
+      <div class="advanced-header" onclick="toggleAdvanced()">
+        <div class="advanced-header-left">
+          <div class="advanced-badge">Advanced</div>
+          <div class="advanced-header-title">Optional Setup</div>
+          <div class="advanced-header-desc">Custom domain & contact form — for those who want more control</div>
+        </div>
+        <div class="advanced-chevron" id="advancedChevron">▼</div>
+      </div>
+
+      <div class="advanced-body" id="advancedBody">
+
+        <!-- CUSTOM DOMAIN -->
+        <div class="advanced-option">
+          <div class="advanced-option-header" onclick="toggleOption('domain')">
+            <div>
+              <div class="advanced-option-title">🌐 Use Your Own Custom Domain</div>
+              <div class="advanced-option-subtitle">e.g. blackfoxmastering.com instead of blackfox.mystudiopage.com</div>
+            </div>
+            <div class="advanced-option-toggle" id="domainToggle">▶</div>
+          </div>
+          <div class="advanced-option-body" id="domainBody">
+            <p class="advanced-option-intro">If you've already bought a domain (or want to), you can point it to your mystudiopage site. This takes about 5 minutes once you have your domain set up.</p>
+
+            <div class="adv-guide-step">
+              <div class="adv-guide-num">1</div>
+              <div class="adv-guide-content">
+                <div class="adv-guide-title">Buy a domain</div>
+                <div class="adv-guide-desc">If you don't have one, go to <a href="https://namecheap.com" target="_blank">namecheap.com</a> and search for your studio name. <em>blackfoxmastering.com</em> typically costs $10–15/year. Always go for .com if it's available — clients trust it more.</div>
+              </div>
+            </div>
+            <div class="adv-guide-step">
+              <div class="adv-guide-num">2</div>
+              <div class="adv-guide-content">
+                <div class="adv-guide-title">Find your domain's DNS settings</div>
+                <div class="adv-guide-desc">Log into wherever you bought the domain. Look for <strong>DNS Settings</strong> or <strong>Manage DNS</strong>. On Namecheap it's under <em>Domain List → Manage → Advanced DNS</em>. On GoDaddy it's under <em>My Products → DNS</em>. On Squarespace it's under <em>Domains → your domain → DNS Settings → Custom Records</em>.</div>
+              </div>
+            </div>
+            <div class="adv-guide-step">
+              <div class="adv-guide-num">3</div>
+              <div class="adv-guide-content">
+                <div class="adv-guide-title">Add these two records</div>
+                <div class="adv-guide-desc">Add a new record for each of these exactly as shown:</div>
+                <div class="dns-table">
+                  <div class="dns-row dns-header">
+                    <div>Type</div><div>Name/Host</div><div>Value</div>
+                  </div>
+                  <div class="dns-row">
+                    <div class="dns-type">A</div><div>@</div><div>76.76.21.21</div>
+                  </div>
+                  <div class="dns-row">
+                    <div class="dns-type">CNAME</div><div>www</div><div>cname.vercel-dns.com</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="adv-guide-step">
+              <div class="adv-guide-num">4</div>
+              <div class="adv-guide-content">
+                <div class="adv-guide-title">Enter your domain below and save</div>
+                <div class="adv-guide-desc">Paste your domain in the field below. DNS changes can take a few minutes to a few hours to go live — this is normal.</div>
+              </div>
+            </div>
+
+            <div class="field-group" style="margin-top:20px">
+              <label class="field-label">Your Custom Domain</label>
+              <input type="text" placeholder="e.g. blackfoxmastering.com">
+              <div class="field-hint">Don't include https:// — just the domain name itself</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTACT FORM -->
+        <div class="advanced-option">
+          <div class="advanced-option-header" onclick="toggleOption('form')">
+            <div>
+              <div class="advanced-option-title">📬 Add a Contact Form</div>
+              <div class="advanced-option-subtitle">Let clients message you directly from your site — no email app required</div>
+            </div>
+            <div class="advanced-option-toggle" id="formToggle">▶</div>
+          </div>
+          <div class="advanced-option-body" id="formBody">
+            <p class="advanced-option-intro">By default your site shows your email address with a button that opens the client's mail app. If you want a built-in form instead, you can connect Formspree — it's free for basic use and takes about 3 minutes.</p>
+
+            <div class="adv-guide-step">
+              <div class="adv-guide-num">1</div>
+              <div class="adv-guide-content">
+                <div class="adv-guide-title">Create a free Formspree account</div>
+                <div class="adv-guide-desc">Go to <a href="https://formspree.io" target="_blank">formspree.io</a> and sign up with your email. It's free for up to 50 submissions per month — more than enough for a studio site.</div>
+              </div>
+            </div>
+            <div class="adv-guide-step">
+              <div class="adv-guide-num">2</div>
+              <div class="adv-guide-content">
+                <div class="adv-guide-title">Create a new form</div>
+                <div class="adv-guide-desc">Click <strong>+ New Form</strong>, give it a name like <em>"Studio Contact"</em>, and set the notification email to wherever you want messages sent.</div>
+              </div>
+            </div>
+            <div class="adv-guide-step">
+              <div class="adv-guide-num">3</div>
+              <div class="adv-guide-content">
+                <div class="adv-guide-title">Copy your Form ID</div>
+                <div class="adv-guide-desc">After creating the form, Formspree gives you a short ID that looks like <em>xrgvkpqw</em>. Copy that and paste it below.</div>
+              </div>
+            </div>
+            <div class="adv-guide-step">
+              <div class="adv-guide-num">4</div>
+              <div class="adv-guide-content">
+                <div class="adv-guide-title">Paste your Form ID below</div>
+                <div class="adv-guide-desc">We'll wire up the contact form on your site automatically. Test it after publishing to make sure submissions come through.</div>
+              </div>
+            </div>
+
+            <div class="field-group" style="margin-top:20px">
+              <label class="field-label">Formspree Form ID</label>
+              <input type="text" placeholder="e.g. xrgvkpqw">
+              <div class="field-hint">Found in your Formspree dashboard after creating a form</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="step-nav-buttons">
+  <button class="btn btn-ghost" id="btnBack" onclick="goBack()" style="visibility:hidden">← Back</button>
+  <div class="step-progress-text" id="stepProgressText">Step 1 of 9 — Engineer Type</div>
+  <button class="btn btn-primary" id="btnNext" onclick="goNext()">Continue →</button>
+</div>
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 9;
+  let selectedType = null;
+  let selectedTheme = 'dark-gold';
+
+  const stepNames = [
+    'Engineer Type', 'Basic Info', 'Your Photo',
+    'SoundCloud', 'Services & Rates', 'Your Stats',
+    'Socials', 'Color Scheme', 'Preview & Publish'
+  ];
+
+  function goToStep(step) {
+    // Mark current as completed
+    document.querySelector(`.step-nav-item[data-step="${currentStep}"]`).classList.add('completed');
+
+    // Hide current
+    document.getElementById(`step${currentStep}`).classList.remove('active');
+    document.querySelector(`.step-nav-item[data-step="${currentStep}"]`).classList.remove('active');
+
+    // Show new
+    currentStep = step;
+    document.getElementById(`step${currentStep}`).classList.add('active');
+    document.querySelector(`.step-nav-item[data-step="${currentStep}"]`).classList.add('active');
+    document.querySelector(`.step-nav-item[data-step="${currentStep}"]`).classList.remove('completed');
+
+    // Update UI
+    const pct = (currentStep / totalSteps) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('headerStepNum').textContent = currentStep;
+    document.getElementById('stepProgressText').textContent = `Step ${currentStep} of ${totalSteps} — ${stepNames[currentStep-1]}`;
+
+    document.getElementById('btnBack').style.visibility = currentStep > 1 ? 'visible' : 'hidden';
+
+    const isLast = currentStep === totalSteps;
+    const btn = document.getElementById('btnNext');
+    btn.textContent = isLast ? 'Publish My Site 🚀' : 'Continue →';
+    btn.className = isLast ? 'btn btn-publish' : 'btn btn-primary';
+
+    // Update summary on step 9
+    if (currentStep === 9) updateSummary();
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goNext() {
+    if (currentStep === totalSteps) {
+      publishSite();
+      return;
+    }
+    goToStep(currentStep + 1);
+  }
+
+  function goBack() {
+    if (currentStep > 1) goToStep(currentStep - 1);
+  }
+
+  // Sidebar nav
+  document.querySelectorAll('.step-nav-item').forEach(item => {
+    item.addEventListener('click', function() {
+      const step = parseInt(this.dataset.step);
+      if (step < currentStep || this.classList.contains('completed')) {
+        goToStep(step);
+      }
+    });
+  });
+
+  function selectType(card) {
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedType = card.dataset.type;
+  }
+
+  function selectTheme(card) {
+    document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedTheme = card.dataset.theme;
+    document.getElementById('summaryTheme').textContent = card.querySelector('.theme-name').textContent;
+  }
+
+  function selectSCOption(val, el) {
+    document.querySelectorAll('.sc-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('scGuide').classList.toggle('visible', val === 'no');
+    document.getElementById('trackFields').style.display = val === 'yes' ? 'flex' : 'none';
+    if (val === 'no') {
+      setTimeout(() => {
+        document.getElementById('trackFields').style.display = 'flex';
+      }, 800);
+    }
+  }
+
+  function updateStatPreview(num, val) {
+    const el = document.getElementById(`statPreview${num}`);
+    el.textContent = val || '—';
+  }
+
+  function updateSubdomainPreview() {
+    const val = document.getElementById('subdomainInput').value || 'yourname';
+    document.getElementById('urlPreview').innerHTML = `🟢 &nbsp;Your site will be live at: <strong>${val}.mystudiopage.com</strong>`;
+  }
+
+  function handlePhoto(input) {
+    if (input.files && input.files[0]) {
+      const uploadEl = input.closest('.photo-upload');
+      uploadEl.querySelector('.photo-upload-icon').textContent = '✅';
+      uploadEl.querySelector('.photo-upload-title').textContent = input.files[0].name;
+      uploadEl.querySelector('.photo-upload-hint').textContent = 'Photo selected — looks good!';
+      uploadEl.style.borderColor = 'var(--green)';
+    }
+  }
+
+  function updateSummary() {
+    const typeNames = {
+      mastering: 'Mastering Engineer',
+      mixing: 'Mixing Engineer',
+      mixmaster: 'Mix + Master Engineer',
+      production: 'Producer',
+      producer_mixer: 'Producer + Mixing Engineer'
+    };
+    document.getElementById('summaryType').textContent = selectedType ? typeNames[selectedType] : '—';
+  }
+
+  function publishSite() {
+    const subdomain = document.getElementById('subdomainInput').value || 'yoursite';
+    alert(`🚀 Publishing ${subdomain}.mystudiopage.com...\n\n(In the real build this triggers site generation and deployment)`);
+  }
+
+  function toggleAdvanced() {
+    const body = document.getElementById('advancedBody');
+    const chevron = document.getElementById('advancedChevron');
+    body.classList.toggle('open');
+    chevron.classList.toggle('open');
+  }
+
+  function toggleOption(type) {
+    const body = document.getElementById(`${type}Body`);
+    const toggle = document.getElementById(`${type}Toggle`);
+    body.classList.toggle('open');
+    toggle.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
