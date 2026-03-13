@@ -187,7 +187,8 @@
   .main {
     margin-left: 260px;
     padding: 48px 64px 120px;
-    max-width: 900px;
+    min-width: 0;
+    width: calc(100% - 260px);
   }
 
   /* STEP PANEL */
@@ -233,6 +234,8 @@
     color: var(--muted2);
     line-height: 1.7;
     max-width: 560px;
+    word-break: normal;
+    overflow-wrap: normal;
   }
 
   /* EXAMPLE BOX */
