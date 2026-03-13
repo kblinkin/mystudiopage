@@ -97,7 +97,7 @@
   /* LAYOUT */
   .wizard {
     display: grid;
-    grid-template-columns: 260px 1fr;
+    display: flex;
     min-height: 100vh;
     padding-top: 58px;
   }
@@ -185,10 +185,12 @@
 
   /* MAIN CONTENT */
   .main {
+    flex: 1;
     margin-left: 260px;
     padding: 48px 64px 120px;
     min-width: 0;
-    width: calc(100% - 260px);
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   /* STEP PANEL */
