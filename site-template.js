@@ -472,7 +472,10 @@ export function renderSite(data) {
       font-size: 22px;
       color: var(--muted2);
       line-height: 1.6;
-      max-width: 480px;
+      white-space: nowrap;
+      max-width: 90vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
       margin: 0 auto 40px;
     }
 
@@ -496,7 +499,7 @@ export function renderSite(data) {
 
     @media (max-width: 768px) {
       .hero-title { font-size: 72px; }
-      .hero-tagline { font-size: 18px; }
+      .hero-tagline { font-size: 18px; white-space: normal; text-overflow: clip; }
       .hero-inner { padding: 0 24px; }
     }
 
@@ -1073,7 +1076,7 @@ export function renderSite(data) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>${css}</style>
+<style>${css}${data.customCss ? '\n/* Custom Tweaks */\n' + data.customCss : ''}</style>
 </head>
 <body>
 ${navHtml}
