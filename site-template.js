@@ -609,10 +609,10 @@ export function renderSite(data) {
     }
 
     .stat-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 0.05em;
       color: var(--muted2);
       margin-top: 6px;
     }

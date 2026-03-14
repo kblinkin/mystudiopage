@@ -2235,6 +2235,7 @@
         <div class="tweak-input-row">
           <input type="text" id="tweakInput" placeholder="Describe a visual change…" onkeydown="if(event.key==='Enter'){event.preventDefault();applyTweak();}">
           <button class="btn btn-primary" id="tweakBtn" onclick="applyTweak()">Apply</button>
+          <button class="btn btn-ghost" id="tweakUndoBtn" onclick="undoLastTweak()" style="display:none">↩ Undo</button>
         </div>
         <div class="tweak-loading" id="tweakLoading">Generating CSS tweak…</div>
         <div class="tweak-error" id="tweakError"></div>
@@ -3101,6 +3102,10 @@
       const ta = f.querySelector('textarea');
       return { name: textInputs[0]?.value?.trim()||'', price: textInputs[1]?.value?.trim()||'', desc: ta?.value?.trim()||'', bookingUrl: urlInput?.value?.trim()||'' };
     }).filter(s => s.name || s.desc);
+    // If step 5 was never visited this session, fall back to the saved services
+    if (data.services.length === 0 && window._savedServices && window._savedServices.length > 0) {
+      data.services = window._savedServices;
+    }
     // Also handle production quote card
     if (data.services.length === 0 && data.engineerType === 'production') {
       const urlInput = document.querySelector('.production-quote-card input[type="url"]');
@@ -3427,6 +3432,12 @@
     renderTweaks();
   }
 
+  function undoLastTweak() {
+    if (customTweaks.length === 0) return;
+    customTweaks.pop();
+    renderTweaks();
+  }
+
   function renderTweaks() {
     const list = document.getElementById('tweakList');
     if (!list) return;
@@ -3436,6 +3447,8 @@
         <button class="tweak-item-remove" onclick="removeTweak(${i})" title="Remove">✕</button>
       </div>
     `).join('');
+    const undoBtn = document.getElementById('tweakUndoBtn');
+    if (undoBtn) undoBtn.style.display = customTweaks.length > 0 ? '' : 'none';
   }
 
   function handleLogoUpload(event) {
