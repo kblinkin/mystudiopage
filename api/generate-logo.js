@@ -196,14 +196,24 @@ Search for visual references that fit this studio's aesthetic, then design a log
       // 2. Force single-color: replace ALL fills with logoColor, remove all strokes
       // Recraft ignores the colors param — we enforce it in post-processing
       const c = logoColor;
+      // CSS inside <style> blocks
+      svg = svg.replace(/(<style[^>]*>)([\s\S]*?)(<\/style>)/gi, (m, open, css, close) => {
+        let newCss = css.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:${c}`);
+        newCss = newCss.replace(/\bstroke\s*:\s*(?!none|transparent)[^;}"']+/gi, `stroke:none`);
+        return `${open}${newCss}${close}`;
+      });
       // Attribute fills/strokes
       svg = svg.replace(/\bfill=["'](?!none|transparent)[^"']*["']/gi, `fill="${c}"`);
       svg = svg.replace(/\bstroke=["'](?!none|transparent)[^"']*["']/gi, `stroke="none"`);
-      // Inline style fills/strokes
+      // Inline style attribute fills/strokes
       svg = svg.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:${c}`);
       svg = svg.replace(/\bstroke\s*:\s*(?!none|transparent)[^;}"']+/gi, `stroke:none`);
-      // Remove fill/stroke from the root <svg> itself (prevents inherited background)
+      // Remove fill from root <svg> (prevents inherited background color)
       svg = svg.replace(/(<svg\b[^>]*?)\s+fill=["'][^"']*["']/i, '$1');
+      // Allow artwork that extends past the viewBox to show (fixes clipped bottom)
+      if (!svg.includes('overflow=')) {
+        svg = svg.replace(/(<svg\b[^>]*)>/, '$1 overflow="visible">');
+      }
 
       return res.status(200).json({ svg });
     }
