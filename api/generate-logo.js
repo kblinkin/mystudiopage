@@ -112,20 +112,20 @@ Output a complete, self-contained SVG.`
     const promptMsg = await client.messages.create({
       model: 'claude-haiku-4-5',
       max_tokens: 180,
-      system: `You write prompts for a professional logo mark generator. Describe ONE bold, simple abstract symbol (2-3 shapes maximum). Be hyper-specific about the exact geometric forms — angles, curves, how shapes interlock or overlap. No text, no letters, no background. No generic descriptions like "elegant" or "professional" — only concrete visual specifics. Under 80 words.`,
+      system: `You write image generation prompts for a professional logo designer. Describe a single iconic brand mark using ONLY solid filled shapes — no outlines, no thin lines, no sketches. Think Nike swoosh, Apple logo, Mercedes star: bold, flat, immediate. Describe exact shapes and how they form one unified silhouette. Under 80 words. No meta-commentary.`,
       messages: [{
         role: 'user',
-        content: `Logo mark for a recording studio.
+        content: `Brand mark for a recording studio.
 Concept: ${engineerConcept}
 Style: ${styleDesc}
-Color: ${accent}
+Color: ${accent} on transparent background
 
-Describe a specific, original symbol. Think: what single geometric form captures this concept? Be bold and decisive — one strong idea, not a list of options.`
+One strong geometric symbol. Solid filled shapes only. Must read instantly as a logo, not an illustration.`
       }]
     });
     imagePrompt = promptMsg.content[0].text.trim();
   } catch (err) {
-    imagePrompt = `Bold minimal abstract mark. ${styleDesc}. ${engineerConcept}. Single strong geometric form. Color ${accent}.`;
+    imagePrompt = `Minimal flat logo mark, solid geometric shapes, ${styleDesc}, ${engineerConcept}, bold silhouette, color ${accent}, isolated on transparent background.`;
   }
 
   // Generate with Recraft v3 vector
@@ -140,7 +140,7 @@ Describe a specific, original symbol. Think: what single geometric form captures
       body: JSON.stringify({
         model: 'recraftv3',
         prompt: imagePrompt,
-        style: 'Vector art',
+        style: 'Bold stroke',
         size: '1024x1024',
         colors: [{ rgb: hexToRgb(accent) }],
         response_format: 'url'
@@ -170,9 +170,15 @@ Describe a specific, original symbol. Think: what single geometric form captures
       const s = svg.indexOf('<svg'), e = svg.lastIndexOf('</svg>');
       if (s >= 0 && e > s) svg = svg.slice(s, e + 6);
 
-      // Remove Recraft's white background rect
-      svg = svg.replace(/<rect[^>]*fill=["'](?:white|#fff|#ffffff)["'][^>]*\/>/gi, '');
-      svg = svg.replace(/<rect[^>]*fill=["'](?:white|#fff|#ffffff)["'][^>]*><\/rect>/gi, '');
+      // Remove Recraft's background rect — catches all fill formats and positions
+      // 1. White/light fill in fill attribute
+      svg = svg.replace(/<rect[^>]*fill=["'](?:white|#[Ff]{3}|#[Ff]{6}|rgb\(255[^)]*\))["'][^>]*(?:\/>|><\/rect>)/gi, '');
+      // 2. White/light fill in style attribute
+      svg = svg.replace(/<rect[^>]*style=["'][^"']*fill\s*:\s*(?:white|#[Ff]{3,6}|rgb\(255[^)]*\))[^"']*["'][^>]*(?:\/>|><\/rect>)/gi, '');
+      // 3. Full-canvas rect at origin (width/height = 100% or matches viewBox)
+      svg = svg.replace(/<rect\b(?=[^>]*width=["'](?:100%|1024|512|800)["'])[^>]*(?:\/>|><\/rect>)/gi, '');
+      // 4. Nuclear option: remove any rect with no x/y (implicitly 0,0) that is very large
+      svg = svg.replace(/<rect\b(?![^>]*\bx=["'][1-9])(?=[^>]*width=["']\d{3,}["'])[^>]*(?:\/>|><\/rect>)/gi, '');
 
       return res.status(200).json({ svg });
     }
