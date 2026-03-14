@@ -95,14 +95,19 @@ export function renderSite(data) {
   // ── CREDITS ───────────────────────────────────────────────────────────────
   let creditsHtml = '';
   if (credits.length > 0) {
-    const items = credits.map((c, i) =>
-      `<span class="credit-name">${escHtml(c)}</span>${i < credits.length - 1 ? '<span class="credit-dot" aria-hidden="true">·</span>' : ''}`
-    ).join('');
+    const items = credits.map(c =>
+      `<span class="credit-name">${escHtml(c)}</span>`
+    ).join('<span class="credit-dot" aria-hidden="true">·</span>');
     creditsHtml = `
-  <section class="credits-band" aria-label="Notable credits">
+  <section class="credits" id="credits">
     <div class="credits-inner">
-      <div class="credits-eyebrow">Credits</div>
-      <div class="credits-list">${items}</div>
+      <details class="credits-details">
+        <summary class="credits-summary">
+          <h2 class="section-heading credits-heading">Credits</h2>
+          <span class="credits-toggle" aria-hidden="true">+</span>
+        </summary>
+        <div class="credits-list">${items}</div>
+      </details>
     </div>
   </section>`;
   }
@@ -496,56 +501,76 @@ export function renderSite(data) {
     }
 
     /* ── Credits ────────────────────────────────────────────────────────── */
-    .credits-band {
-      padding: 28px 0;
-      background: var(--bg2);
-      border-top: 1px solid var(--border2);
-      border-bottom: 1px solid var(--border2);
+    .credits {
+      padding: 100px 0;
+      background: var(--bg);
     }
 
     .credits-inner {
       max-width: 1100px;
       margin: 0 auto;
       padding: 0 40px;
-      display: flex;
-      align-items: baseline;
-      gap: 24px;
-      flex-wrap: wrap;
     }
 
-    .credits-eyebrow {
+    .credits-details { list-style: none; }
+    .credits-details::marker,
+    .credits-details summary::marker,
+    .credits-details summary::-webkit-details-marker { display: none; }
+
+    .credits-summary {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+    }
+
+    .credits-heading {
+      margin-bottom: 0;
+      color: var(--text);
+    }
+
+    .credits-toggle {
       font-family: 'DM Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
+      font-size: 20px;
       color: var(--muted);
-      white-space: nowrap;
+      line-height: 1;
+      transition: color 0.2s, transform 0.2s;
       flex-shrink: 0;
+    }
+
+    .credits-details[open] .credits-toggle {
+      transform: rotate(45deg);
+      color: var(--accent);
     }
 
     .credits-list {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      margin-top: 32px;
     }
 
     .credit-name {
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
-      font-size: 13px;
-      color: var(--muted2);
-      letter-spacing: 0.02em;
+      font-size: 15px;
+      color: var(--muted);
+      letter-spacing: 0.03em;
     }
 
     .credit-dot {
       font-family: 'DM Mono', monospace;
       font-size: 10px;
       color: var(--muted);
+      opacity: 0.4;
     }
 
     @media (max-width: 768px) {
-      .credits-inner { padding: 0 24px; gap: 12px; }
+      .credits { padding: 64px 0; }
+      .credits-inner { padding: 0 24px; }
     }
 
     /* ── Stats ──────────────────────────────────────────────────────────── */
