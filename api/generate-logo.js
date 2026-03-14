@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { studioName, engineerType, typeDesc, themeName, accent, bg, textColor, styleDirection, logoMode } = req.body;
+  const { studioName, engineerType, typeDesc, themeName, accent, bg, textColor, styleDirection, layoutStyle, logoMode } = req.body;
 
   if (!studioName) {
     return res.status(400).json({ error: 'studioName is required' });
@@ -17,32 +17,41 @@ export default async function handler(req, res) {
 
   const isWordmark = logoMode === 'wordmark';
 
-  // --- WORDMARK: Claude handles text SVG well ---
+  // --- WORDMARK: matches site layout font ---
   if (isWordmark) {
+    // Map layout style → font family + letter spacing + weight guidance
+    const layoutFonts = {
+      default:   { family: "'Bebas Neue', 'Impact', sans-serif",          letterSpacing: '0.12em', style: 'condensed display, all caps feel' },
+      editorial: { family: "'Playfair Display', 'Georgia', serif",         letterSpacing: '0.04em', style: 'elegant serif, mixed case, refined' },
+      minimal:   { family: "'Space Grotesk', 'Arial', sans-serif",         letterSpacing: '0.08em', style: 'clean geometric sans, modern' },
+      bold:      { family: "'Anton', 'Impact', 'Arial Black', sans-serif", letterSpacing: '0.03em', style: 'ultra bold, high impact, condensed' },
+    };
+    const fontDef = layoutFonts[layoutStyle] || layoutFonts.default;
+
     let message;
     try {
       message = await client.messages.create({
         model: 'claude-opus-4-6',
         max_tokens: 2048,
-        system: `You are a world-class typographic brand designer. You have designed identity systems for Sony Music, Atlantic Records, and major recording studios. You create SVG wordmarks with the craft of a $15,000 commission — precise letter spacing, intentional weight, considered proportions. Return ONLY valid SVG markup. No markdown, no explanation. Output must start with <svg and end with </svg>.`,
+        system: `You are a world-class typographic brand designer. You create SVG wordmarks with the craft of a $15,000 commission. Return ONLY valid SVG markup. No markdown, no explanation. Output must start with <svg and end with </svg>.`,
         messages: [{
           role: 'user',
           content: `Design a professional wordmark SVG for this recording studio:
 
 Studio name: "${studioName}"
 Color: ${accent} on transparent background
-Aesthetic: ${themeName}${styleDirection ? ` — ${styleDirection}` : ''}
+Site layout style: ${layoutStyle || 'default'} — ${fontDef.style}
 
 Specifications:
 - viewBox="0 0 600 200" width="600" height="200"
 - No background fill
 - Render the name as a single <text> element, centered in the viewBox (x="300" y="120" text-anchor="middle")
-- Choose a font stack that suits the name: for bold/strong names use a condensed sans ("Impact, 'Arial Narrow', sans-serif"), for refined names use a serif ("Georgia, 'Times New Roman', serif"), for technical/modern use monospace or geometric sans
-- font-size should fill the width well — typically 72–96px for short names, 48–64px for longer ones
-- letter-spacing: 0.08em to 0.2em for a premium feel (never default 0)
+- font-family: ${fontDef.family}
+- font-size: typically 72–96px for short names, 48–64px for longer ones
+- letter-spacing: ${fontDef.letterSpacing}
 - fill: ${accent}
-- You may add ONE secondary design element — a thin rule below the text, two bracket marks flanking it, or a single geometric accent — using ${textColor} at low opacity or as a fine line
-- The result should look like it belongs on a studio door plaque, not a Word document
+- You may add ONE secondary design element — a thin rule, bracket marks, or a geometric accent — using ${textColor} at low opacity
+- The result must match the ${layoutStyle || 'default'} layout's typographic personality
 
 Output a complete, self-contained SVG.`
         }]
