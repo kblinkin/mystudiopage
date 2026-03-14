@@ -610,11 +610,10 @@ export function renderSite(data) {
 
     .stat-label {
       font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
+      font-size: 18px;
       font-weight: 300;
-      letter-spacing: 0.05em;
       color: var(--muted2);
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
     .stat-sep {
