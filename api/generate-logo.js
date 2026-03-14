@@ -96,9 +96,8 @@ Colors: ${themeName}, primary ${accent}${styleDirection ? `\nStyle: ${styleDirec
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'recraft-v2',
+        model: 'recraftv4',
         prompt: imagePrompt,
-        style: 'vector_illustration',
         size: '1024x1024',
         response_format: 'url'
       })
