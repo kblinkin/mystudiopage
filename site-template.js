@@ -64,21 +64,15 @@ export function renderSite(data) {
   ].filter(s => socials[s.key]);
 
   // ── NAV ───────────────────────────────────────────────────────────────────
-  const navLogo = hasLogo
-    ? `<div class="nav-logo-svg">${data.logoSvg}</div>`
-    : `<div class="nav-studio-name">${escHtml(studioName)}</div>`;
-
   const navHtml = `
   <nav class="site-nav" role="navigation">
     <div class="nav-inner">
-      <a href="#" class="nav-brand" aria-label="${escHtml(studioName)}">${navLogo}</a>
+      <div class="nav-studio-name">${escHtml(studioName)}</div>
       <a href="#contact" class="nav-cta">Get In Touch</a>
     </div>
   </nav>`;
 
   // ── HERO ──────────────────────────────────────────────────────────────────
-  // If a logo exists it already contains the studio name — use it as the hero centrepiece.
-  // Otherwise fall back to the studio name as large text.
   const heroNameBlock = hasLogo
     ? `<div class="hero-logo">${data.logoSvg}</div>`
     : `<h1 class="hero-title">${escHtml(studioName)}</h1>`;
@@ -319,26 +313,6 @@ export function renderSite(data) {
       justify-content: space-between;
     }
 
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      height: 36px;
-      overflow: hidden;
-    }
-
-    .nav-logo-svg {
-      height: 36px;
-      max-width: 220px;
-      display: flex;
-      align-items: center;
-    }
-
-    .nav-logo-svg svg {
-      height: 36px;
-      width: auto;
-      max-width: 220px;
-    }
-
     .nav-studio-name {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 20px;
@@ -404,24 +378,13 @@ export function renderSite(data) {
       min-height: 100vh;
       display: flex;
       align-items: center;
+      justify-content: center;
       background: var(--bg);
-      padding: 56px 0 0;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 50%, ${t.accentDim} 0%, transparent 70%);
-      pointer-events: none;
+      padding: 56px 0 80px;
     }
 
     .hero-inner {
-      position: relative;
-      z-index: 1;
-      max-width: 900px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 0 40px;
       width: 100%;
@@ -456,23 +419,23 @@ export function renderSite(data) {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 28px;
+      margin-bottom: 36px;
     }
 
     .hero-logo svg {
       width: 100%;
-      max-width: 560px;
+      max-width: 760px;
       height: auto;
     }
 
     /* Fallback when no logo — studio name as large text */
     .hero-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 104px;
+      font-size: 140px;
       letter-spacing: 0.02em;
-      line-height: 0.95;
+      line-height: 0.9;
       color: var(--text);
-      margin: 0 auto 24px;
+      margin: 0 auto 28px;
     }
 
     .hero-tagline {
@@ -504,10 +467,10 @@ export function renderSite(data) {
     }
 
     @media (max-width: 768px) {
-      .hero-title { font-size: 64px; }
+      .hero-title { font-size: 72px; }
       .hero-tagline { font-size: 16px; }
       .hero-inner { padding: 0 24px; }
-      .hero-logo svg { max-width: 360px; }
+      .hero-logo svg { max-width: 460px; }
     }
 
     /* ── Stats ──────────────────────────────────────────────────────────── */
@@ -1015,8 +978,8 @@ export function renderSite(data) {
 <body>
 ${navHtml}
 ${heroHtml}
-${statsHtml}
 ${aboutHtml}
+${statsHtml}
 ${workHtml}
 ${servicesHtml}
 ${contactHtml}

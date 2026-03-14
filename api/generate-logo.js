@@ -14,43 +14,53 @@ export default async function handler(req, res) {
   }
 
   const taglineNote = tagline
-    ? `Tagline (optional, small text): "${tagline}"`
-    : 'No tagline — name only.';
+    ? `Tagline (small text below name): "${tagline}"`
+    : 'No tagline.';
 
   const message = await client.messages.create({
-    model: 'claude-haiku-4-5',
-    max_tokens: 2000,
-    system: `You are an expert brand designer specializing in audio studio identities. You create clean, professional SVG logos. Return ONLY valid SVG markup — no markdown fences, no explanation, no comments. The output must start with <svg and end with </svg>.`,
+    model: 'claude-sonnet-4-6',
+    max_tokens: 4000,
+    system: `You are a senior brand identity designer with 20 years of experience creating logos for professional recording studios, mastering houses, and audio facilities. You produce SVG logos that look like they cost $5,000 to commission — refined, confident, and typographically precise. Return ONLY valid SVG markup. No markdown fences, no explanation, no comments outside the SVG. Output must start with <svg and end with </svg>.`,
     messages: [
       {
         role: 'user',
-        content: `Design a professional logo SVG for this audio studio:
+        content: `Create a professional, established-looking logo SVG for this audio studio:
 
 Studio name: "${studioName}"
 Engineer type: ${typeDesc}
 Color scheme: ${themeName}
-Colors — background: ${bg}, accent/highlight: ${accent}, text: ${textColor}
+Background: ${bg} | Accent/highlight: ${accent} | Text: ${textColor}
 ${taglineNote}
 
-Technical spec:
-- viewBox="0 0 600 180" width="600" height="180"
-- Embed this font via <defs>: <style>@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue');</style>
-- Use font-family="'Bebas Neue', sans-serif" for the studio name
-- Use the exact hex colors provided — do not substitute
+Technical requirements:
+- viewBox="0 0 600 200" width="600" height="200"
+- Load Bebas Neue via: <defs><style>@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue');</style></defs>
+- Studio name: font-family="'Bebas Neue', sans-serif" — this is the hero of the design
+- Use the EXACT hex colors given. Background fill the entire SVG with ${bg}.
+- All text must be clearly legible against the background
 
-Design brief:
-Let the engineer type shape subtle aesthetic decisions. Mastering engineers → precision, tight geometry, thin lines. Mixing engineers → layered or depth-suggesting marks. Producers → bolder, more expressive shapes. All should feel premium and minimal.
+Design direction — make it look like a REAL studio brand:
+- The studio name should be large, confident, and dominant (minimum 72px for short names, scale down for longer)
+- Add a considered graphic element — choose ONE that fits the engineer type:
+  * Mastering: a thin horizontal rule or pair of parallel lines flanking the name, or a precise geometric mark (diamond, square bracket)
+  * Mixing: stacked parallel lines suggesting layers/faders, or a waveform-inspired arc
+  * Mix+Master: a clean monogram mark or bold rule system
+  * Production: a bold geometric shape, circle mark, or abstract sound symbol
+- Use letter-spacing generously (0.15em to 0.25em) — audio brands always have wide tracking
+- If there's a tagline, render it in a lighter weight below in a clean sans-serif or monospace style at ~14px, with even wider letter-spacing and muted color
+- Use accent color ${accent} for the graphic element or as a highlight — not for the main name text
+- Main name text color: ${textColor}
+- Negative space is your friend — don't crowd the canvas
+- The result must look at home on a business card, invoice header, and studio wall print
 
-Make deliberate choices on: layout (centered, left-aligned, or stacked), decorative element (waveform hint, rule lines, geometric accent, dot mark), font sizing, letter-spacing, and negative space use. The studio name is always the dominant element. Any decorative marks should feel considered, not generic.
-
-The result should look equally at home on a professional invoice, a business card, and a studio wall.`
+Do not use clipPath unless essential. Keep paths simple and clean. The output should be a complete, self-contained SVG that renders correctly in a browser img tag.`
       }
     ]
   });
 
   let svg = message.content[0].text.trim();
 
-  // Strip any accidental markdown fences Claude might have added
+  // Strip any accidental markdown fences
   svg = svg.replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/i, '').trim();
 
   // Basic validation
