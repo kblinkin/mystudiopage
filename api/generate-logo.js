@@ -75,12 +75,6 @@ Output a complete, self-contained SVG.`
 
   // --- GRAPHIC MARK: Claude Haiku crafts prompt → Recraft v3 vector generates SVG ---
 
-  // Convert hex accent to RGB for Recraft's colors param
-  const hexToRgb = hex => {
-    const h = hex.replace('#', '');
-    return { r: parseInt(h.slice(0,2),16), g: parseInt(h.slice(2,4),16), b: parseInt(h.slice(4,6),16) };
-  };
-
   // Is this a dark or light theme?
   const isDark = bg && (bg === '#0c0c0c' || bg === '#080c12' || bg === '#080f0b' || bg === '#0a0a0a' || bg.startsWith('#0') || bg.startsWith('#1'));
 
@@ -162,7 +156,6 @@ Search for visual references that fit this studio's aesthetic, then design a log
         prompt: imagePrompt,
         style: 'vector_illustration',
         size: '1024x1024',
-        colors: [{ rgb: hexToRgb(logoColor) }],
         response_format: 'url'
       })
     });
@@ -190,13 +183,7 @@ Search for visual references that fit this studio's aesthetic, then design a log
       const s = svg.indexOf('<svg'), e = svg.lastIndexOf('</svg>');
       if (s >= 0 && e > s) svg = svg.slice(s, e + 6);
 
-      // 1. Remove background fill from root <svg> element
-      svg = svg.replace(/(<svg\b[^>]*)\s+fill=["'][^"']*["']/i, '$1');
-      svg = svg.replace(/(<svg\b[^>]*)style=["']([^"']*)["']/i, (m, tag, style) =>
-        `${tag}style="${style.replace(/background[^;]*;?/gi, '').replace(/fill\s*:\s*[^;]+;?/gi, '')}"`
-      );
-
-      // 2. Remove background rects — any large rect at canvas origin, any fill color
+      // 1. Remove background rects — any large rect at canvas origin, any fill color
       svg = svg.replace(/<rect\b[^>]*(?:\/>|><\/rect>)/gi, (match) => {
         const hasLargeWidth = /width=["'](?:100%|[2-9]\d{2,}|\d{4,})["']/.test(match);
         const hasLargeHeight = /height=["'](?:100%|[2-9]\d{2,}|\d{4,})["']/.test(match);
@@ -205,6 +192,18 @@ Search for visual references that fit this studio's aesthetic, then design a log
         if ((hasLargeWidth || hasLargeHeight) && !hasOffsetX && !hasOffsetY) return '';
         return match;
       });
+
+      // 2. Force single-color: replace ALL fills with logoColor, remove all strokes
+      // Recraft ignores the colors param — we enforce it in post-processing
+      const c = logoColor;
+      // Attribute fills/strokes
+      svg = svg.replace(/\bfill=["'](?!none|transparent)[^"']*["']/gi, `fill="${c}"`);
+      svg = svg.replace(/\bstroke=["'](?!none|transparent)[^"']*["']/gi, `stroke="none"`);
+      // Inline style fills/strokes
+      svg = svg.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:${c}`);
+      svg = svg.replace(/\bstroke\s*:\s*(?!none|transparent)[^;}"']+/gi, `stroke:none`);
+      // Remove fill/stroke from the root <svg> itself (prevents inherited background)
+      svg = svg.replace(/(<svg\b[^>]*?)\s+fill=["'][^"']*["']/i, '$1');
 
       return res.status(200).json({ svg });
     }
