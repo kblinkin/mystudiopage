@@ -114,6 +114,15 @@ export function renderSite(data) {
   const hasPhoto    = !!data.photoDataUrl;
   const hasLogo     = !!data.logoSvg;
   const formId      = data.formspreeId || '';
+
+  // Recolor logo SVG to match current theme — white on dark bg, dark text on light bg
+  const themeBg = t.bg || '#0c0c0c';
+  const themeIsDark = themeBg.startsWith('#0') || themeBg.startsWith('#1');
+  const logoFill = themeIsDark ? '#ffffff' : t.text;
+  const logoSvg = hasLogo ? data.logoSvg
+    .replace(/\bfill=["'](?!none|transparent)[^"']+["']/gi, `fill="${logoFill}"`)
+    .replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:${logoFill}`)
+    : null;
   const isProduction = data.engineerType === 'production';
 
   // Social link labels
@@ -140,10 +149,10 @@ export function renderSite(data) {
   const heroHtml = `
   <section class="hero" id="hero">
     <div class="hero-inner">
-      ${hasLogo && !isWordmark ? `<div class="hero-pre-logo">${data.logoSvg}</div>` : ''}
+      ${hasLogo && !isWordmark ? `<div class="hero-pre-logo">${logoSvg}</div>` : ''}
       <div class="hero-eyebrow">${escHtml(typeLabel)}</div>
       ${isWordmark
-        ? `<div class="hero-wordmark">${data.logoSvg}</div>`
+        ? `<div class="hero-wordmark">${logoSvg}</div>`
         : `<h1 class="hero-title">${escHtml(studioName)}</h1>`}
       ${data.tagline ? `<p class="hero-tagline">${escHtml(data.tagline)}</p>` : ''}
       <a href="#contact" class="hero-cta">Work With Me</a>
