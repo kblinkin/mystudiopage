@@ -82,9 +82,8 @@ Color application:
 Output a complete, well-constructed SVG. Use as many path points as the design requires — do not simplify at the expense of quality.`;
 
   const message = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 16000,
-    thinking: { type: 'adaptive' },
+    model: 'claude-opus-4-6',
+    max_tokens: 4096,
     system: systemPrompt,
     messages: [
       { role: 'user', content: userPrompt }
