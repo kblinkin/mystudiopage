@@ -73,15 +73,12 @@ export function renderSite(data) {
   </nav>`;
 
   // ── HERO ──────────────────────────────────────────────────────────────────
-  const heroNameBlock = hasLogo
-    ? `<div class="hero-logo">${data.logoSvg}</div>`
-    : `<h1 class="hero-title">${escHtml(studioName)}</h1>`;
-
   const heroHtml = `
   <section class="hero" id="hero">
     <div class="hero-inner">
+      ${hasLogo ? `<div class="hero-pre-logo">${data.logoSvg}</div>` : ''}
       <div class="hero-eyebrow">${escHtml(typeLabel)}</div>
-      ${heroNameBlock}
+      <h1 class="hero-title">${escHtml(studioName)}</h1>
       ${data.tagline ? `<p class="hero-tagline">${escHtml(data.tagline)}</p>` : ''}
       <a href="#contact" class="hero-cta">Work With Me</a>
     </div>
@@ -414,21 +411,24 @@ export function renderSite(data) {
       flex-shrink: 0;
     }
 
-    /* Logo as hero centrepiece */
-    .hero-logo {
+    /* Traditional logo mark above the hero text */
+    .hero-pre-logo {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 36px;
+      margin-bottom: 32px;
     }
 
-    .hero-logo svg {
-      width: 100%;
-      max-width: 760px;
-      height: auto;
+    .hero-pre-logo svg {
+      width: 120px;
+      height: 120px;
     }
 
-    /* Fallback when no logo — studio name as large text */
+    @media (max-width: 768px) {
+      .hero-pre-logo svg { width: 88px; height: 88px; }
+    }
+
+    /* Studio name as large hero text (always rendered) */
     .hero-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 140px;
@@ -470,7 +470,6 @@ export function renderSite(data) {
       .hero-title { font-size: 72px; }
       .hero-tagline { font-size: 16px; }
       .hero-inner { padding: 0 24px; }
-      .hero-logo svg { max-width: 460px; }
     }
 
     /* ── Stats ──────────────────────────────────────────────────────────── */
