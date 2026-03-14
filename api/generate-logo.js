@@ -159,8 +159,7 @@ Search for visual references that fit this studio's aesthetic, then design a log
       body: JSON.stringify({
         model: 'recraftv3',
         prompt: imagePrompt,
-        style: 'icon',
-        substyle: 'colored_shapes',
+        style: 'vector_illustration',
         size: '1024x1024',
         colors: [{ rgb: hexToRgb(accent) }],
         response_format: 'url'
