@@ -64,32 +64,62 @@ Output a complete, self-contained SVG.`
     return res.status(200).json({ svg });
   }
 
-  // --- GRAPHIC MARK: Build prompt → Recraft v3 vector generates SVG ---
+  // --- GRAPHIC MARK: Claude Haiku crafts prompt → Recraft v3 vector generates SVG ---
 
-  // Style direction → visual language mapping
+  // Convert hex accent to RGB for Recraft's colors param
+  const hexToRgb = hex => {
+    const h = hex.replace('#', '');
+    return { r: parseInt(h.slice(0,2),16), g: parseInt(h.slice(2,4),16), b: parseInt(h.slice(4,6),16) };
+  };
+
+  // Is this a dark or light theme?
+  const isDark = bg && (bg === '#0c0c0c' || bg === '#080c12' || bg === '#080f0b' || bg === '#0a0a0a' || bg.startsWith('#0') || bg.startsWith('#1'));
+
+  // Style direction → visual language
   const styleGuide = {
-    organic:      'flowing organic curves, natural fluid forms, soft rounded geometry, biomorphic shapes',
+    organic:      'flowing organic curves, natural fluid forms, soft rounded biomorphic shapes',
     geometric:    'precise geometric forms, sharp angles, clean lines, mathematical symmetry',
-    minimal:      'single bold minimal shape, extreme negative space, restrained and pure',
+    minimal:      'single bold minimal shape, extreme negative space, pure and restrained',
     industrial:   'angular industrial forms, mechanical precision, hard edges, structural weight',
-    brutalist:    'raw bold shapes, heavy mass, stark contrast, uncompromising geometry',
-    retro:        'vintage-inspired mark, classic proportions, timeless craft',
+    brutalist:    'raw bold shapes, heavy mass, stark high-contrast geometry',
+    retro:        'vintage-inspired mark, classic proportions, timeless craft feel',
     futuristic:   'sleek futuristic forms, dynamic angles, forward motion, tech precision',
     elegant:      'refined elegant curves, graceful balance, sophisticated restraint',
   };
-  const styleDesc = styleGuide[styleDirection?.toLowerCase()] || (styleDirection ? `${styleDirection} aesthetic` : 'sophisticated geometric forms');
+  const styleDesc = styleGuide[styleDirection?.toLowerCase()] || (styleDirection ? `${styleDirection} style` : 'sophisticated abstract geometry');
 
-  // Engineer type → visual concept mapping
+  // Engineer type → core visual concept
   const engineerConcepts = {
-    mastering:  'precision calibration mark, diamond facets, technical instrument geometry',
-    mixing:     'signal flow forms, waveform cross-sections, fader arc geometry',
-    mixmaster:  'two interlocking mirror forms, duality of process, unified halves',
-    production: 'rhythm made visible, creative spark, oscilloscope-inspired geometry',
+    mastering:  'precision calibration instrument, diamond facets, technical drawing geometry',
+    mixing:     'signal flow, waveform cross-section, fader arc as architectural form',
+    mixmaster:  'two interlocking mirror forms representing the full mix-to-master journey',
+    production: 'rhythm made visible, the geometry of a kick drum or oscilloscope pulse',
   };
-  const engineerConcept = engineerConcepts[engineerType] || 'audio engineering geometry';
+  const engineerConcept = engineerConcepts[engineerType] || 'audio engineering precision';
 
-  // Build the Recraft prompt directly — no need for a Haiku round-trip
-  const imagePrompt = `Professional abstract logo mark for a recording studio. ${styleDesc}. Inspired by ${engineerConcept}. Primary color ${accent}, color scheme: ${themeName}. Pure symbol, no text or letters. Clean vector art on white background. Premium brand identity, sophisticated and distinctive.`;
+  // Use Claude Haiku to craft a vivid, specific visual prompt
+  let imagePrompt;
+  try {
+    const promptMsg = await client.messages.create({
+      model: 'claude-haiku-4-5',
+      max_tokens: 180,
+      system: `You write image generation prompts for a professional AI logo tool. Write one vivid visual description (under 100 words) of an abstract logo mark. Be specific about exact shapes, forms, and composition. No text or letters. No background description. Pure visual form only — no instructions or meta-commentary.`,
+      messages: [{
+        role: 'user',
+        content: `Create a logo mark for:
+Studio: "${studioName}"
+Core concept: ${engineerConcept}
+Visual style: ${styleDesc}
+Color: ${accent} (${themeName})
+
+Be creative and specific. Make it feel like a $10,000 brand identity, not clip art.`
+      }]
+    });
+    imagePrompt = promptMsg.content[0].text.trim();
+  } catch (err) {
+    // Fallback to a direct prompt if Haiku fails
+    imagePrompt = `Professional abstract logo mark. ${styleDesc}. ${engineerConcept}. Color ${accent}. Pure symbol, no text.`;
+  }
 
   // Generate with Recraft v3 vector
   let recraftRes;
@@ -105,6 +135,7 @@ Output a complete, self-contained SVG.`
         prompt: imagePrompt,
         style: 'vector_illustration',
         size: '1024x1024',
+        colors: [{ rgb: hexToRgb(accent) }],
         response_format: 'url'
       })
     });
