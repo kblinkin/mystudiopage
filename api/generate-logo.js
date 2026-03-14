@@ -75,20 +75,18 @@ Output a complete, self-contained SVG.`
   // Is this a dark or light theme?
   const isDark = bg && (bg === '#0c0c0c' || bg === '#080c12' || bg === '#080f0b' || bg === '#0a0a0a' || bg.startsWith('#0') || bg.startsWith('#1'));
 
-  // Style direction → Recraft sub-style + prompt description
-  const styleMap = {
-    organic:    { recraft: 'Vector art',     desc: 'flowing organic curves, natural fluid forms, soft rounded biomorphic shapes' },
-    geometric:  { recraft: 'Bold stroke',    desc: 'precise geometric forms, sharp angles, clean lines, mathematical symmetry' },
-    minimal:    { recraft: 'Thin',           desc: 'single bold minimal shape, extreme negative space, pure and restrained' },
-    industrial: { recraft: 'Engraving',      desc: 'angular industrial forms, mechanical precision, hard edges, structural weight' },
-    brutalist:  { recraft: 'Sharp contrast', desc: 'raw bold shapes, heavy mass, stark high-contrast geometry' },
-    retro:      { recraft: 'Linocut',        desc: 'vintage-inspired mark, handcrafted feel, timeless print quality' },
-    futuristic: { recraft: 'Line art',       desc: 'sleek precise lines, dynamic angles, technical forward-motion geometry' },
-    elegant:    { recraft: 'Thin',           desc: 'refined curves, graceful balance, sophisticated restraint' },
+  // Style direction → prompt description for Haiku
+  const styleGuide = {
+    organic:    'flowing organic curves, natural fluid forms, soft rounded biomorphic shapes',
+    geometric:  'precise geometric forms, sharp angles, clean lines, mathematical symmetry',
+    minimal:    'single bold minimal shape, extreme negative space, pure and restrained',
+    industrial: 'angular industrial forms, mechanical precision, hard edges, structural weight',
+    brutalist:  'raw bold shapes, heavy mass, stark high-contrast geometry',
+    retro:      'vintage-inspired mark, handcrafted feel, timeless print quality',
+    futuristic: 'sleek precise lines, dynamic angles, technical forward-motion geometry',
+    elegant:    'refined curves, graceful balance, sophisticated restraint',
   };
-  const key = styleDirection?.toLowerCase();
-  const styleDef = styleMap[key] || { recraft: 'Vector art', desc: styleDirection ? `${styleDirection} style` : 'sophisticated abstract geometry' };
-  const { recraft: recraftStyle, desc: styleDesc } = styleDef;
+  const styleDesc = styleGuide[styleDirection?.toLowerCase()] || (styleDirection ? `${styleDirection} style` : 'sophisticated abstract geometry');
 
   // Engineer type → core visual concept
   const engineerConcepts = {
@@ -133,7 +131,7 @@ Describe a specific, original symbol. Think: what single geometric form captures
       body: JSON.stringify({
         model: 'recraftv3',
         prompt: imagePrompt,
-        style: recraftStyle,
+        style: 'Vector art',
         size: '1024x1024',
         colors: [{ rgb: hexToRgb(accent) }],
         response_format: 'url'
