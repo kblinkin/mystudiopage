@@ -47,7 +47,7 @@ function accentHex(color) {
 
 function getLayoutCss(style, t) {
   if (style === 'editorial') return `
-    /* Editorial layout */
+    /* Editorial layout — Playfair Display + Source Sans 3 */
     .hero-inner { text-align: left; }
     .hero-pre-logo { justify-content: flex-start; }
     .hero-tagline { margin-left: 0; }
@@ -56,30 +56,42 @@ function getLayoutCss(style, t) {
     .contact-inner .section-eyebrow { justify-content: flex-start; }
     .contact-inner .section-eyebrow::before { display: block; }
     .stats-inner { justify-content: flex-start; padding-left: 60px; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: 110px; letter-spacing: -0.01em; font-weight: 700; }
+    .section-heading { font-family: 'Playfair Display', serif; font-weight: 700; letter-spacing: 0; }
+    .credits-section-label { font-family: 'Playfair Display', serif; }
+    .about-studio-name { font-family: 'Playfair Display', serif; }
+    body, .hero-tagline, .about-bio, .service-desc, .contact-sub { font-family: 'Source Sans 3', sans-serif; font-weight: 300; }
+    .section-eyebrow, .nav-link, .service-tier, .stat-text { font-family: 'Source Sans 3', sans-serif; font-weight: 600; letter-spacing: 0.15em; }
+    @media (max-width: 768px) { .hero-title { font-size: 64px; } }
   `;
   if (style === 'minimal') return `
-    /* Minimal layout */
+    /* Minimal layout — Space Grotesk */
     .hero { min-height: 75vh; }
-    .hero-title { font-size: 88px; letter-spacing: 0.06em; }
+    .hero-title { font-family: 'Space Grotesk', sans-serif; font-size: 88px; letter-spacing: -0.02em; font-weight: 700; }
     .section-eyebrow::before { display: none; }
-    .section-eyebrow { letter-spacing: 0.3em; }
-    .section-heading { font-size: 40px; letter-spacing: 0.06em; }
+    .section-eyebrow { font-family: 'Space Mono', monospace; letter-spacing: 0.2em; }
+    .section-heading { font-family: 'Space Grotesk', sans-serif; font-size: 40px; letter-spacing: -0.01em; font-weight: 700; }
+    .credits-section-label { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+    .about-studio-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+    body, .hero-tagline, .about-bio, .service-desc { font-family: 'Space Grotesk', sans-serif; font-weight: 300; }
+    .stat-text { font-family: 'Space Mono', monospace; font-size: 22px; letter-spacing: 0.05em; }
     .about, .services, .work, .contact { padding: 130px 0; }
     .stats-band { padding: 60px 0; }
-    .stat-text { font-size: 22px; letter-spacing: 0.1em; }
     .stat-sep { height: 28px; }
     .nav { border-bottom: none; background: transparent; position: absolute; }
     .hero { padding-top: 100px; }
     @media (max-width: 768px) { .hero-title { font-size: 56px; } }
   `;
   if (style === 'bold') return `
-    /* Bold layout */
+    /* Bold layout — Anton headlines */
     .hero { border-bottom: 3px solid ${t.text}; min-height: auto; padding: 130px 0 100px; }
-    .hero-title { font-size: 160px; }
+    .hero-title { font-family: 'Anton', sans-serif; font-size: 160px; letter-spacing: 0.02em; font-weight: 400; }
+    .section-heading { font-family: 'Anton', sans-serif; font-size: 64px; letter-spacing: 0.02em; font-weight: 400; }
+    .credits-section-label { font-family: 'Anton', sans-serif; letter-spacing: 0.02em; }
+    .about-studio-name { font-family: 'Anton', sans-serif; letter-spacing: 0.02em; }
     .stats-band { border-top: 3px solid ${t.text}; border-bottom: 3px solid ${t.text}; background: ${t.bg}; }
     .section-eyebrow::before { display: none; }
     .section-eyebrow { border-left: 3px solid ${t.accent}; padding-left: 14px; letter-spacing: 0.25em; }
-    .section-heading { font-size: 64px; }
     .about { border-bottom: 1px solid ${t.border2}; }
     .work { border-bottom: 1px solid ${t.border2}; }
     .service-card { border-color: ${t.border}; }
@@ -1123,7 +1135,7 @@ export function renderSite(data) {
 <meta name="description" content="${escHtml(data.tagline || typeLabel + ' — ' + studioName)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&family=Anton&display=swap" rel="stylesheet">
 <style>${css}${getLayoutCss(data.layoutStyle, t)}${data.customCss ? '\n/* Custom Tweaks */\n' + data.customCss : ''}</style>
 </head>
 <body>
