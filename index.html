@@ -2735,6 +2735,10 @@
       document.getElementById('logoLoadingState').style.display = 'none';
       document.getElementById('logoErrorState').style.display = 'none';
     }
+    if (data.logoKeywords) {
+      const kwEl = document.getElementById('logoKeywords');
+      if (kwEl) kwEl.value = data.logoKeywords;
+    }
     if (data.logoMode) {
       logoMode = data.logoMode;
       const btn = document.querySelector(`.logo-mode-btn[data-mode="${data.logoMode}"]`);
@@ -3155,6 +3159,7 @@
     data.formspreeId = document.querySelector('#formBody input[type="text"]')?.value?.trim() || '';
     data.logoSvg = currentLogoSvg || '';
     data.logoMode = logoMode || 'mark';
+    data.logoKeywords = document.getElementById('logoKeywords')?.value?.trim() || '';
     data.photoDataUrl = currentPhotoDataUrl || '';
     data.credits = creditsList.length > 0 ? [...creditsList] : [];
     data.customCss = customTweaks.map(t => t.css).join('\n');
