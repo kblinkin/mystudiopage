@@ -8,7 +8,7 @@
           "value": "(?<subdomain>(?!www)[^.]+)\\.mystudiopage\\.com"
         }
       ],
-      "destination": "/api/serve-site?s=$subdomain"
+      "destination": "/api/serve-site?s=:subdomain"
     }
   ]
 }

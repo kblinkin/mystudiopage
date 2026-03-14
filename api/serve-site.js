@@ -92,7 +92,9 @@ const NOT_FOUND_HTML = `<!DOCTYPE html>
 </html>`;
 
 export default async function handler(req, res) {
-  const subdomain = req.query.s || '';
+  const host = req.headers.host || '';
+  const hostSubdomain = host.includes('.mystudiopage.com') ? host.split('.mystudiopage.com')[0] : '';
+  const subdomain = req.query.s || hostSubdomain || '';
 
   if (!subdomain) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
