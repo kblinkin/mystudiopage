@@ -83,15 +83,21 @@ Color application:
 
 Output a complete, well-constructed SVG. Use as many path points as the design requires — do not simplify at the expense of quality.`;
 
-  const message = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 8000,
-    thinking: { type: 'adaptive' },
-    system: systemPrompt,
-    messages: [
-      { role: 'user', content: userPrompt }
-    ]
-  });
+  let message;
+  try {
+    message = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 8000,
+      thinking: { type: 'adaptive' },
+      system: systemPrompt,
+      messages: [
+        { role: 'user', content: userPrompt }
+      ]
+    });
+  } catch (err) {
+    const detail = err?.message || err?.error?.message || String(err);
+    return res.status(500).json({ error: `API error: ${detail}` });
+  }
 
   const textBlock = message.content.find(b => b.type === 'text');
   if (!textBlock) {
