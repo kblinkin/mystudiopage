@@ -3,6 +3,12 @@
   "functions": {
     "api/serve-site.js": {
       "includeFiles": "index.html"
+    },
+    "api/generate-logo.js": {
+      "maxDuration": 60
+    },
+    "api/customize.js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [
