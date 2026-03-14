@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-export const config = { maxDuration: 60 };
+export const config = { maxDuration: 120 };
 
 const client = new Anthropic();
 
@@ -106,44 +106,48 @@ Output a complete, self-contained SVG.`
   };
   const engineerConcept = engineerConcepts[engineerType] || 'audio engineering precision';
 
-  // Use Claude Sonnet to craft a creative, context-aware prompt
+  // Use Claude Sonnet + web search to research references, then craft the image prompt
   let imagePrompt;
   try {
-    const promptMsg = await client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 300,
-      system: `You are a world-class brand identity designer. Your job is to invent ONE unexpected, memorable visual concept for a logo mark and describe it as an image generation prompt.
+    const systemPrompt = `You are a world-class brand identity designer. Your job is to:
+1. Do ONE web search to find visual design references, logo inspiration, or mood imagery related to the studio's name, keywords, and aesthetic.
+2. Use those references to craft ONE image generation prompt for a professional logo mark.
 
-Your process:
-1. Read the studio name and find what it LITERALLY or PHONETICALLY evokes — sounds, textures, objects, places, sensations. This is your raw material.
-2. Find a visual metaphor from the engineer type that avoids clichés (no soundwaves, no headphones, no vinyl records, no musical notes).
-3. If keywords are provided, use them as creative fuel — not literally, but as mood/texture.
-4. Fuse steps 1-3 into ONE geometric symbol that feels inevitable in hindsight.
-5. Apply the style direction to the form.
+After searching, output ONLY the image generation prompt — no preamble, no explanation.
 
-Output rules:
-- Describe ONLY solid filled shapes — no outlines, no thin lines, no sketches
-- 1-2 shapes maximum, forming a single unified silhouette
-- No text, no letters, no faces, no realistic imagery
+Prompt rules:
+- Describe ONLY solid filled flat shapes — no outlines, no thin lines, no sketches, no gradients
+- 1-2 shapes maximum, forming a single unified bold silhouette
+- No text, no letters, no faces, no realistic imagery, no ornate detail
 - Be hyper-specific: exact angles, proportions, how shapes relate
-- 80-120 words
-- End with: "Flat vector, solid fills, isolated on white, logo mark style"`,
-      messages: [{
-        role: 'user',
-        content: `Studio name: "${studioName}"
+- 60-90 words
+- End with: "Single-color flat icon, transparent background, no background fill, minimal logo mark"`;
+
+    const userMessage = `Studio name: "${studioName}"
 Engineer type: ${typeDesc}
 Style direction: ${styleDesc}
-Color palette: ${themeName} (primary: ${accent})${keywords ? `\nKeywords from the client: "${keywords}"` : ''}
+Color palette: ${themeName} (primary: ${accent})${keywords ? `\nKeywords: "${keywords}"` : ''}
 
-Design a logo mark concept. Be original — avoid the first obvious idea.`
-      }]
+Search for visual references that fit this studio's aesthetic, then design a logo mark concept.`;
+
+    // web_search is a server-side tool — Anthropic runs the search internally,
+    // no client-side loop needed. Response arrives with stop_reason: 'end_turn'.
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 500,
+      system: systemPrompt,
+      tools: [{ type: 'web_search_20260209', name: 'web_search' }],
+      messages: [{ role: 'user', content: userMessage }],
     });
-    imagePrompt = promptMsg.content[0].text.trim();
+
+    imagePrompt = response.content.find(b => b.type === 'text')?.text?.trim()
+      || `Minimal flat logo mark, solid geometric shapes, ${styleDesc}, ${engineerConcept}. Single bold silhouette. Single-color flat icon, transparent background, no background fill, minimal logo mark.`;
   } catch (err) {
-    imagePrompt = `Minimal flat logo mark, solid geometric shapes, ${styleDesc}, ${engineerConcept}. Bold silhouette, color ${accent}. Flat vector, solid fills, isolated on white, logo mark style.`;
+    imagePrompt = `Minimal flat logo mark, solid geometric shapes, ${styleDesc}, ${engineerConcept}. Single bold silhouette. Single-color flat icon, transparent background, no background fill, minimal logo mark.`;
   }
 
-  // Generate with Recraft v3 vector
+  // Generate with Recraft v3 vector — 'icon' style with 'colored_shapes' substyle
+  // gives clean single-color flat fills, ideal for logo marks
   let recraftRes;
   try {
     recraftRes = await fetch('https://external.api.recraft.ai/v1/images/generations', {
@@ -155,7 +159,8 @@ Design a logo mark concept. Be original — avoid the first obvious idea.`
       body: JSON.stringify({
         model: 'recraftv3',
         prompt: imagePrompt,
-        style: 'Bold stroke',
+        style: 'vector_illustration',
+        substyle: 'flat',
         size: '1024x1024',
         colors: [{ rgb: hexToRgb(accent) }],
         response_format: 'url'
@@ -185,15 +190,17 @@ Design a logo mark concept. Be original — avoid the first obvious idea.`
       const s = svg.indexOf('<svg'), e = svg.lastIndexOf('</svg>');
       if (s >= 0 && e > s) svg = svg.slice(s, e + 6);
 
-      // Remove Recraft's background rect — catches all fill formats and positions
-      // 1. White/light fill in fill attribute
-      svg = svg.replace(/<rect[^>]*fill=["'](?:white|#[Ff]{3}|#[Ff]{6}|rgb\(255[^)]*\))["'][^>]*(?:\/>|><\/rect>)/gi, '');
-      // 2. White/light fill in style attribute
-      svg = svg.replace(/<rect[^>]*style=["'][^"']*fill\s*:\s*(?:white|#[Ff]{3,6}|rgb\(255[^)]*\))[^"']*["'][^>]*(?:\/>|><\/rect>)/gi, '');
-      // 3. Full-canvas rect at origin (width/height = 100% or matches viewBox)
-      svg = svg.replace(/<rect\b(?=[^>]*width=["'](?:100%|1024|512|800)["'])[^>]*(?:\/>|><\/rect>)/gi, '');
-      // 4. Nuclear option: remove any rect with no x/y (implicitly 0,0) that is very large
-      svg = svg.replace(/<rect\b(?![^>]*\bx=["'][1-9])(?=[^>]*width=["']\d{3,}["'])[^>]*(?:\/>|><\/rect>)/gi, '');
+      // Remove Recraft's background rect — any large rect at canvas origin, any fill color
+      // Strategy: remove any rect with large dimensions (≥256px or 100%) that sits at origin (no x/y or x=0/y=0)
+      svg = svg.replace(/<rect\b[^>]*(?:\/>|><\/rect>)/gi, (match) => {
+        const hasLargeWidth = /width=["'](?:100%|[2-9]\d{2,}|\d{4,})["']/.test(match);
+        const hasLargeHeight = /height=["'](?:100%|[2-9]\d{2,}|\d{4,})["']/.test(match);
+        const hasOffsetX = /\bx=["'][1-9]/.test(match);
+        const hasOffsetY = /\by=["'][1-9]/.test(match);
+        // Remove if it's large in either dimension and not offset from origin
+        if ((hasLargeWidth || hasLargeHeight) && !hasOffsetX && !hasOffsetY) return '';
+        return match;
+      });
 
       return res.status(200).json({ svg });
     }
