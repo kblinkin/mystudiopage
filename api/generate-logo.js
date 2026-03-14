@@ -101,7 +101,7 @@ Output a complete, self-contained SVG.`
   const engineerConcept = engineerConcepts[engineerType] || 'audio engineering precision';
 
   // Use Claude Sonnet + web search to research references, then craft the image prompt
-  const logoColor = textColor || '#ffffff';
+  const logoColor = isDark ? '#ffffff' : '#000000';
   let imagePrompt;
   try {
     const systemPrompt = `You are a world-class brand identity designer. Your job is to:
@@ -193,19 +193,19 @@ Search for visual references that fit this studio's aesthetic, then design a log
         return match;
       });
 
-      // 2. Force single-color using currentColor — the site template CSS controls the actual color.
-      // This means the logo automatically adapts when the user switches between dark/light themes.
+      // 2. Force single-color: white on dark themes, black on light themes
+      const c = logoColor;
       // CSS inside <style> blocks
       svg = svg.replace(/(<style[^>]*>)([\s\S]*?)(<\/style>)/gi, (m, open, css, close) => {
-        let newCss = css.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:currentColor`);
+        let newCss = css.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:${c}`);
         newCss = newCss.replace(/\bstroke\s*:\s*(?!none|transparent)[^;}"']+/gi, `stroke:none`);
         return `${open}${newCss}${close}`;
       });
       // Attribute fills/strokes
-      svg = svg.replace(/\bfill=["'](?!none|transparent)[^"']*["']/gi, `fill="currentColor"`);
+      svg = svg.replace(/\bfill=["'](?!none|transparent)[^"']*["']/gi, `fill="${c}"`);
       svg = svg.replace(/\bstroke=["'](?!none|transparent)[^"']*["']/gi, `stroke="none"`);
       // Inline style attribute fills/strokes
-      svg = svg.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:currentColor`);
+      svg = svg.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:${c}`);
       svg = svg.replace(/\bstroke\s*:\s*(?!none|transparent)[^;}"']+/gi, `stroke:none`);
       // Remove fill from root <svg> (prevents inherited background color)
       svg = svg.replace(/(<svg\b[^>]*?)\s+fill=["'][^"']*["']/i, '$1');
