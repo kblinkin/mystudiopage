@@ -464,7 +464,7 @@ export function renderSite(data) {
     .hero-tagline {
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
-      font-size: 18px;
+      font-size: 22px;
       color: var(--muted2);
       line-height: 1.6;
       max-width: 480px;
@@ -491,7 +491,7 @@ export function renderSite(data) {
 
     @media (max-width: 768px) {
       .hero-title { font-size: 72px; }
-      .hero-tagline { font-size: 16px; }
+      .hero-tagline { font-size: 18px; }
       .hero-inner { padding: 0 24px; }
     }
 
@@ -649,7 +649,7 @@ export function renderSite(data) {
     .about-bio {
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
-      font-size: 16px;
+      font-size: 18px;
       color: var(--muted2);
       line-height: 1.85;
       margin-bottom: 28px;
@@ -680,7 +680,7 @@ export function renderSite(data) {
       .about { padding: 64px 0; }
       .about-inner { padding: 0 24px; }
       .about-studio-name { font-size: 36px; }
-      .about-bio { font-size: 15px; }
+      .about-bio { font-size: 16px; }
       .about-photo { max-width: 100%; }
     }
 
@@ -1056,8 +1056,8 @@ ${heroHtml}
 ${aboutHtml}
 ${creditsHtml}
 ${workHtml}
-${statsHtml}
 ${servicesHtml}
+${statsHtml}
 ${contactHtml}
 ${footerHtml}
 </body>

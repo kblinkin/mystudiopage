@@ -2608,6 +2608,16 @@
       if (themeCard) { document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected')); themeCard.classList.add('selected'); selectedTheme = data.theme; }
     }
 
+    // 8b. Credits
+    if (data.credits && data.credits.length > 0) {
+      creditsList.length = 0;
+      data.credits.forEach(c => { if (c) creditsList.push(c); });
+      renderCredits();
+      // Show the credits area so user can see them
+      document.getElementById('creditsArea').style.display = 'block';
+      document.getElementById('creditsToggleBtn').textContent = '− Hide';
+    }
+
     // 9. Logo
     if (data.logoSvg) {
       currentLogoSvg = data.logoSvg;
