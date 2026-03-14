@@ -107,6 +107,7 @@ Output a complete, self-contained SVG.`
   const engineerConcept = engineerConcepts[engineerType] || 'audio engineering precision';
 
   // Use Claude Sonnet + web search to research references, then craft the image prompt
+  const logoColor = textColor || '#ffffff';
   let imagePrompt;
   try {
     const systemPrompt = `You are a world-class brand identity designer. Your job is to:
@@ -121,8 +122,7 @@ Prompt rules:
 - No text, no letters, no faces, no realistic imagery, no ornate detail
 - Be hyper-specific: exact angles, proportions, how shapes relate
 - 60-90 words
-- End with: "Single-color flat icon, transparent background, no background fill, minimal logo mark"`;
-
+- End with: "Single solid color fills only, no outlines, transparent background, no background rect, SVG logo mark"`;
     const userMessage = `Studio name: "${studioName}"
 Engineer type: ${typeDesc}
 Style direction: ${styleDesc}
@@ -140,10 +140,11 @@ Search for visual references that fit this studio's aesthetic, then design a log
       messages: [{ role: 'user', content: userMessage }],
     });
 
-    imagePrompt = response.content.find(b => b.type === 'text')?.text?.trim()
-      || `Minimal flat logo mark, solid geometric shapes, ${styleDesc}, ${engineerConcept}. Single bold silhouette. Single-color flat icon, transparent background, no background fill, minimal logo mark.`;
+    const rawPrompt = response.content.find(b => b.type === 'text')?.text?.trim()
+      || `Minimal flat logo mark, solid geometric shapes, ${styleDesc}, ${engineerConcept}. Single bold silhouette.`;
+    imagePrompt = `${rawPrompt} All shapes filled with ${logoColor}, single solid color only, transparent background, no background rect, SVG logo mark.`;
   } catch (err) {
-    imagePrompt = `Minimal flat logo mark, solid geometric shapes, ${styleDesc}, ${engineerConcept}. Single bold silhouette. Single-color flat icon, transparent background, no background fill, minimal logo mark.`;
+    imagePrompt = `Minimal flat logo mark, solid geometric shapes, ${styleDesc}, ${engineerConcept}. Single bold silhouette. All shapes filled with ${logoColor}, single solid color only, transparent background, no background rect, SVG logo mark.`;
   }
 
   // Generate with Recraft v3 vector — 'icon' style with 'colored_shapes' substyle
@@ -161,7 +162,7 @@ Search for visual references that fit this studio's aesthetic, then design a log
         prompt: imagePrompt,
         style: 'vector_illustration',
         size: '1024x1024',
-        colors: [{ rgb: hexToRgb(accent) }],
+        colors: [{ rgb: hexToRgb(logoColor) }],
         response_format: 'url'
       })
     });
@@ -189,14 +190,18 @@ Search for visual references that fit this studio's aesthetic, then design a log
       const s = svg.indexOf('<svg'), e = svg.lastIndexOf('</svg>');
       if (s >= 0 && e > s) svg = svg.slice(s, e + 6);
 
-      // Remove Recraft's background rect — any large rect at canvas origin, any fill color
-      // Strategy: remove any rect with large dimensions (≥256px or 100%) that sits at origin (no x/y or x=0/y=0)
+      // 1. Remove background fill from root <svg> element
+      svg = svg.replace(/(<svg\b[^>]*)\s+fill=["'][^"']*["']/i, '$1');
+      svg = svg.replace(/(<svg\b[^>]*)style=["']([^"']*)["']/i, (m, tag, style) =>
+        `${tag}style="${style.replace(/background[^;]*;?/gi, '').replace(/fill\s*:\s*[^;]+;?/gi, '')}"`
+      );
+
+      // 2. Remove background rects — any large rect at canvas origin, any fill color
       svg = svg.replace(/<rect\b[^>]*(?:\/>|><\/rect>)/gi, (match) => {
         const hasLargeWidth = /width=["'](?:100%|[2-9]\d{2,}|\d{4,})["']/.test(match);
         const hasLargeHeight = /height=["'](?:100%|[2-9]\d{2,}|\d{4,})["']/.test(match);
         const hasOffsetX = /\bx=["'][1-9]/.test(match);
         const hasOffsetY = /\by=["'][1-9]/.test(match);
-        // Remove if it's large in either dimension and not offset from origin
         if ((hasLargeWidth || hasLargeHeight) && !hasOffsetX && !hasOffsetY) return '';
         return match;
       });
