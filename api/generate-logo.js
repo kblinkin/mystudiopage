@@ -193,20 +193,19 @@ Search for visual references that fit this studio's aesthetic, then design a log
         return match;
       });
 
-      // 2. Force single-color: replace ALL fills with logoColor, remove all strokes
-      // Recraft ignores the colors param — we enforce it in post-processing
-      const c = logoColor;
+      // 2. Force single-color using currentColor — the site template CSS controls the actual color.
+      // This means the logo automatically adapts when the user switches between dark/light themes.
       // CSS inside <style> blocks
       svg = svg.replace(/(<style[^>]*>)([\s\S]*?)(<\/style>)/gi, (m, open, css, close) => {
-        let newCss = css.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:${c}`);
+        let newCss = css.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:currentColor`);
         newCss = newCss.replace(/\bstroke\s*:\s*(?!none|transparent)[^;}"']+/gi, `stroke:none`);
         return `${open}${newCss}${close}`;
       });
       // Attribute fills/strokes
-      svg = svg.replace(/\bfill=["'](?!none|transparent)[^"']*["']/gi, `fill="${c}"`);
+      svg = svg.replace(/\bfill=["'](?!none|transparent)[^"']*["']/gi, `fill="currentColor"`);
       svg = svg.replace(/\bstroke=["'](?!none|transparent)[^"']*["']/gi, `stroke="none"`);
       // Inline style attribute fills/strokes
-      svg = svg.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:${c}`);
+      svg = svg.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:currentColor`);
       svg = svg.replace(/\bstroke\s*:\s*(?!none|transparent)[^;}"']+/gi, `stroke:none`);
       // Remove fill from root <svg> (prevents inherited background color)
       svg = svg.replace(/(<svg\b[^>]*?)\s+fill=["'][^"']*["']/i, '$1');

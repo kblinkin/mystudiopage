@@ -502,6 +502,7 @@ export function renderSite(data) {
       justify-content: center;
       align-items: center;
       margin-bottom: 32px;
+      color: var(--text);
     }
 
     .hero-pre-logo svg {
