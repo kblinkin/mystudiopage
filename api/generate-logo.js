@@ -152,8 +152,9 @@ Search for visual references that fit this studio's aesthetic, then design a log
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'recraftv4_vector',
+        model: 'recraftv3',
         prompt: imagePrompt,
+        style: 'vector_illustration',
         size: '1024x1024',
         response_format: 'url'
       })

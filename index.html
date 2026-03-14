@@ -2181,7 +2181,7 @@
 
       <div style="margin-bottom:24px;padding:16px 18px;border:1px solid var(--accent);border-radius:6px;background:var(--accent-dim)">
         <div class="field-label" style="margin-bottom:6px;color:var(--accent)">✦ Keywords <span style="color:var(--muted);font-size:10px;margin-left:4px;text-transform:none;letter-spacing:0">the more specific, the better your logo</span></div>
-        <input type="text" id="logoKeywords" class="form-input" placeholder="e.g. mountain, precision, analog, fox, dark…" style="max-width:400px;border-color:var(--border)">
+        <input type="text" id="logoKeywords" class="form-input" placeholder="e.g. mountain, precision, analog, fox, dark…" style="max-width:400px;border-color:var(--border)" oninput="localStorage.setItem('msp_logo_keywords', this.value)">
         <div class="field-hint" style="margin-top:6px">We search for real visual references based on your keywords before designing the mark.</div>
       </div>
 
@@ -3650,6 +3650,8 @@
   }
 
   // ── INIT ─────────────────────────────────────────────
+  const _savedKw = localStorage.getItem('msp_logo_keywords');
+  if (_savedKw) { const _kwEl = document.getElementById('logoKeywords'); if (_kwEl) _kwEl.value = _savedKw; }
   checkExistingSession();
 </script>
 </body>
