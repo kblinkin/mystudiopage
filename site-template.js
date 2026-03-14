@@ -45,6 +45,49 @@ function accentHex(color) {
   return (color || '#c8a96e').replace(/^#/, '');
 }
 
+function getLayoutCss(style, t) {
+  if (style === 'editorial') return `
+    /* Editorial layout */
+    .hero-inner { text-align: left; }
+    .hero-pre-logo { justify-content: flex-start; }
+    .hero-tagline { margin-left: 0; }
+    .section-eyebrow { justify-content: flex-start; }
+    .contact-inner { text-align: left; max-width: 1100px; }
+    .contact-inner .section-eyebrow { justify-content: flex-start; }
+    .contact-inner .section-eyebrow::before { display: block; }
+    .stats-inner { justify-content: flex-start; padding-left: 60px; }
+  `;
+  if (style === 'minimal') return `
+    /* Minimal layout */
+    .hero { min-height: 75vh; }
+    .hero-title { font-size: 88px; letter-spacing: 0.06em; }
+    .section-eyebrow::before { display: none; }
+    .section-eyebrow { letter-spacing: 0.3em; }
+    .section-heading { font-size: 40px; letter-spacing: 0.06em; }
+    .about, .services, .work, .contact { padding: 130px 0; }
+    .stats-band { padding: 60px 0; }
+    .stat-text { font-size: 22px; letter-spacing: 0.1em; }
+    .stat-sep { height: 28px; }
+    .nav { border-bottom: none; background: transparent; position: absolute; }
+    .hero { padding-top: 100px; }
+    @media (max-width: 768px) { .hero-title { font-size: 56px; } }
+  `;
+  if (style === 'bold') return `
+    /* Bold layout */
+    .hero { border-bottom: 3px solid ${t.text}; min-height: auto; padding: 130px 0 100px; }
+    .hero-title { font-size: 160px; }
+    .stats-band { border-top: 3px solid ${t.text}; border-bottom: 3px solid ${t.text}; background: ${t.bg}; }
+    .section-eyebrow::before { display: none; }
+    .section-eyebrow { border-left: 3px solid ${t.accent}; padding-left: 14px; letter-spacing: 0.25em; }
+    .section-heading { font-size: 64px; }
+    .about { border-bottom: 1px solid ${t.border2}; }
+    .work { border-bottom: 1px solid ${t.border2}; }
+    .service-card { border-color: ${t.border}; }
+    @media (max-width: 768px) { .hero-title { font-size: 80px; } .section-heading { font-size: 44px; } }
+  `;
+  return ''; // default
+}
+
 export function renderSite(data) {
   const theme = THEMES[data.theme] || THEMES['dark-gold'];
   const t = theme;
@@ -1066,7 +1109,7 @@ export function renderSite(data) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>${css}${data.customCss ? '\n/* Custom Tweaks */\n' + data.customCss : ''}</style>
+<style>${css}${getLayoutCss(data.layoutStyle, t)}${data.customCss ? '\n/* Custom Tweaks */\n' + data.customCss : ''}</style>
 </head>
 <body>
 ${navHtml}
