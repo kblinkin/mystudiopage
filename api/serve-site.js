@@ -1,5 +1,16 @@
 import { kv } from '@vercel/kv';
 import { renderSite } from '../site-template.js';
+import { readFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dir = dirname(fileURLToPath(import.meta.url));
+let builderHtml;
+try {
+  builderHtml = readFileSync(join(__dir, '..', 'index.html'), 'utf8');
+} catch (e) {
+  builderHtml = null;
+}
 
 const NOT_FOUND_HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -97,8 +108,9 @@ export default async function handler(req, res) {
   const subdomain = req.query.s || hostSubdomain || '';
 
   if (!subdomain) {
+    // Main domain request — serve the builder
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    return res.status(404).send(NOT_FOUND_HTML);
+    return res.status(200).send(builderHtml || NOT_FOUND_HTML);
   }
 
   try {

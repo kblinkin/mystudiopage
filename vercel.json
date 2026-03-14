@@ -1,13 +1,12 @@
 {
+  "functions": {
+    "api/serve-site.js": {
+      "includeFiles": "index.html"
+    }
+  },
   "rewrites": [
     {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "(?!www\\.)[^.]+\\.mystudiopage\\.com"
-        }
-      ],
+      "source": "/((?!api/).*)",
       "destination": "/api/serve-site"
     }
   ]
