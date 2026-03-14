@@ -1,5 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 
+export const config = { maxDuration: 60 };
+
 const client = new Anthropic();
 
 export default async function handler(req, res) {
@@ -85,7 +87,6 @@ Output a complete, well-constructed SVG. Use as many path points as the design r
     model: 'claude-sonnet-4-6',
     max_tokens: 8000,
     thinking: { type: 'adaptive' },
-    output_config: { effort: 'low' },
     system: systemPrompt,
     messages: [
       { role: 'user', content: userPrompt }
