@@ -101,7 +101,7 @@ Output a complete, self-contained SVG.`
   const engineerConcept = engineerConcepts[engineerType] || 'audio engineering precision';
 
   // Use Claude Sonnet + web search to research references, then craft the image prompt
-  const logoColor = isDark ? '#ffffff' : '#000000';
+  const logoColor = isDark ? '#ffffff' : '#280F61';
   let imagePrompt;
   try {
     const systemPrompt = `You are a world-class brand identity designer. Your job is to:

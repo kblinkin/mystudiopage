@@ -118,7 +118,7 @@ export function renderSite(data) {
   // Recolor logo SVG to match current theme — white on dark bg, dark text on light bg
   const themeBg = t.bg || '#0c0c0c';
   const themeIsDark = themeBg.startsWith('#0') || themeBg.startsWith('#1');
-  const logoFill = themeIsDark ? '#ffffff' : t.text;
+  const logoFill = themeIsDark ? '#ffffff' : '#280F61';
   const logoSvg = hasLogo ? data.logoSvg
     .replace(/\bfill=["'](?!none|transparent)[^"']+["']/gi, `fill="${logoFill}"`)
     .replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:${logoFill}`)

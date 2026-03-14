@@ -2137,7 +2137,7 @@
       </div>
 
       <div class="logo-context-card">
-        <div class="logo-context-label">What Claude will use</div>
+        <div class="logo-context-label">What we'll use</div>
         <div class="logo-context-items">
           <div class="logo-context-item">
             <span class="lci-key">Studio Name</span>
@@ -2182,7 +2182,7 @@
       <div style="margin-bottom:24px;padding:16px 18px;border:1px solid var(--accent);border-radius:6px;background:var(--accent-dim)">
         <div class="field-label" style="margin-bottom:6px;color:var(--accent)">✦ Keywords <span style="color:var(--muted);font-size:10px;margin-left:4px;text-transform:none;letter-spacing:0">the more specific, the better your logo</span></div>
         <input type="text" id="logoKeywords" class="form-input" placeholder="e.g. mountain, precision, analog, fox, dark…" style="max-width:400px;border-color:var(--border)">
-        <div class="field-hint" style="margin-top:6px">The AI searches for real visual references based on your keywords before designing the mark.</div>
+        <div class="field-hint" style="margin-top:6px">We search for real visual references based on your keywords before designing the mark.</div>
       </div>
 
       <div id="logoGenerateSection">
@@ -2202,7 +2202,7 @@
             <div class="publish-dot"></div>
             <div class="publish-dot"></div>
           </div>
-          <div class="logo-loading-text" id="logoLoadingText">Claude is designing your mark...</div>
+          <div class="logo-loading-text" id="logoLoadingText">We're designing your mark...</div>
         </div>
       </div>
 
@@ -2293,7 +2293,7 @@
       <!-- TWEAK BOT -->
       <div class="tweak-bot-section">
         <div class="tweak-bot-heading">Visual Tweaks</div>
-        <p class="tweak-bot-desc">Describe a visual change and AI will apply it to your site. Good for things the builder doesn't expose — spacing, font sizes, button styles, section height, and more. Each tweak is saved and applied every time you publish.</p>
+        <p class="tweak-bot-desc">Describe a visual change and we'll apply it to your site. Good for things the builder doesn't expose — spacing, font sizes, button styles, section height, and more. Each tweak is saved and applied every time you publish.</p>
         <div class="tweak-bot-examples">
           <span class="tweak-example" onclick="setTweakPrompt(this.textContent)">"Make the hero section taller"</span>
           <span class="tweak-example" onclick="setTweakPrompt(this.textContent)">"Make my studio name smaller"</span>
@@ -3349,11 +3349,11 @@
     document.getElementById('logoUploadArea').style.display = 'none';
 
     const loadingMessages = [
-      'Crafting your visual prompt...',
-      'Generating your mark...',
-      'Rendering the vector...',
-      'Refining the geometry...',
-      'Adding finishing touches...'
+      'We\'re researching your visual references...',
+      'We\'re crafting your concept...',
+      'We\'re generating your mark...',
+      'We\'re refining the geometry...',
+      'We\'re adding finishing touches...'
     ];
     let msgIdx = 0;
     const msgEl = document.getElementById('logoLoadingText');
