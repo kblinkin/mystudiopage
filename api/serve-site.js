@@ -103,9 +103,14 @@ const NOT_FOUND_HTML = `<!DOCTYPE html>
 </html>`;
 
 export default async function handler(req, res) {
-  const host = req.headers.host || '';
+  // x-forwarded-host preserves the original hostname through Vercel's internal routing
+  const host = req.headers['x-forwarded-host'] || req.headers.host || '';
   const hostSubdomain = host.includes('.mystudiopage.com') ? host.split('.mystudiopage.com')[0] : '';
   const subdomain = req.query.s || hostSubdomain || '';
+
+  // Debug header — check for this in browser Network tab
+  res.setHeader('X-Debug-Host', host);
+  res.setHeader('X-Debug-Subdomain', subdomain || 'none');
 
   if (!subdomain) {
     // Main domain request — serve the builder

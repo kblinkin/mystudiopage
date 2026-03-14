@@ -1,4 +1,5 @@
 {
+  "outputDirectory": "public",
   "functions": {
     "api/serve-site.js": {
       "includeFiles": "index.html"
