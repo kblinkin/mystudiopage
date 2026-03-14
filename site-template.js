@@ -18,8 +18,8 @@ const TYPE_LABELS = {
 
 const SERVICES_TITLE = {
   mastering:  'Rates & Services',
-  mixing:     'Mixing Packages',
-  mixmaster:  'Packages',
+  mixing:     'Mixing Prices',
+  mixmaster:  'Prices',
   production: 'Working Together'
 };
 
@@ -116,11 +116,10 @@ export function renderSite(data) {
   let statsHtml = '';
   if (stats.length > 0) {
     const statItems = stats.map((s, i) => {
+      // Support both old {value, label} format and new single {value} format
+      const text = s.label ? `${s.value} ${s.label}` : s.value;
       const sep = i < stats.length - 1 ? '<div class="stat-sep" aria-hidden="true"></div>' : '';
-      return `<div class="stat-block">
-        <div class="stat-value">${escHtml(s.value)}</div>
-        <div class="stat-label">${escHtml(s.label)}</div>
-      </div>${sep}`;
+      return `<div class="stat-block"><div class="stat-text">${escHtml(text)}</div></div>${sep}`;
     }).join('');
     statsHtml = `
   <section class="stats-band" aria-label="Quick stats">
@@ -600,20 +599,12 @@ export function renderSite(data) {
       padding: 0 48px;
     }
 
-    .stat-value {
+    .stat-text {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 52px;
+      font-size: 32px;
       line-height: 1;
-      color: var(--accent);
-      letter-spacing: 0.03em;
-    }
-
-    .stat-label {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 300;
-      color: var(--muted2);
-      margin-top: 8px;
+      color: var(--text);
+      letter-spacing: 0.05em;
     }
 
     .stat-sep {

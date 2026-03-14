@@ -974,10 +974,11 @@
 
   .stat-field-top {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 0;
   }
+  .stat-field-top input { flex: 1; }
 
   /* PRIVATE TRACK NOTE */
   .info-box {
@@ -1916,40 +1917,24 @@
       <div class="example-box">
         <div class="example-label">Examples by engineer type</div>
         <div class="example-text">
-          <strong>Mastering:</strong> 48hr · Turnaround &nbsp;|&nbsp; ∞ · Revisions &nbsp;|&nbsp; All · Genres &nbsp;|&nbsp; Free · Proof Session <br>
-          <strong>Mixing:</strong> 5 Day · Turnaround &nbsp;|&nbsp; 3 · Revision Rounds &nbsp;|&nbsp; WAV+MP3 · Delivery &nbsp;|&nbsp; Free · Rough Mix <br>
-          <strong>Production:</strong> Custom · Every Beat &nbsp;|&nbsp; Excl. · Rights Available &nbsp;|&nbsp; All · Genres &nbsp;|&nbsp; Free · Demo Session <br>
-          <strong>Mix+Master:</strong> 7 Day · Turnaround &nbsp;|&nbsp; Full · Stem Mix &nbsp;|&nbsp; DDP · Delivery &nbsp;|&nbsp; ∞ · Revisions
+          <strong>Mastering:</strong> 48HR Turnaround &nbsp;|&nbsp; Unlimited Revisions &nbsp;|&nbsp; All Genres &nbsp;|&nbsp; Free Proof Session <br>
+          <strong>Mixing:</strong> 5 Day Turnaround &nbsp;|&nbsp; 3 Revision Rounds &nbsp;|&nbsp; WAV + MP3 Delivery &nbsp;|&nbsp; Free Rough Mix <br>
+          <strong>Production:</strong> Custom Pricing &nbsp;|&nbsp; Exclusive Rights Available &nbsp;|&nbsp; All Genres &nbsp;|&nbsp; Free Demo Session <br>
+          <strong>Mix+Master:</strong> 7 Day Turnaround &nbsp;|&nbsp; Full Stem Mix &nbsp;|&nbsp; DDP Delivery &nbsp;|&nbsp; Unlimited Revisions
         </div>
       </div>
 
       <div class="stats-grid" id="statsGrid">
         <div class="stat-field">
           <div class="stat-field-top">
-            <div class="stat-preview" id="statPreview1">—</div>
+            <input type="text" placeholder="e.g. 48HR Turnaround">
             <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
-          </div>
-          <div class="field-group" style="margin-bottom:8px">
-            <label class="field-label">Value</label>
-            <input type="text" placeholder="e.g. 48hr" oninput="updateStatPreview(1, this.value)">
-          </div>
-          <div class="field-group" style="margin-bottom:0">
-            <label class="field-label">Label</label>
-            <input type="text" placeholder="e.g. Turnaround">
           </div>
         </div>
         <div class="stat-field">
           <div class="stat-field-top">
-            <div class="stat-preview" id="statPreview2">—</div>
+            <input type="text" placeholder="e.g. Unlimited Revisions">
             <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
-          </div>
-          <div class="field-group" style="margin-bottom:8px">
-            <label class="field-label">Value</label>
-            <input type="text" placeholder="e.g. ∞" oninput="updateStatPreview(2, this.value)">
-          </div>
-          <div class="field-group" style="margin-bottom:0">
-            <label class="field-label">Label</label>
-            <input type="text" placeholder="e.g. Revisions">
           </div>
         </div>
       </div>
@@ -2612,20 +2597,14 @@
       statCount = 0;
       data.stats.forEach(s => {
         statCount++;
+        // Support old {value, label} format by combining them
+        const text = s.label ? `${s.value} ${s.label}` : s.value;
         const div = document.createElement('div');
         div.className = 'stat-field';
         div.innerHTML = `
           <div class="stat-field-top">
-            <div class="stat-preview">${escAttr(s.value || '—')}</div>
+            <input type="text" value="${escAttr(text)}" placeholder="e.g. 48HR Turnaround">
             <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
-          </div>
-          <div class="field-group" style="margin-bottom:8px">
-            <label class="field-label">Value</label>
-            <input type="text" value="${escAttr(s.value)}" placeholder="e.g. 48hr" oninput="this.closest('.stat-field').querySelector('.stat-preview').textContent=this.value||'—'">
-          </div>
-          <div class="field-group" style="margin-bottom:0">
-            <label class="field-label">Label</label>
-            <input type="text" value="${escAttr(s.label)}" placeholder="e.g. Turnaround">
           </div>`;
         grid.appendChild(div);
       });
@@ -3041,22 +3020,13 @@
 
   function addStat() {
     statCount++;
-    const n = statCount;
     const grid = document.getElementById('statsGrid');
     const div = document.createElement('div');
     div.className = 'stat-field';
     div.innerHTML = `
       <div class="stat-field-top">
-        <div class="stat-preview">—</div>
+        <input type="text" placeholder="e.g. 5 Day Turnaround">
         <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
-      </div>
-      <div class="field-group" style="margin-bottom:8px">
-        <label class="field-label">Value</label>
-        <input type="text" placeholder="e.g. 24hr" oninput="this.closest('.stat-field').querySelector('.stat-preview').textContent=this.value||'—'">
-      </div>
-      <div class="field-group" style="margin-bottom:0">
-        <label class="field-label">Label</label>
-        <input type="text" placeholder="e.g. Rush Turnaround">
       </div>
     `;
     grid.appendChild(div);
@@ -3115,8 +3085,8 @@
     // Stats
     const statFields = document.querySelectorAll('#statsGrid .stat-field');
     data.stats = Array.from(statFields).map(f => {
-      const inputs = f.querySelectorAll('input[type="text"]');
-      return { value: inputs[0]?.value?.trim()||'', label: inputs[1]?.value?.trim()||'' };
+      const input = f.querySelector('input[type="text"]');
+      return { value: input?.value?.trim()||'' };
     }).filter(s => s.value);
 
     // Socials
