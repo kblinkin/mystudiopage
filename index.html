@@ -1962,11 +1962,11 @@
     <div class="step-panel" id="step9">
       <div class="step-header">
         <div class="step-eyebrow">Step 9 of 10 — Optional</div>
-        <div class="step-title">Build Your<br>Logo</div>
-        <p class="step-desc">Claude AI designs a custom logo using your studio name, engineer type, and color scheme — no prompting needed. The logo gets built directly into your site header. You can also download it for business cards, social media, or anywhere else you need it.</p>
+        <div class="step-title">Logo<br>Mark</div>
+        <p class="step-desc">Claude AI designs a custom graphic mark using your engineer type and color scheme. It appears above your studio name on the site. You can also download it for business cards, social media, or anywhere else you need it. Totally optional — skip if you prefer text-only.</p>
       </div>
 
-      <div class="logo-ai-badge">✦ Powered by Claude Haiku · ~$0.004 per generation</div>
+      <div class="logo-ai-badge">✦ Powered by Claude Sonnet · ~$0.003 per generation</div>
 
       <div class="logo-context-card">
         <div class="logo-context-label">What Claude will use</div>
@@ -1991,10 +1991,13 @@
       </div>
 
       <div id="logoGenerateSection">
-        <button class="btn btn-primary logo-generate-btn" onclick="generateLogo()" id="logoGenerateBtn">
-          ✦ Generate My Logo
-        </button>
-        <div class="field-hint" style="text-align:center;margin-top:8px">Claude designs it — you just approve it. Regenerate as many times as you like.</div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary logo-generate-btn" onclick="generateLogo()" id="logoGenerateBtn">
+            ✦ Generate My Logo
+          </button>
+          <button class="btn btn-ghost" onclick="skipLogo()">Skip — No Logo</button>
+        </div>
+        <div class="field-hint" style="margin-top:8px">Claude designs a graphic mark — you just approve it. Regenerate as many times as you like.</div>
       </div>
 
       <div id="logoLoadingState" style="display:none">
@@ -2004,7 +2007,7 @@
             <div class="publish-dot"></div>
             <div class="publish-dot"></div>
           </div>
-          <div class="logo-loading-text" id="logoLoadingText">Claude is designing your logo...</div>
+          <div class="logo-loading-text" id="logoLoadingText">Claude is designing your mark...</div>
         </div>
       </div>
 
@@ -2012,10 +2015,11 @@
         <div class="logo-preview-box" id="logoPreviewBox"></div>
         <div class="info-box" style="margin-bottom:20px">
           <div class="info-box-label">✓ Added to your site</div>
-          <div class="info-box-text">This logo will appear in the header of your mystudiopage site. Use the download buttons below to save a copy for social media, business cards, email signatures, or anywhere else you need it.</div>
+          <div class="info-box-text">This mark will appear above your studio name on the site. Download it for social media, business cards, or email signatures too.</div>
         </div>
         <div class="logo-actions">
           <button class="btn btn-ghost" onclick="generateLogo()">↺ Try Another</button>
+          <button class="btn btn-ghost" onclick="removeLogo()">✕ Remove</button>
           <button class="btn btn-primary" onclick="downloadLogoSVG()">Download SVG</button>
           <button class="btn btn-ghost" onclick="downloadLogoPNG()">Download PNG</button>
         </div>
@@ -3083,10 +3087,10 @@
     document.getElementById('logoLoadingState').style.display = 'block';
 
     const loadingMessages = [
-      'Claude is designing your logo...',
+      'Claude is designing your mark...',
       'Considering your engineer type...',
-      'Crafting the typography...',
-      'Refining the layout...',
+      'Crafting the symbol...',
+      'Refining the geometry...',
       'Adding finishing touches...'
     ];
     let msgIdx = 0;
@@ -3107,8 +3111,7 @@
           themeName: theme.name,
           accent: theme.accent,
           bg: theme.bg,
-          textColor: theme.text,
-          tagline
+          textColor: theme.text
         })
       });
 
@@ -3138,6 +3141,18 @@
           : err.message;
       document.getElementById('logoGenerateSection').style.display = 'block';
     }
+  }
+
+  function skipLogo() {
+    currentLogoSvg = null;
+    goToStep(currentStep + 1);
+  }
+
+  function removeLogo() {
+    currentLogoSvg = null;
+    document.getElementById('logoPreviewSection').style.display = 'none';
+    document.getElementById('logoGenerateSection').style.display = 'block';
+    document.getElementById('logoGenerateBtn').innerHTML = '✦ Generate My Logo';
   }
 
   function downloadLogoSVG() {

@@ -7,51 +7,45 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { studioName, engineerType, typeDesc, themeName, accent, bg, textColor, tagline } = req.body;
+  const { studioName, engineerType, typeDesc, themeName, accent, bg, textColor } = req.body;
 
   if (!studioName) {
     return res.status(400).json({ error: 'studioName is required' });
   }
 
-  const taglineNote = tagline
-    ? `Tagline (optional small text): "${tagline}"`
-    : 'No tagline.';
-
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 4000,
-    system: `You are a senior brand identity designer with 20 years of experience creating logos for professional recording studios, mastering houses, and audio facilities. You produce compact, mark-based SVG logos that look like they cost $5,000 to commission — refined, iconic, and typographically precise. Return ONLY valid SVG markup. No markdown fences, no explanation, no comments outside the SVG. Output must start with <svg and end with </svg>.`,
+    system: `You are a senior brand identity designer with 20 years of experience creating logos for professional recording studios, mastering houses, and audio facilities. You produce iconic, mark-based SVG symbols that look like they cost $5,000 to commission — refined, bold, and graphic. Return ONLY valid SVG markup. No markdown fences, no explanation, no comments outside the SVG. Output must start with <svg and end with </svg>.`,
     messages: [
       {
         role: 'user',
-        content: `Create a traditional, compact logo mark SVG for this audio studio:
+        content: `Create a pure graphic logo mark SVG for this audio studio — NO TEXT, symbols and shapes only:
 
-Studio name: "${studioName}"
+Studio name (for context/inspiration only, do NOT render it): "${studioName}"
 Engineer type: ${typeDesc}
 Color scheme: ${themeName}
-Accent/highlight color: ${accent} | Text/mark color: ${textColor}
-${taglineNote}
+Primary mark color: ${accent} | Secondary color: ${textColor}
 
 Technical requirements:
 - viewBox="0 0 400 400" width="400" height="400"
-- NO background fill — the SVG must have a transparent background (no background rect)
-- Load Bebas Neue via: <defs><style>@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue');</style></defs>
+- NO background fill — transparent background (no background rect at all)
+- NO text, NO letters, NO words of any kind
 - ALL elements must be fully inside the viewBox — nothing clipped or cut off at the edges
-- Leave at least 20px of padding on all sides so nothing touches the edge
+- Leave at least 30px of padding on all sides so nothing touches the edge
 
-Design direction — this is a TRADITIONAL LOGO MARK, not a banner:
-- Think: circular badge, stacked wordmark with a symbol, monogram with a geometric frame, or a bold icon above the name
-- Structure: a graphic symbol/mark in the upper portion, studio name below in Bebas Neue — OR a strong monogram mark that integrates both
-- The graphic symbol should be bold and readable at small sizes (will be displayed at ~120px)
+Design direction — this is a PURE GRAPHIC MARK, no text:
+- NO studio name, NO tagline, NO words of any kind — purely a symbol/icon/glyph
+- Think: a monogram initial, a geometric badge, an abstract audio symbol, a crest, or a bold icon
+- It will be displayed small (~100–120px) above large typographic text, so it must read clearly at that size
+- Bold, graphic, high-contrast — avoid fine detail or thin lines
 - Choose a symbol that fits the engineer type:
-  * Mastering: diamond, square bracket frame, precision circle with crosshair, or an angular geometric crest
-  * Mixing: concentric arcs (like a mixing desk), stacked horizontal bars, or a wave form contained in a shape
-  * Mix+Master: a split or bisected geometric form, or a clean bold monogram in a frame
-  * Production: a bold abstract mark, microphone silhouette, triangle/play form, or bold initials in a circle
-- Studio name in Bebas Neue, letter-spacing 0.15em–0.25em, centered below the mark
-- If tagline, render it in a very small (12px), widely tracked monospace style below the name
-- Use ${accent} for the graphic element/mark; ${textColor} for the studio name text
-- The logo must read clearly at 120px wide — bold, graphic, not detailed
+  * Mastering: diamond, square bracket frame, precision circle with crosshair, angular geometric crest, or a bold abstract M
+  * Mixing: concentric arcs (like faders), stacked horizontal bars of varying length (EQ bars), or a bold waveform in a shape
+  * Mix+Master: a split/bisected geometric form, a circle with a horizontal rule, or a bold monogram initial in a frame
+  * Production: a triangle/play symbol, microphone silhouette, bold circle mark, or bold abstract initial
+- Use ${accent} as the primary mark color; ${textColor} as a secondary or outline color if needed
+- The mark must look complete and professional with NO text at all
 
 Keep paths simple. No clipPath. Output a complete, self-contained SVG.`
       }
