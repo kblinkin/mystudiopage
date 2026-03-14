@@ -103,22 +103,20 @@ Output a complete, self-contained SVG.`
     const promptMsg = await client.messages.create({
       model: 'claude-haiku-4-5',
       max_tokens: 180,
-      system: `You write image generation prompts for a professional AI logo tool. Write one vivid visual description (under 100 words) of an abstract logo mark. Be specific about exact shapes, forms, and composition. No text or letters. No background description. Pure visual form only — no instructions or meta-commentary.`,
+      system: `You write prompts for a professional logo mark generator. Describe ONE bold, simple abstract symbol (2-3 shapes maximum). Be hyper-specific about the exact geometric forms — angles, curves, how shapes interlock or overlap. No text, no letters, no background. No generic descriptions like "elegant" or "professional" — only concrete visual specifics. Under 80 words.`,
       messages: [{
         role: 'user',
-        content: `Create a logo mark for:
-Studio: "${studioName}"
-Core concept: ${engineerConcept}
-Visual style: ${styleDesc}
-Color: ${accent} (${themeName})
+        content: `Logo mark for a recording studio.
+Concept: ${engineerConcept}
+Style: ${styleDesc}
+Color: ${accent}
 
-Be creative and specific. Make it feel like a $10,000 brand identity, not clip art.`
+Describe a specific, original symbol. Think: what single geometric form captures this concept? Be bold and decisive — one strong idea, not a list of options.`
       }]
     });
     imagePrompt = promptMsg.content[0].text.trim();
   } catch (err) {
-    // Fallback to a direct prompt if Haiku fails
-    imagePrompt = `Professional abstract logo mark. ${styleDesc}. ${engineerConcept}. Color ${accent}. Pure symbol, no text.`;
+    imagePrompt = `Bold minimal abstract mark. ${styleDesc}. ${engineerConcept}. Single strong geometric form. Color ${accent}.`;
   }
 
   // Generate with Recraft v3 vector
@@ -133,7 +131,7 @@ Be creative and specific. Make it feel like a $10,000 brand identity, not clip a
       body: JSON.stringify({
         model: 'recraftv3',
         prompt: imagePrompt,
-        style: 'vector_illustration',
+        style: 'vector_illustration/engraving',
         size: '1024x1024',
         colors: [{ rgb: hexToRgb(accent) }],
         response_format: 'url'
@@ -162,6 +160,11 @@ Be creative and specific. Make it feel like a $10,000 brand identity, not clip a
       let svg = content;
       const s = svg.indexOf('<svg'), e = svg.lastIndexOf('</svg>');
       if (s >= 0 && e > s) svg = svg.slice(s, e + 6);
+
+      // Remove Recraft's white background rect
+      svg = svg.replace(/<rect[^>]*fill=["'](?:white|#fff|#ffffff)["'][^>]*\/>/gi, '');
+      svg = svg.replace(/<rect[^>]*fill=["'](?:white|#fff|#ffffff)["'][^>]*><\/rect>/gi, '');
+
       return res.status(200).json({ svg });
     }
 
