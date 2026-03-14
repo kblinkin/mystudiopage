@@ -1027,6 +1027,27 @@
   }
   .warning-box-text strong { color: var(--text); font-weight: 500; }
 
+  /* PRODUCTION QUOTE CARD */
+  .production-quote-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 28px;
+  }
+  .production-quote-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .production-quote-body {
+    font-size: 14px;
+    color: var(--muted2);
+    line-height: 1.75;
+    margin-bottom: 20px;
+  }
+
   /* LOGO BUILDER */
   .logo-context-card {
     background: var(--bg2);
@@ -1224,13 +1245,199 @@
     .advanced-header-left { flex-direction: column; align-items: flex-start; gap: 6px; }
     .dns-row { grid-template-columns: 60px 90px 1fr; }
   }
+
+  /* ── AUTH OVERLAY ─────────────────────────────────────────────────────── */
+  #authOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    transition: opacity 0.5s ease;
+  }
+
+  #authOverlay.hiding {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .auth-box {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .auth-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .auth-tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 48px;
+  }
+
+  .auth-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border2);
+    margin-bottom: 32px;
+  }
+
+  .auth-tab {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 10px 20px 10px 0;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+    margin-right: 24px;
+  }
+
+  .auth-tab.active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+
+  .auth-form { display: none; }
+  .auth-form.active { display: block; }
+
+  .auth-error {
+    font-size: 13px;
+    color: var(--red);
+    background: rgba(235,87,87,0.08);
+    border: 1px solid rgba(235,87,87,0.25);
+    border-left: 3px solid var(--red);
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    display: none;
+    line-height: 1.5;
+  }
+
+  .auth-submit {
+    width: 100%;
+    justify-content: center;
+    padding: 16px;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    margin-top: 4px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .auth-footer {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 20px;
+    line-height: 1.6;
+  }
+
+  /* ── DATA LOADED BANNER ──────────────────────────────────────────────── */
+  #dataBanner {
+    display: none;
+    position: fixed;
+    top: 58px;
+    left: 0; right: 0;
+    z-index: 90;
+    background: var(--green-dim);
+    border-bottom: 1px solid var(--green);
+    padding: 8px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--green);
+    align-items: center;
+    gap: 8px;
+    transition: opacity 0.5s ease;
+  }
+
+  /* ── USER BADGE ──────────────────────────────────────────────────────── */
+  #authUserBadge {
+    display: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  #authUserBadge .logout-link {
+    color: var(--muted);
+    text-decoration: underline;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+
+  #authUserBadge .logout-link:hover { color: var(--text); }
 </style>
 </head>
 <body>
 
+<!-- AUTH OVERLAY — shown by default, hidden after login -->
+<div id="authOverlay">
+  <div class="auth-box">
+    <div class="auth-brand">mystudiopage</div>
+    <div class="auth-tagline">Audio engineering portfolio builder</div>
+
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabRegister" onclick="switchAuthTab('register')">Create Account</div>
+      <div class="auth-tab" id="tabLogin" onclick="switchAuthTab('login')">Log In</div>
+    </div>
+
+    <!-- Register -->
+    <div class="auth-form active" id="authRegisterForm">
+      <div class="auth-error" id="registerError"></div>
+      <div class="field-group">
+        <label class="field-label">Email</label>
+        <input type="email" id="registerEmail" placeholder="you@example.com" autocomplete="email" onkeydown="if(event.key==='Enter')doRegister()">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Password</label>
+        <input type="password" id="registerPassword" placeholder="At least 8 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
+      </div>
+      <button class="btn btn-primary auth-submit" onclick="doRegister()" id="registerBtn">Create Account →</button>
+    </div>
+
+    <!-- Login -->
+    <div class="auth-form" id="authLoginForm">
+      <div class="auth-error" id="loginError"></div>
+      <div class="field-group">
+        <label class="field-label">Email</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Password</label>
+        <input type="password" id="loginPassword" placeholder="Your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn btn-primary auth-submit" onclick="doLogin()" id="loginBtn">Log In →</button>
+    </div>
+
+    <div class="auth-footer">Your progress is saved to your account when you publish.<br>You can come back any time to update your site.</div>
+  </div>
+</div>
+
+<!-- DATA LOADED BANNER -->
+<div id="dataBanner">✓ &nbsp;Your previous progress has been loaded — make any changes and republish.</div>
+
 <header>
   <div class="logo">mystudiopage <span>/ builder</span></div>
-  <div class="header-step-indicator">Step <span id="headerStepNum">1</span> of 10</div>
+  <div style="display:flex;align-items:center;gap:20px">
+    <div id="authUserBadge"></div>
+    <div class="header-step-indicator">Step <span id="headerStepNum">1</span> of 10</div>
+  </div>
 </header>
 
 <div class="progress-bar">
@@ -1294,7 +1501,7 @@
     <!-- STEP 1: ENGINEER TYPE -->
     <div class="step-panel active" id="step1">
       <div class="step-header">
-        <div class="step-eyebrow">Step 1 of 9</div>
+        <div class="step-eyebrow">Step 1 of 10</div>
         <div class="step-title">What Kind of<br>Engineer Are You?</div>
         <p class="step-desc">This shapes your services section and how your site talks about your work. Pick the one that best describes what you do most.</p>
       </div>
@@ -1326,7 +1533,7 @@
     <!-- STEP 2: BASIC INFO -->
     <div class="step-panel" id="step2">
       <div class="step-header">
-        <div class="step-eyebrow">Step 2 of 9</div>
+        <div class="step-eyebrow">Step 2 of 10</div>
         <div class="step-title">Tell Us About<br>Yourself</div>
         <p class="step-desc">This is what shows up at the top of your site and in your about section. Write it how you'd introduce yourself to a new client.</p>
       </div>
@@ -1370,7 +1577,7 @@
 
       <div class="field-group">
         <label class="field-label">Your Bio</label>
-        <textarea placeholder="Write 2–3 sentences about your experience, your approach, and who you work with..."></textarea>
+        <textarea id="inputBio" placeholder="Write 2–3 sentences about your experience, your approach, and who you work with..."></textarea>
         <div class="field-hint">Keep it personal and specific. Clients want to know there's a real person on the other side.</div>
       </div>
 
@@ -1383,7 +1590,7 @@
 
       <div class="field-group">
         <label class="field-label">Contact Email</label>
-        <input type="email" placeholder="e.g. hello@blackfoxmastering.com">
+        <input type="email" id="inputEmail" placeholder="e.g. hello@blackfoxmastering.com">
         <div class="field-hint">This is how clients will reach you. It'll appear on your contact section.</div>
       </div>
     </div>
@@ -1391,9 +1598,9 @@
     <!-- STEP 3: PHOTO -->
     <div class="step-panel" id="step3">
       <div class="step-header">
-        <div class="step-eyebrow">Step 3 of 9</div>
+        <div class="step-eyebrow">Step 3 of 10</div>
         <div class="step-title">Add Your<br>Photo</div>
-        <p class="step-desc">A photo builds trust. Clients want to know there's a real person behind the work. You don't need a professional photographer — a good phone photo works fine.</p>
+        <p class="step-desc">A photo builds instant trust. Clients are more likely to reach out when they can see a real person behind the work. This one step makes a bigger difference than almost anything else on your site.</p>
       </div>
 
       <div class="photo-upload" onclick="this.querySelector('input').click()">
@@ -1406,20 +1613,47 @@
       <div class="photo-tips">
         <div class="photo-tip good">
           <div class="photo-tip-label">✓ What works</div>
-          <div class="photo-tip-text">Well-lit face shot. Plain or blurred background. You're in focus. Studio setting is a bonus but not required.</div>
+          <div class="photo-tip-text">Clear face shot, upper body. Confident, natural expression — not stiff. Studio setting is a real bonus. Clean or blurred background. You're the obvious subject.</div>
         </div>
         <div class="photo-tip bad">
           <div class="photo-tip-label">✗ What to avoid</div>
-          <div class="photo-tip-text">Blurry, dark, or cropped badly. Group photos. Overly filtered. Photos where you're not the obvious subject.</div>
+          <div class="photo-tip-text">Blurry, dark, or heavily filtered. Cropped from a group photo. Sunglasses. Photos where you look like you didn't want to be photographed.</div>
         </div>
       </div>
 
       <div class="divider"></div>
 
-      <div class="example-box">
-        <div class="example-label">No photo yet?</div>
+      <div class="section-title">Lighting Tips</div>
+
+      <div class="example-box" style="margin-bottom:12px">
+        <div class="example-label">Best option — natural window light</div>
         <div class="example-text">
-          Set your phone against a wall, open portrait mode, stand in a well-lit spot (facing a window works great), and take 10 shots. You'll get at least one usable one. It takes 5 minutes and makes a real difference.
+          Stand facing a window (not sideways to it). The light should hit your face straight on. Overcast days are perfect — the clouds diffuse everything and you get soft, even light with no harsh shadows. This works better than most studio lights.
+        </div>
+      </div>
+
+      <div class="example-box" style="margin-bottom:12px">
+        <div class="example-label">In your studio</div>
+        <div class="example-text">
+          Sit at your desk or stand near your gear. Turn on any room lights you have and supplement with a ring light or a desk lamp pointed at a white wall (not directly at your face). The studio context adds credibility — clients like seeing the setup.
+        </div>
+      </div>
+
+      <div class="example-box" style="margin-bottom:28px">
+        <div class="example-label">Quick phone setup</div>
+        <div class="example-text">
+          Lean your phone against something stable. Turn on Portrait Mode. Face your light source. Hit the timer, take 10 shots. You'll get at least two or three usable ones. It takes five minutes and is absolutely worth it.
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">No Photo of Yourself?</div>
+
+      <div class="info-box">
+        <div class="info-box-label">Studio photo is a valid alternative</div>
+        <div class="info-box-text">
+          If you're not comfortable with a personal photo, a well-framed shot of your studio, desk, or gear works well. Make sure it's well-lit, in focus, and actually looks like a professional space. A photo of your monitors, interface, and a clean desk says a lot about how you work.
         </div>
       </div>
     </div>
@@ -1427,7 +1661,7 @@
     <!-- STEP 4: SOUNDCLOUD -->
     <div class="step-panel" id="step4">
       <div class="step-header">
-        <div class="step-eyebrow">Step 4 of 9</div>
+        <div class="step-eyebrow">Step 4 of 10</div>
         <div class="step-title">Your Audio<br>Samples</div>
         <p class="step-desc">Your work section lets clients hear what you do before they reach out. We use SoundCloud links so you're not paying to host audio files.</p>
       </div>
@@ -1538,90 +1772,26 @@
     <!-- STEP 5: SERVICES -->
     <div class="step-panel" id="step5">
       <div class="step-header">
-        <div class="step-eyebrow">Step 5 of 9</div>
+        <div class="step-eyebrow">Step 5 of 10</div>
         <div class="step-title">Services<br>& Rates</div>
         <p class="step-desc">We've pre-filled these based on your engineer type. Edit the names, descriptions, and prices to match what you actually offer. Don't undercharge — clients expect to pay for quality.</p>
       </div>
 
-      <div class="example-box">
-        <div class="example-label">Pricing Guidance — Mastering</div>
-        <div class="example-text">
-          Starting out: <strong>$50–75/track</strong> is fair while building your roster. Mid-level: <strong>$85–150/track</strong> once you have a body of work. Established: <strong>$150–300/track</strong>. Don't start too low — it's harder to raise prices than to offer a limited-time discount.
+      <div class="example-box" id="pricingGuidance">
+        <div class="example-label" id="pricingGuidanceLabel">Pricing Guidance</div>
+        <div class="example-text" id="pricingGuidanceText">
+          Starting out: <strong>$50–75/track</strong> is fair while building your roster. Mid-level: <strong>$85–150/track</strong> once you have a body of work. Established: <strong>$150–300/track</strong>. Don't start too low — it's harder to raise prices than to offer a discount.
         </div>
       </div>
 
-      <div class="service-fields" id="serviceFields">
-        <div class="service-field" id="serviceField1">
-          <div class="service-field-header">
-            <div class="service-field-num">01</div>
-            <div class="service-field-type">Service 1</div>
-            <button class="remove-btn" onclick="removeService(this)" title="Remove service">✕</button>
-          </div>
-          <div class="service-input-row">
-            <div class="field-group" style="margin-bottom:0">
-              <label class="field-label">Service Name</label>
-              <input type="text" value="Streaming Master">
-            </div>
-            <div class="field-group" style="margin-bottom:0">
-              <label class="field-label">Price</label>
-              <input type="text" placeholder="e.g. $85 / track">
-            </div>
-          </div>
-          <div class="field-group" style="margin-top:12px;margin-bottom:0">
-            <label class="field-label">Description</label>
-            <textarea style="height:80px" placeholder="What's included? What do they send you? What do they get back?">Optimized for Spotify, Apple Music, Tidal, and all major platforms. LUFS-compliant with maximum perceived loudness.</textarea>
-          </div>
-        </div>
-        <div class="service-field" id="serviceField2">
-          <div class="service-field-header">
-            <div class="service-field-num">02</div>
-            <div class="service-field-type">Service 2</div>
-            <button class="remove-btn" onclick="removeService(this)" title="Remove service">✕</button>
-          </div>
-          <div class="service-input-row">
-            <div class="field-group" style="margin-bottom:0">
-              <label class="field-label">Service Name</label>
-              <input type="text" value="Vinyl Master">
-            </div>
-            <div class="field-group" style="margin-bottom:0">
-              <label class="field-label">Price</label>
-              <input type="text" placeholder="e.g. $150 / side">
-            </div>
-          </div>
-          <div class="field-group" style="margin-top:12px;margin-bottom:0">
-            <label class="field-label">Description</label>
-            <textarea style="height:80px">Lacquer masters to the highest standard. RIAA curve, side sequencing, and cutting notes included.</textarea>
-          </div>
-        </div>
-        <div class="service-field" id="serviceField3">
-          <div class="service-field-header">
-            <div class="service-field-num">03</div>
-            <div class="service-field-type">Service 3</div>
-            <button class="remove-btn" onclick="removeService(this)" title="Remove service">✕</button>
-          </div>
-          <div class="service-input-row">
-            <div class="field-group" style="margin-bottom:0">
-              <label class="field-label">Service Name</label>
-              <input type="text" value="Album Package">
-            </div>
-            <div class="field-group" style="margin-bottom:0">
-              <label class="field-label">Price</label>
-              <input type="text" placeholder="e.g. From $600 / album">
-            </div>
-          </div>
-          <div class="field-group" style="margin-top:12px;margin-bottom:0">
-            <label class="field-label">Description</label>
-            <textarea style="height:80px">Full album mastering with cohesive sequencing, DDP delivery, and streaming and CD-ready files.</textarea>
-          </div>
-        </div>
-      </div>
-      <button class="add-field-btn" onclick="addService()">+ Add Another Service</button>
+      <div class="service-fields" id="serviceFields"></div>
+      <button class="add-field-btn" id="addServiceBtn" onclick="addService()">+ Add Another Service</button>
     </div>
 
     <!-- STEP 6: STATS -->
     <div class="step-panel" id="step6">
       <div class="step-header">
-        <div class="step-eyebrow">Step 6 of 9</div>
+        <div class="step-eyebrow">Step 6 of 10</div>
         <div class="step-title">Your<br>Stats</div>
         <p class="step-desc">Quick facts that tell clients what working with you looks like. Start with four — add or remove to suit what you actually want to highlight. Pick things that are genuinely true and that matter to your clients.</p>
       </div>
@@ -1665,34 +1835,6 @@
             <input type="text" placeholder="e.g. Revisions">
           </div>
         </div>
-        <div class="stat-field">
-          <div class="stat-field-top">
-            <div class="stat-preview" id="statPreview3">—</div>
-            <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
-          </div>
-          <div class="field-group" style="margin-bottom:8px">
-            <label class="field-label">Value</label>
-            <input type="text" placeholder="e.g. All" oninput="updateStatPreview(3, this.value)">
-          </div>
-          <div class="field-group" style="margin-bottom:0">
-            <label class="field-label">Label</label>
-            <input type="text" placeholder="e.g. Genres Welcome">
-          </div>
-        </div>
-        <div class="stat-field">
-          <div class="stat-field-top">
-            <div class="stat-preview" id="statPreview4">—</div>
-            <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
-          </div>
-          <div class="field-group" style="margin-bottom:8px">
-            <label class="field-label">Value</label>
-            <input type="text" placeholder="e.g. Free" oninput="updateStatPreview(4, this.value)">
-          </div>
-          <div class="field-group" style="margin-bottom:0">
-            <label class="field-label">Label</label>
-            <input type="text" placeholder="e.g. Proof Session">
-          </div>
-        </div>
       </div>
       <button class="add-field-btn" onclick="addStat()" style="margin-top:8px">+ Add Another Stat</button>
     </div>
@@ -1700,7 +1842,7 @@
     <!-- STEP 7: SOCIALS -->
     <div class="step-panel" id="step7">
       <div class="step-header">
-        <div class="step-eyebrow">Step 7 of 9</div>
+        <div class="step-eyebrow">Step 7 of 10</div>
         <div class="step-title">Social<br>Links</div>
         <p class="step-desc">Add any social profiles you want clients to find. Leave any blank and it simply won't appear on your site — no harm done.</p>
       </div>
@@ -1743,7 +1885,7 @@
     <!-- STEP 8: COLOR SCHEME -->
     <div class="step-panel" id="step8">
       <div class="step-header">
-        <div class="step-eyebrow">Step 8 of 9</div>
+        <div class="step-eyebrow">Step 8 of 10</div>
         <div class="step-title">Pick Your<br>Color Scheme</div>
         <p class="step-desc">Each theme is a complete look — colors, feel, the whole thing. Pick the one that feels most like you and how you want clients to perceive your work.</p>
       </div>
@@ -1819,7 +1961,7 @@
       <div class="step-header">
         <div class="step-eyebrow">Step 9 of 10 — Optional</div>
         <div class="step-title">Build Your<br>Logo</div>
-        <p class="step-desc">Claude AI designs a custom logo using your studio name, engineer type, and color scheme. No prompting needed — it figures out the rest.</p>
+        <p class="step-desc">Claude AI designs a custom logo using your studio name, engineer type, and color scheme — no prompting needed. The logo gets built directly into your site header. You can also download it for business cards, social media, or anywhere else you need it.</p>
       </div>
 
       <div class="logo-ai-badge">✦ Powered by Claude Haiku · ~$0.004 per generation</div>
@@ -1866,6 +2008,10 @@
 
       <div id="logoPreviewSection" style="display:none;margin-top:28px">
         <div class="logo-preview-box" id="logoPreviewBox"></div>
+        <div class="info-box" style="margin-bottom:20px">
+          <div class="info-box-label">✓ Added to your site</div>
+          <div class="info-box-text">This logo will appear in the header of your mystudiopage site. Use the download buttons below to save a copy for social media, business cards, email signatures, or anywhere else you need it.</div>
+        </div>
         <div class="logo-actions">
           <button class="btn btn-ghost" onclick="generateLogo()">↺ Try Another</button>
           <button class="btn btn-primary" onclick="downloadLogoSVG()">Download SVG</button>
@@ -1902,6 +2048,10 @@
       <div class="field-hint" style="margin-top:8px;margin-bottom:40px">Use your studio name, no spaces or special characters. e.g. <em>blackfoxmastering</em> or <em>blackfox</em></div>
 
       <div class="divider"></div>
+
+      <button class="btn btn-ghost" onclick="previewSite()" style="margin-bottom:32px;width:100%;justify-content:center;">
+        Preview Your Site →
+      </button>
 
       <div class="section-title">Summary</div>
 
@@ -2091,15 +2241,288 @@
 <!-- BOTTOM NAV -->
 <div class="step-nav-buttons">
   <button class="btn btn-ghost" id="btnBack" onclick="goBack()" style="visibility:hidden">← Back</button>
-  <div class="step-progress-text" id="stepProgressText">Step 1 of 9 — Engineer Type</div>
+  <div class="step-progress-text" id="stepProgressText">Step 1 of 10 — Engineer Type</div>
   <button class="btn btn-primary" id="btnNext" onclick="goNext()">Continue →</button>
 </div>
 
 <script>
+  // ── AUTH STATE ────────────────────────────────────────────────────────────
+  let authToken = localStorage.getItem('msp_auth_token') || null;
+  let authEmail = null;
+
+  async function checkExistingSession() {
+    if (!authToken) {
+      // No token — show auth overlay (it's already visible by default)
+      return;
+    }
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'verify', token: authToken })
+      });
+      const data = await res.json();
+      if (res.ok && data.valid) {
+        authEmail = data.email;
+        updateAuthUI();
+        await loadSavedSiteData();
+        hideAuthOverlay();
+      } else {
+        localStorage.removeItem('msp_auth_token');
+        authToken = null;
+        // Auth overlay stays visible
+      }
+    } catch (err) {
+      // Network error — still show overlay so they can log in
+    }
+  }
+
+  async function loadSavedSiteData() {
+    if (!authToken) return;
+    try {
+      const res = await fetch('/api/account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: authToken })
+      });
+      const result = await res.json();
+      if (res.ok && result.data) {
+        const data = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+        loadSavedData(data);
+        showDataBanner();
+      }
+    } catch (err) {
+      // Silent — no saved data is fine
+    }
+  }
+
+  function hideAuthOverlay() {
+    const overlay = document.getElementById('authOverlay');
+    overlay.classList.add('hiding');
+    setTimeout(() => { overlay.style.display = 'none'; }, 500);
+  }
+
+  function updateAuthUI() {
+    if (!authEmail) return;
+    const badge = document.getElementById('authUserBadge');
+    badge.style.display = 'block';
+    badge.innerHTML = `${authEmail}<span class="logout-link" onclick="doLogout()">log out</span>`;
+  }
+
+  function switchAuthTab(tab) {
+    document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+    document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('authRegisterForm').classList.toggle('active', tab === 'register');
+    document.getElementById('authLoginForm').classList.toggle('active', tab === 'login');
+  }
+
+  async function doRegister() {
+    const email = document.getElementById('registerEmail').value.trim();
+    const password = document.getElementById('registerPassword').value;
+    const errEl = document.getElementById('registerError');
+    const btn = document.getElementById('registerBtn');
+    errEl.style.display = 'none';
+    if (!email || !password) { errEl.textContent = 'Please fill in both fields.'; errEl.style.display = 'block'; return; }
+    btn.textContent = 'Creating account…'; btn.disabled = true;
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'register', email, password })
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        authToken = data.token; authEmail = data.email;
+        localStorage.setItem('msp_auth_token', authToken);
+        updateAuthUI(); hideAuthOverlay();
+      } else {
+        errEl.textContent = data.error || 'Something went wrong. Please try again.';
+        errEl.style.display = 'block';
+      }
+    } catch (err) {
+      errEl.textContent = 'Could not connect. Please check your internet and try again.';
+      errEl.style.display = 'block';
+    } finally { btn.textContent = 'Create Account →'; btn.disabled = false; }
+  }
+
+  async function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errEl = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+    errEl.style.display = 'none';
+    if (!email || !password) { errEl.textContent = 'Please fill in both fields.'; errEl.style.display = 'block'; return; }
+    btn.textContent = 'Logging in…'; btn.disabled = true;
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'login', email, password })
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        authToken = data.token; authEmail = data.email;
+        localStorage.setItem('msp_auth_token', authToken);
+        updateAuthUI();
+        await loadSavedSiteData();
+        hideAuthOverlay();
+      } else {
+        errEl.textContent = data.error || 'Login failed. Please try again.';
+        errEl.style.display = 'block';
+      }
+    } catch (err) {
+      errEl.textContent = 'Could not connect. Please check your internet and try again.';
+      errEl.style.display = 'block';
+    } finally { btn.textContent = 'Log In →'; btn.disabled = false; }
+  }
+
+  async function doLogout() {
+    if (authToken) {
+      await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'logout', token: authToken })
+      }).catch(() => {});
+    }
+    localStorage.removeItem('msp_auth_token');
+    location.reload();
+  }
+
+  function showDataBanner() {
+    const banner = document.getElementById('dataBanner');
+    if (!banner) return;
+    banner.style.display = 'flex';
+    setTimeout(() => {
+      banner.style.opacity = '0';
+      setTimeout(() => { banner.style.display = 'none'; }, 600);
+    }, 5000);
+  }
+
+  function escAttr(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  // Restore all saved form data into the wizard
+  function loadSavedData(data) {
+    if (!data) return;
+
+    // 1. Engineer type
+    if (data.engineerType) {
+      const card = document.querySelector(`.type-card[data-type="${data.engineerType}"]`);
+      if (card) { document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected')); card.classList.add('selected'); selectedType = data.engineerType; }
+    }
+
+    // 2. Basic info
+    const fieldMap = { name:'inputName', studioName:'inputStudio', tagline:'inputTagline', bio:'inputBio', email:'inputEmail' };
+    Object.entries(fieldMap).forEach(([k, id]) => { const el = document.getElementById(id); if (el && data[k]) el.value = data[k]; });
+
+    // 3. Photo
+    if (data.photoDataUrl) {
+      currentPhotoDataUrl = data.photoDataUrl;
+      const area = document.querySelector('.photo-upload');
+      if (area) {
+        area.innerHTML = `<div class="photo-upload-icon">📷</div><div class="photo-upload-title" style="color:var(--green)">✓ Photo loaded from your account</div><div class="photo-upload-hint">Click to replace it with a different photo</div><input type="file" accept="image/*" style="display:none" onchange="handlePhoto(this)">`;
+      }
+    }
+
+    // 4. Tracks (fill the 3 static track fields)
+    if (data.tracks && data.tracks.length > 0) {
+      const trackFieldEls = document.querySelectorAll('#trackFields .track-field');
+      data.tracks.forEach((t, i) => {
+        const field = trackFieldEls[i];
+        if (!field) return;
+        const inputs = field.querySelectorAll('input');
+        if (inputs[0]) inputs[0].value = t.url || '';
+        if (inputs[1]) inputs[1].value = t.title || '';
+        if (inputs[2]) inputs[2].value = t.genre || '';
+      });
+      document.getElementById('trackFields').style.display = 'flex';
+    }
+
+    // 5. Services — stored for populateServices() to pick up
+    if (data.engineerType !== 'production' && data.services && data.services.length > 0) {
+      window._savedServices = data.services;
+    }
+
+    // 6. Stats
+    if (data.stats && data.stats.length > 0) {
+      const grid = document.getElementById('statsGrid');
+      grid.innerHTML = '';
+      statCount = 0;
+      data.stats.forEach(s => {
+        statCount++;
+        const div = document.createElement('div');
+        div.className = 'stat-field';
+        div.innerHTML = `
+          <div class="stat-field-top">
+            <div class="stat-preview">${escAttr(s.value || '—')}</div>
+            <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
+          </div>
+          <div class="field-group" style="margin-bottom:8px">
+            <label class="field-label">Value</label>
+            <input type="text" value="${escAttr(s.value)}" placeholder="e.g. 48hr" oninput="this.closest('.stat-field').querySelector('.stat-preview').textContent=this.value||'—'">
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <label class="field-label">Label</label>
+            <input type="text" value="${escAttr(s.label)}" placeholder="e.g. Turnaround">
+          </div>`;
+        grid.appendChild(div);
+      });
+    }
+
+    // 7. Socials
+    if (data.socials) {
+      const map = { instagram:'Instagram', soundcloud:'SoundCloud', youtube:'YouTube', twitter:'Twitter', facebook:'Facebook', linkedin:'LinkedIn' };
+      document.querySelectorAll('.social-field').forEach(f => {
+        const txt = f.querySelector('.social-platform')?.textContent || '';
+        for (const [key, label] of Object.entries(map)) {
+          if (data.socials[key] && txt.toLowerCase().includes(label.toLowerCase().split('/')[0].trim())) {
+            const input = f.querySelector('input'); if (input) input.value = data.socials[key];
+          }
+        }
+      });
+    }
+
+    // 8. Theme
+    if (data.theme) {
+      const themeCard = document.querySelector(`.theme-card[data-theme="${data.theme}"]`);
+      if (themeCard) { document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected')); themeCard.classList.add('selected'); selectedTheme = data.theme; }
+    }
+
+    // 9. Logo
+    if (data.logoSvg) {
+      currentLogoSvg = data.logoSvg;
+      const box = document.getElementById('logoPreviewBox');
+      if (box) box.innerHTML = data.logoSvg;
+      document.getElementById('logoGenerateSection').style.display = 'none';
+      document.getElementById('logoPreviewSection').style.display = 'block';
+      document.getElementById('logoLoadingState').style.display = 'none';
+      document.getElementById('logoErrorState').style.display = 'none';
+    }
+
+    // 10. Subdomain
+    if (data.subdomain) {
+      const el = document.getElementById('subdomainInput');
+      if (el) { el.value = data.subdomain; updateSubdomainPreview(); }
+    }
+
+    // 11. Advanced options
+    if (data.customDomain) {
+      const el = document.querySelector('#domainBody input[type="text"]');
+      if (el) el.value = data.customDomain;
+    }
+    if (data.formspreeId) {
+      const el = document.querySelector('#formBody input[type="text"]');
+      if (el) el.value = data.formspreeId;
+    }
+  }
+
+  // ── WIZARD STATE ─────────────────────────────────────────────────────────
   let currentStep = 1;
   const totalSteps = 10;
   let selectedType = null;
   let selectedTheme = 'dark-gold';
+  let currentPhotoDataUrl = null;
 
   const stepNames = [
     'Engineer Type', 'Basic Info', 'Your Photo',
@@ -2134,9 +2557,10 @@
     btn.textContent = isLast ? 'Publish My Site 🚀' : 'Continue →';
     btn.className = isLast ? 'btn btn-publish' : 'btn btn-primary';
 
-    // Update summary on step 10, populate logo context on step 9
+    // Update summary on step 10, populate logo context on step 9, services on step 5
     if (currentStep === 10) updateSummary();
     if (currentStep === 9) populateLogoContext();
+    if (currentStep === 5) populateServices();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -2210,6 +2634,23 @@
       uploadEl.querySelector('.photo-upload-title').textContent = input.files[0].name;
       uploadEl.querySelector('.photo-upload-hint').textContent = 'Photo selected — looks good!';
       uploadEl.style.borderColor = 'var(--green)';
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX = 800;
+          let w = img.width, h = img.height;
+          if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+          else if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          currentPhotoDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(input.files[0]);
     }
   }
 
@@ -2225,7 +2666,146 @@
   }
 
   // ── SERVICES ────────────────────────────────────────
-  let serviceCount = 3;
+  const serviceTemplates = {
+    mastering: {
+      guidance: 'Starting out: <strong>$50–75/track</strong> is fair while building your roster. Mid-level: <strong>$85–150/track</strong>. Established: <strong>$150–300/track</strong>. Don\'t start too low — it\'s harder to raise prices than to offer a discount.',
+      guidanceLabel: 'Pricing Guidance — Mastering',
+      services: [
+        { name: 'Streaming Master', pricePlaceholder: 'e.g. $85 / track', desc: 'Optimized for Spotify, Apple Music, Tidal, and all major platforms. LUFS-compliant delivery with full-resolution WAV and MP3.' },
+        { name: 'Stem Master',      pricePlaceholder: 'e.g. $120 / track', desc: 'Mastered directly from your stems for maximum control over the final sound. Ideal for clients who want the cleanest possible result.' }
+      ]
+    },
+    mixing: {
+      guidance: 'Starting out: <strong>$150–250/track</strong> is reasonable. Mid-level: <strong>$250–500/track</strong>. Established engineers: <strong>$500–1,500/track</strong>. Factor in session complexity and revision rounds.',
+      guidanceLabel: 'Pricing Guidance — Mixing',
+      services: [
+        { name: 'Full Mix',  pricePlaceholder: 'e.g. $250 / track', desc: 'Full mix from your session files or stems. Includes up to 3 revision rounds. Delivered as WAV and MP3.' },
+        { name: 'Stem Mix', pricePlaceholder: 'e.g. $350 / track', desc: 'Mix delivered as organized, labeled stems — ideal for sync licensing, re-masters, or future revisions.' }
+      ]
+    },
+    mixmaster: {
+      guidance: 'Bundling mix and master adds value. <strong>$300–600/track</strong> starting out. <strong>$600–1,500/track</strong> mid-level. Position it as convenience — one engineer, one vision, one bill.',
+      guidanceLabel: 'Pricing Guidance — Mix + Master',
+      services: [
+        { name: 'Mix + Master',   pricePlaceholder: 'e.g. $350 / track',  desc: 'Full mix and master handled in one pass. From stems to streaming-ready files. Includes revisions and all delivery formats.' },
+        { name: 'Album Package',  pricePlaceholder: 'e.g. From $2,000',    desc: 'Complete mix and master for a full project. Cohesive sound across all tracks, DDP delivery, and streaming and CD-ready files.' }
+      ]
+    },
+    production: null
+  };
+
+  function populateServices() {
+    const container = document.getElementById('serviceFields');
+    const addBtn = document.getElementById('addServiceBtn');
+    const guidanceBox = document.getElementById('pricingGuidance');
+    const guidanceLabel = document.getElementById('pricingGuidanceLabel');
+    const guidanceText = document.getElementById('pricingGuidanceText');
+
+    // Only repopulate if container is empty (don't overwrite edits)
+    if (container.children.length > 0) return;
+
+    // If the user has saved services from their account, use those
+    if (window._savedServices && window._savedServices.length > 0 && type !== 'production') {
+      guidanceBox.style.display = 'block';
+      addBtn.style.display = 'flex';
+      const tmpl = serviceTemplates[type];
+      if (tmpl) { guidanceLabel.textContent = tmpl.guidanceLabel; guidanceText.innerHTML = tmpl.guidance; }
+      serviceCount = 0;
+      window._savedServices.forEach(s => {
+        serviceCount++;
+        const n = serviceCount;
+        const num = String(n).padStart(2, '0');
+        const div = document.createElement('div');
+        div.className = 'service-field';
+        div.id = `serviceField${n}`;
+        div.innerHTML = `
+          <div class="service-field-header">
+            <div class="service-field-num">${num}</div>
+            <div class="service-field-type">Service ${n}</div>
+            <button class="remove-btn" onclick="removeService(this)" title="Remove service">✕</button>
+          </div>
+          <div class="service-input-row">
+            <div class="field-group" style="margin-bottom:0">
+              <label class="field-label">Service Name</label>
+              <input type="text" value="${escAttr(s.name)}">
+            </div>
+            <div class="field-group" style="margin-bottom:0">
+              <label class="field-label">Price</label>
+              <input type="text" value="${escAttr(s.price)}" placeholder="e.g. $85 / track">
+            </div>
+          </div>
+          <div class="field-group" style="margin-top:12px;margin-bottom:0">
+            <label class="field-label">Description</label>
+            <textarea style="height:80px">${escAttr(s.desc)}</textarea>
+          </div>`;
+        container.appendChild(div);
+      });
+      window._savedServices = null;
+      return;
+    }
+
+    const type = selectedType || 'mastering';
+    const template = serviceTemplates[type];
+
+    if (type === 'production') {
+      guidanceBox.style.display = 'none';
+      addBtn.style.display = 'none';
+      container.innerHTML = `
+        <div class="production-quote-card">
+          <div class="production-quote-title">Project-Based Pricing</div>
+          <div class="production-quote-body">
+            Every production is different — the scope, the timeline, what's needed. Rather than a fixed price list, I work with each artist to scope out the project and quote based on what it actually requires.
+          </div>
+          <div class="production-quote-body" style="margin-bottom:0">
+            The best way to start is a free 15-minute intro call. We talk through your project, see if it's a good fit, and go from there. No commitment needed.
+          </div>
+          <div class="field-group" style="margin-top:20px;margin-bottom:0">
+            <label class="field-label">Booking / contact link <span style="color:var(--muted);font-size:10px;font-family:'DM Mono',monospace;margin-left:4px">optional</span></label>
+            <input type="url" placeholder="e.g. https://calendly.com/yourname">
+            <div class="field-hint">A Calendly or similar link makes it easy for artists to book that first call directly from your site.</div>
+          </div>
+        </div>`;
+      serviceCount = 1;
+      return;
+    }
+
+    guidanceBox.style.display = 'block';
+    addBtn.style.display = 'flex';
+    guidanceLabel.textContent = template.guidanceLabel;
+    guidanceText.innerHTML = template.guidance;
+    serviceCount = 0;
+
+    template.services.forEach((svc, i) => {
+      serviceCount++;
+      const num = String(serviceCount).padStart(2, '0');
+      const div = document.createElement('div');
+      div.className = 'service-field';
+      div.id = `serviceField${serviceCount}`;
+      div.innerHTML = `
+        <div class="service-field-header">
+          <div class="service-field-num">${num}</div>
+          <div class="service-field-type">Service ${serviceCount}</div>
+          <button class="remove-btn" onclick="removeService(this)" title="Remove service">✕</button>
+        </div>
+        <div class="service-input-row">
+          <div class="field-group" style="margin-bottom:0">
+            <label class="field-label">Service Name</label>
+            <input type="text" value="${svc.name}">
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <label class="field-label">Price</label>
+            <input type="text" placeholder="${svc.pricePlaceholder}">
+          </div>
+        </div>
+        <div class="field-group" style="margin-top:12px;margin-bottom:0">
+          <label class="field-label">Description</label>
+          <textarea style="height:80px">${svc.desc}</textarea>
+        </div>`;
+      container.appendChild(div);
+    });
+  }
+
+  let serviceCount = 0;
 
   function addService() {
     serviceCount++;
@@ -2266,7 +2846,7 @@
   }
 
   // ── STATS ────────────────────────────────────────────
-  let statCount = 4;
+  let statCount = 2;
 
   function addStat() {
     statCount++;
@@ -2297,12 +2877,72 @@
     btn.closest('.stat-field').remove();
   }
 
-  // ── PUBLISH ──────────────────────────────────────────
-  function publishSite() {
-    const subdomain = (document.getElementById('subdomainInput').value || 'yoursite').toLowerCase().replace(/[^a-z0-9-]/g, '');
-    const url = `${subdomain || 'yoursite'}.mystudiopage.com`;
+  // ── COLLECT FORM DATA ─────────────────────────────────
+  function collectFormData() {
+    const data = {};
+    data.engineerType = selectedType || 'mastering';
+    data.theme = selectedTheme || 'dark-gold';
+    data.name = document.getElementById('inputName')?.value?.trim() || '';
+    data.studioName = document.getElementById('inputStudio')?.value?.trim() || '';
+    data.tagline = document.getElementById('inputTagline')?.value?.trim() || '';
+    data.bio = document.getElementById('inputBio')?.value?.trim() || '';
+    data.email = document.getElementById('inputEmail')?.value?.trim() || '';
+    data.subdomain = document.getElementById('subdomainInput')?.value?.trim().toLowerCase().replace(/[^a-z0-9-]/g,'') || '';
+    data.customDomain = document.querySelector('#domainBody input[type="text"]')?.value?.trim() || '';
+    data.formspreeId = document.querySelector('#formBody input[type="text"]')?.value?.trim() || '';
+    data.logoSvg = currentLogoSvg || '';
+    data.photoDataUrl = currentPhotoDataUrl || '';
 
-    document.getElementById('publishedUrlDisplay').textContent = url;
+    // Tracks
+    const trackFields = document.querySelectorAll('#trackFields .track-field');
+    data.tracks = Array.from(trackFields).map(f => {
+      const inputs = f.querySelectorAll('input');
+      return { url: inputs[0]?.value?.trim()||'', title: inputs[1]?.value?.trim()||'', genre: inputs[2]?.value?.trim()||'' };
+    }).filter(t => t.url);
+
+    // Services
+    const svcFields = document.querySelectorAll('#serviceFields .service-field');
+    data.services = Array.from(svcFields).map(f => {
+      const textInputs = f.querySelectorAll('input[type="text"]');
+      const urlInput = f.querySelector('input[type="url"]');
+      const ta = f.querySelector('textarea');
+      return { name: textInputs[0]?.value?.trim()||'', price: textInputs[1]?.value?.trim()||'', desc: ta?.value?.trim()||'', bookingUrl: urlInput?.value?.trim()||'' };
+    }).filter(s => s.name || s.desc);
+    // Also handle production quote card
+    if (data.services.length === 0 && data.engineerType === 'production') {
+      const urlInput = document.querySelector('.production-quote-card input[type="url"]');
+      data.services = [{ name: 'Production', price: '', desc: 'Project-based pricing. Get in touch for a free consultation.', bookingUrl: urlInput?.value?.trim()||'' }];
+    }
+
+    // Stats
+    const statFields = document.querySelectorAll('#statsGrid .stat-field');
+    data.stats = Array.from(statFields).map(f => {
+      const inputs = f.querySelectorAll('input[type="text"]');
+      return { value: inputs[0]?.value?.trim()||'', label: inputs[1]?.value?.trim()||'' };
+    }).filter(s => s.value);
+
+    // Socials
+    data.socials = {};
+    const platformMap = { 'instagram':'instagram','soundcloud':'soundcloud','youtube':'youtube','twitter':'twitter','x':'twitter','facebook':'facebook','linkedin':'linkedin' };
+    document.querySelectorAll('.social-field').forEach(f => {
+      const raw = f.querySelector('.social-platform')?.textContent?.replace(/[^\w]/g,'').toLowerCase() || '';
+      const key = Object.keys(platformMap).find(k => raw.includes(k));
+      const val = f.querySelector('input')?.value?.trim() || '';
+      if (key && val) data.socials[platformMap[key]] = val;
+    });
+
+    return data;
+  }
+
+  // ── PUBLISH ──────────────────────────────────────────
+  async function publishSite() {
+    const data = collectFormData();
+
+    if (!data.subdomain) {
+      alert('Please enter a subdomain for your site URL before publishing.');
+      return;
+    }
+
     document.getElementById('publishOverlay').classList.add('active');
     document.getElementById('publishingState').style.display = 'block';
     document.getElementById('publishSuccessState').classList.remove('active');
@@ -2316,14 +2956,42 @@
     ];
     let i = 0;
     const statusEl = document.getElementById('publishStatusLine');
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       i++;
       if (i < lines.length) {
         statusEl.textContent = lines[i];
       } else {
         clearInterval(interval);
-        document.getElementById('publishingState').style.display = 'none';
-        document.getElementById('publishSuccessState').classList.add('active');
+
+        try {
+          // Include auth token so the server can save data to the user's account
+          if (authToken) data.token = authToken;
+
+          const res = await fetch('/api/publish', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          const result = await res.json().catch(() => ({}));
+
+          document.getElementById('publishingState').style.display = 'none';
+          document.getElementById('publishSuccessState').classList.add('active');
+
+          if (res.ok && result.url) {
+            const displayUrl = result.url.replace(/^https?:\/\//, '');
+            document.getElementById('publishedUrlDisplay').textContent = displayUrl;
+          } else {
+            const errorMsg = result.error || 'Publish failed. Please try again.';
+            document.getElementById('publishedUrlDisplay').textContent = errorMsg;
+            document.getElementById('publishedUrlDisplay').style.color = 'var(--red)';
+          }
+        } catch (err) {
+          document.getElementById('publishingState').style.display = 'none';
+          document.getElementById('publishSuccessState').classList.add('active');
+          document.getElementById('publishedUrlDisplay').textContent = 'Could not reach the server. Check your connection and try again.';
+          document.getElementById('publishedUrlDisplay').style.color = 'var(--red)';
+        }
       }
     }, 600);
   }
@@ -2495,6 +3163,19 @@
     };
     img.src = url;
   }
+
+  // ── PREVIEW SITE ─────────────────────────────────────
+  async function previewSite() {
+    const data = collectFormData();
+    const { renderSite } = await import('/site-template.js');
+    const html = renderSite(data);
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  }
+
+  // ── INIT ─────────────────────────────────────────────
+  checkExistingSession();
 </script>
 </body>
 </html>
