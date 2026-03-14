@@ -47,6 +47,7 @@ export function renderSite(data) {
   const tracks      = Array.isArray(data.tracks)   ? data.tracks.filter(tr => tr && tr.url)   : [];
   const services    = Array.isArray(data.services) ? data.services.filter(s => s && (s.name || s.desc)) : [];
   const stats       = Array.isArray(data.stats)    ? data.stats.filter(s => s && s.value)     : [];
+  const credits     = Array.isArray(data.credits)  ? data.credits.filter(Boolean)              : [];
   const socials     = data.socials || {};
   const hasPhoto    = !!data.photoDataUrl;
   const hasLogo     = !!data.logoSvg;
@@ -83,6 +84,21 @@ export function renderSite(data) {
       <a href="#contact" class="hero-cta">Work With Me</a>
     </div>
   </section>`;
+
+  // ── CREDITS ───────────────────────────────────────────────────────────────
+  let creditsHtml = '';
+  if (credits.length > 0) {
+    const items = credits.map((c, i) =>
+      `<span class="credit-name">${escHtml(c)}</span>${i < credits.length - 1 ? '<span class="credit-dot" aria-hidden="true">·</span>' : ''}`
+    ).join('');
+    creditsHtml = `
+  <section class="credits-band" aria-label="Notable credits">
+    <div class="credits-inner">
+      <div class="credits-eyebrow">Credits</div>
+      <div class="credits-list">${items}</div>
+    </div>
+  </section>`;
+  }
 
   // ── STATS ─────────────────────────────────────────────────────────────────
   let statsHtml = '';
@@ -470,6 +486,59 @@ export function renderSite(data) {
       .hero-title { font-size: 72px; }
       .hero-tagline { font-size: 16px; }
       .hero-inner { padding: 0 24px; }
+    }
+
+    /* ── Credits ────────────────────────────────────────────────────────── */
+    .credits-band {
+      padding: 28px 0;
+      background: var(--bg2);
+      border-top: 1px solid var(--border2);
+      border-bottom: 1px solid var(--border2);
+    }
+
+    .credits-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .credits-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .credits-list {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .credit-name {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      color: var(--muted2);
+      letter-spacing: 0.02em;
+    }
+
+    .credit-dot {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 768px) {
+      .credits-inner { padding: 0 24px; gap: 12px; }
     }
 
     /* ── Stats ──────────────────────────────────────────────────────────── */
@@ -978,6 +1047,7 @@ export function renderSite(data) {
 ${navHtml}
 ${heroHtml}
 ${aboutHtml}
+${creditsHtml}
 ${statsHtml}
 ${workHtml}
 ${servicesHtml}

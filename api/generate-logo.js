@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { studioName, engineerType, typeDesc, themeName, accent, bg, textColor } = req.body;
+  const { studioName, engineerType, typeDesc, themeName, accent, bg, textColor, styleDirection } = req.body;
 
   if (!studioName) {
     return res.status(400).json({ error: 'studioName is required' });
@@ -47,7 +47,7 @@ Design direction — this is a PURE GRAPHIC MARK, no text:
 - Use ${accent} as the primary mark color; ${textColor} as a secondary or outline color if needed
 - The mark must look complete and professional with NO text at all
 
-Keep paths simple. No clipPath. Output a complete, self-contained SVG.`
+${styleDirection ? `Style direction: ${styleDirection}\n` : ''}Keep paths simple. No clipPath. Output a complete, self-contained SVG.`
       }
     ]
   });

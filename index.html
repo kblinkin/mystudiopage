@@ -1116,6 +1116,56 @@
   }
   .logo-preview-box svg { max-width: 100%; height: auto; }
   .logo-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* Style picker */
+  .logo-style-picker { margin-bottom: 24px; }
+  .style-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .style-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--muted2);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .style-chip:hover { border-color: var(--border); color: var(--text); }
+  .style-chip.active { background: var(--accent-dim); border-color: var(--border); color: var(--accent); }
+
+  /* Credits */
+  .credits-section { margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--border2); }
+  .credits-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .btn-sm { font-size: 11px; padding: 6px 14px; }
+  .credits-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .credits-input-row input { flex: 1; }
+  .credits-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .credit-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    padding: 5px 10px;
+  }
+  .credit-tag button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 10px;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+  .credit-tag button:hover { color: var(--red); }
+
   .logo-ai-badge {
     display: inline-flex;
     align-items: center;
@@ -1788,6 +1838,23 @@
 
       <div class="service-fields" id="serviceFields"></div>
       <button class="add-field-btn" id="addServiceBtn" onclick="addService()">+ Add Another Service</button>
+
+      <div class="credits-section">
+        <div class="credits-toggle-row">
+          <div>
+            <div class="field-label" style="margin-bottom:2px">Notable Credits</div>
+            <div class="field-hint" style="margin:0">Artist and client names you've worked with</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="creditsToggleBtn" onclick="toggleCredits()">+ Add Credits</button>
+        </div>
+        <div id="creditsArea" style="display:none;margin-top:16px">
+          <div class="credits-input-row">
+            <input type="text" id="creditsInput" placeholder="e.g. Travis Scott" onkeydown="if(event.key==='Enter'){event.preventDefault();addCredit();}">
+            <button class="btn btn-ghost" onclick="addCredit()">Add</button>
+          </div>
+          <div class="credits-tags" id="creditsTags"></div>
+        </div>
+      </div>
     </div>
 
     <!-- STEP 6: STATS -->
@@ -1987,6 +2054,18 @@
             <span class="lci-key">Tagline</span>
             <span class="lci-val" id="logoCtxTagline">—</span>
           </div>
+        </div>
+      </div>
+
+      <div class="logo-style-picker">
+        <div class="field-label" style="margin-bottom:10px">Style Direction <span style="color:var(--muted);font-size:10px;margin-left:4px">optional</span></div>
+        <div class="style-chips" id="styleChips">
+          <button class="style-chip active" data-style="" onclick="selectStyle(this)">Any</button>
+          <button class="style-chip" data-style="geometric — precise angles, circles, and hard lines" onclick="selectStyle(this)">Geometric</button>
+          <button class="style-chip" data-style="organic — flowing curves and wave-inspired forms" onclick="selectStyle(this)">Organic</button>
+          <button class="style-chip" data-style="minimal — single shape or line, maximum negative space" onclick="selectStyle(this)">Minimal</button>
+          <button class="style-chip" data-style="bold and heavy — thick strokes, filled forms, high contrast" onclick="selectStyle(this)">Bold</button>
+          <button class="style-chip" data-style="crest or badge — circular or shield framing, heraldic feel" onclick="selectStyle(this)">Crest / Badge</button>
         </div>
       </div>
 
@@ -2710,6 +2789,7 @@
     const guidanceBox = document.getElementById('pricingGuidance');
     const guidanceLabel = document.getElementById('pricingGuidanceLabel');
     const guidanceText = document.getElementById('pricingGuidanceText');
+    const type = selectedType || 'mastering';
 
     // Only repopulate if container is empty (don't overwrite edits)
     if (container.children.length > 0) return;
@@ -2754,7 +2834,6 @@
       return;
     }
 
-    const type = selectedType || 'mastering';
     const template = serviceTemplates[type];
 
     if (type === 'production') {
@@ -2902,6 +2981,7 @@
     data.formspreeId = document.querySelector('#formBody input[type="text"]')?.value?.trim() || '';
     data.logoSvg = currentLogoSvg || '';
     data.photoDataUrl = currentPhotoDataUrl || '';
+    data.credits = creditsList.length > 0 ? [...creditsList] : [];
 
     // Tracks
     const trackFields = document.querySelectorAll('#trackFields .track-field');
@@ -3111,7 +3191,8 @@
           themeName: theme.name,
           accent: theme.accent,
           bg: theme.bg,
-          textColor: theme.text
+          textColor: theme.text,
+          styleDirection: getSelectedStyle()
         })
       });
 
@@ -3123,7 +3204,13 @@
       }
 
       const data = await res.json();
-      currentLogoSvg = data.svg;
+
+      // Strip any text/tspan elements Claude may have snuck in
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(data.svg, 'image/svg+xml');
+      doc.querySelectorAll('text, tspan').forEach(el => el.remove());
+      const serializer = new XMLSerializer();
+      currentLogoSvg = serializer.serializeToString(doc.documentElement);
 
       document.getElementById('logoPreviewBox').innerHTML = currentLogoSvg;
       document.getElementById('logoLoadingState').style.display = 'none';
@@ -3141,6 +3228,50 @@
           : err.message;
       document.getElementById('logoGenerateSection').style.display = 'block';
     }
+  }
+
+  // ── Style picker ────────────────────────────────────────────────────────
+  function selectStyle(btn) {
+    document.querySelectorAll('#styleChips .style-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function getSelectedStyle() {
+    const active = document.querySelector('#styleChips .style-chip.active');
+    return active ? active.dataset.style : '';
+  }
+
+  // ── Credits ─────────────────────────────────────────────────────────────
+  const creditsList = [];
+
+  function toggleCredits() {
+    const area = document.getElementById('creditsArea');
+    const btn = document.getElementById('creditsToggleBtn');
+    const visible = area.style.display !== 'none';
+    area.style.display = visible ? 'none' : 'block';
+    btn.textContent = visible ? '+ Add Credits' : '− Hide';
+  }
+
+  function addCredit() {
+    const input = document.getElementById('creditsInput');
+    const name = input.value.trim();
+    if (!name || creditsList.includes(name)) { input.value = ''; return; }
+    creditsList.push(name);
+    input.value = '';
+    renderCredits();
+  }
+
+  function removeCredit(name) {
+    const idx = creditsList.indexOf(name);
+    if (idx !== -1) creditsList.splice(idx, 1);
+    renderCredits();
+  }
+
+  function renderCredits() {
+    const container = document.getElementById('creditsTags');
+    container.innerHTML = creditsList.map(n =>
+      `<div class="credit-tag">${escAttr(n)}<button onclick="removeCredit(${JSON.stringify(n)})" title="Remove">✕</button></div>`
+    ).join('');
   }
 
   function skipLogo() {
