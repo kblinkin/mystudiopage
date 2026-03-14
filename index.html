@@ -1162,8 +1162,12 @@
   .style-chip.active { background: var(--accent-dim); border-color: var(--border); color: var(--accent); }
 
   /* Credits */
-  .credits-section { margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--border2); }
-  .credits-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .credits-section { margin-top: 40px; padding-top: 32px; border-top: 2px solid var(--border); }
+  .credits-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; }
+  .credits-section-label { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; color: var(--text); line-height: 1; }
+  .credits-section-hint { font-size: 12px; color: var(--text2); margin-top: 4px; font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
+  .credits-toggle-icon { width: 36px; height: 36px; border: 1.5px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--text2); background: var(--bg2); flex-shrink: 0; transition: all 0.2s; }
+  .credits-toggle-icon.open { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); transform: rotate(45deg); }
   .btn-sm { font-size: 11px; padding: 6px 14px; }
   .credits-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
   .credits-input-row input { flex: 1; }
@@ -1866,14 +1870,14 @@
       <button class="add-field-btn" id="addServiceBtn" onclick="addService()">+ Add Another Service</button>
 
       <div class="credits-section">
-        <div class="credits-toggle-row">
+        <div class="credits-toggle-row" onclick="toggleCredits()">
           <div>
-            <div class="field-label" style="margin-bottom:2px">Notable Credits</div>
-            <div class="field-hint" style="margin:0">Artist and client names you've worked with</div>
+            <div class="credits-section-label">Credits</div>
+            <div class="credits-section-hint">Artists &amp; clients you've worked with</div>
           </div>
-          <button class="btn btn-ghost btn-sm" id="creditsToggleBtn" onclick="toggleCredits()">+ Add Credits</button>
+          <div class="credits-toggle-icon" id="creditsToggleIcon">+</div>
         </div>
-        <div id="creditsArea" style="display:none;margin-top:16px">
+        <div id="creditsArea" style="display:none;margin-top:20px">
           <div class="credits-input-row">
             <input type="text" id="creditsInput" placeholder="e.g. Travis Scott" onkeydown="if(event.key==='Enter'){event.preventDefault();addCredit();}">
             <button class="btn btn-ghost" onclick="addCredit()">Add</button>
@@ -2055,11 +2059,9 @@
     <div class="step-panel" id="step9">
       <div class="step-header">
         <div class="step-eyebrow">Step 9 of 10 — Optional</div>
-        <div class="step-title">Logo<br>Mark</div>
-        <p class="step-desc">Claude AI designs a custom graphic mark using your engineer type and color scheme. It appears above your studio name on the site. You can also download it for business cards, social media, or anywhere else you need it. Totally optional — skip if you prefer text-only.</p>
+        <div class="step-title">Logo<br>Maker</div>
+        <p class="step-desc">Generate a custom graphic mark using AI, or upload your own. It appears above your studio name on the published site. Totally optional — skip if you prefer text-only.</p>
       </div>
-
-      <div class="logo-ai-badge">✦ Powered by Claude Sonnet · ~$0.003 per generation</div>
 
       <div class="logo-context-card">
         <div class="logo-context-label">What Claude will use</div>
@@ -2103,15 +2105,15 @@
           <button class="btn btn-ghost" onclick="skipLogo()">Skip — No Logo</button>
         </div>
         <div class="field-hint" style="margin-top:8px">Claude designs a graphic mark — you just approve it. Regenerate as many times as you like.</div>
-
-        <div class="logo-upload-divider">— or —</div>
-        <label class="logo-upload-area" id="logoUploadArea">
-          <input type="file" id="logoUploadInput" accept="image/*" onchange="handleLogoUpload(event)" style="display:none">
-          <div class="logo-upload-icon">↑</div>
-          <div class="logo-upload-label">Upload your own logo</div>
-          <div class="logo-upload-hint">SVG, PNG, or JPG — transparent background recommended</div>
-        </label>
       </div>
+
+      <div class="logo-upload-divider">— or —</div>
+      <label class="logo-upload-area" id="logoUploadArea">
+        <input type="file" id="logoUploadInput" accept="image/*" onchange="handleLogoUpload(event)" style="display:none">
+        <div class="logo-upload-icon">↑</div>
+        <div class="logo-upload-label">Upload your own logo</div>
+        <div class="logo-upload-hint">SVG, PNG, or JPG — transparent background recommended</div>
+      </label>
 
       <div id="logoLoadingState" style="display:none">
         <div class="logo-loading-wrap">
@@ -2615,7 +2617,7 @@
       renderCredits();
       // Show the credits area so user can see them
       document.getElementById('creditsArea').style.display = 'block';
-      document.getElementById('creditsToggleBtn').textContent = '− Hide';
+      document.getElementById('creditsToggleIcon').classList.add('open');
     }
 
     // 9. Logo
@@ -3209,6 +3211,7 @@
     document.getElementById('logoPreviewSection').style.display = 'none';
     document.getElementById('logoErrorState').style.display = 'none';
     document.getElementById('logoLoadingState').style.display = 'block';
+    document.getElementById('logoUploadArea').style.display = 'none';
 
     const loadingMessages = [
       'Claude is designing your mark...',
@@ -3260,6 +3263,7 @@
       document.getElementById('logoLoadingState').style.display = 'none';
       document.getElementById('logoPreviewSection').style.display = 'block';
       document.getElementById('logoGenerateSection').style.display = 'block';
+      document.getElementById('logoUploadArea').style.display = '';
       document.getElementById('logoGenerateBtn').innerHTML = '↺ Generate Another';
 
     } catch (err) {
@@ -3271,6 +3275,7 @@
           ? 'Could not reach /api/generate-logo. Deploy the Vercel function to use this feature.'
           : err.message;
       document.getElementById('logoGenerateSection').style.display = 'block';
+      document.getElementById('logoUploadArea').style.display = '';
     }
   }
 
@@ -3290,10 +3295,10 @@
 
   function toggleCredits() {
     const area = document.getElementById('creditsArea');
-    const btn = document.getElementById('creditsToggleBtn');
+    const icon = document.getElementById('creditsToggleIcon');
     const visible = area.style.display !== 'none';
     area.style.display = visible ? 'none' : 'block';
-    btn.textContent = visible ? '+ Add Credits' : '− Hide';
+    icon.classList.toggle('open', !visible);
   }
 
   function addCredit() {
