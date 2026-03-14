@@ -207,6 +207,11 @@ Search for visual references that fit this studio's aesthetic, then design a log
       // Inline style attribute fills/strokes
       svg = svg.replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:${c}`);
       svg = svg.replace(/\bstroke\s*:\s*(?!none|transparent)[^;}"']+/gi, `stroke:none`);
+      // Remove fill-opacity and opacity that create gray/semi-transparent artifacts
+      svg = svg.replace(/\bfill-opacity=["'][^"']*["']/gi, 'fill-opacity="1"');
+      svg = svg.replace(/\bfill-opacity\s*:\s*[^;}"']+/gi, 'fill-opacity:1');
+      svg = svg.replace(/\bopacity=["'](?!1["'])[^"']*["']/gi, 'opacity="1"');
+      svg = svg.replace(/\bopacity\s*:\s*(?!1)[^;}"']+/gi, 'opacity:1');
       // Remove fill from root <svg> (prevents inherited background color)
       svg = svg.replace(/(<svg\b[^>]*?)\s+fill=["'][^"']*["']/i, '$1');
       // Allow artwork that extends past the viewBox to show (fixes clipped bottom)
