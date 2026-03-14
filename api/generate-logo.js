@@ -83,7 +83,8 @@ Output a complete, well-constructed SVG. Use as many path points as the design r
 
   const message = await client.messages.create({
     model: 'claude-opus-4-6',
-    max_tokens: 5000,
+    max_tokens: 8000,
+    thinking: { type: 'adaptive' },
     system: systemPrompt,
     messages: [
       { role: 'user', content: userPrompt }
