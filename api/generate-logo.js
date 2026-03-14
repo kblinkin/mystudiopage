@@ -64,29 +64,34 @@ Output a complete, self-contained SVG.`
     return res.status(200).json({ svg });
   }
 
-  // --- GRAPHIC MARK: Claude Haiku crafts prompt → Recraft generates image ---
+  // --- GRAPHIC MARK: Build prompt → Recraft v3 vector generates SVG ---
 
-  // Step 1: Build a vivid visual prompt
-  let imagePrompt;
-  try {
-    const promptMsg = await client.messages.create({
-      model: 'claude-haiku-4-5',
-      max_tokens: 200,
-      system: `You write prompts for a professional AI logo generator. Write a single visual description (under 120 words) of an abstract geometric logo mark. Be specific about shapes and composition. No text or letters in the mark. Pure visual description only — no instructions, no explanations.`,
-      messages: [{
-        role: 'user',
-        content: `Logo mark for:
-Studio: "${studioName}"
-Type: ${typeDesc}
-Colors: ${themeName}, primary ${accent}${styleDirection ? `\nStyle: ${styleDirection}` : ''}`
-      }]
-    });
-    imagePrompt = promptMsg.content[0].text.trim();
-  } catch (err) {
-    return res.status(500).json({ error: `Prompt error: ${err?.message}` });
-  }
+  // Style direction → visual language mapping
+  const styleGuide = {
+    organic:      'flowing organic curves, natural fluid forms, soft rounded geometry, biomorphic shapes',
+    geometric:    'precise geometric forms, sharp angles, clean lines, mathematical symmetry',
+    minimal:      'single bold minimal shape, extreme negative space, restrained and pure',
+    industrial:   'angular industrial forms, mechanical precision, hard edges, structural weight',
+    brutalist:    'raw bold shapes, heavy mass, stark contrast, uncompromising geometry',
+    retro:        'vintage-inspired mark, classic proportions, timeless craft',
+    futuristic:   'sleek futuristic forms, dynamic angles, forward motion, tech precision',
+    elegant:      'refined elegant curves, graceful balance, sophisticated restraint',
+  };
+  const styleDesc = styleGuide[styleDirection?.toLowerCase()] || (styleDirection ? `${styleDirection} aesthetic` : 'sophisticated geometric forms');
 
-  // Step 2: Generate with Recraft
+  // Engineer type → visual concept mapping
+  const engineerConcepts = {
+    mastering:  'precision calibration mark, diamond facets, technical instrument geometry',
+    mixing:     'signal flow forms, waveform cross-sections, fader arc geometry',
+    mixmaster:  'two interlocking mirror forms, duality of process, unified halves',
+    production: 'rhythm made visible, creative spark, oscilloscope-inspired geometry',
+  };
+  const engineerConcept = engineerConcepts[engineerType] || 'audio engineering geometry';
+
+  // Build the Recraft prompt directly — no need for a Haiku round-trip
+  const imagePrompt = `Professional abstract logo mark for a recording studio. ${styleDesc}. Inspired by ${engineerConcept}. Primary color ${accent}, color scheme: ${themeName}. Pure symbol, no text or letters. Clean vector art on white background. Premium brand identity, sophisticated and distinctive.`;
+
+  // Generate with Recraft v3 vector
   let recraftRes;
   try {
     recraftRes = await fetch('https://external.api.recraft.ai/v1/images/generations', {
@@ -96,8 +101,9 @@ Colors: ${themeName}, primary ${accent}${styleDirection ? `\nStyle: ${styleDirec
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'recraftv4',
+        model: 'recraftv3',
         prompt: imagePrompt,
+        style: 'vector_illustration',
         size: '1024x1024',
         response_format: 'url'
       })
