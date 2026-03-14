@@ -15,73 +15,98 @@ export default async function handler(req, res) {
 
   const isWordmark = logoMode === 'wordmark';
 
-  // Style direction preamble — only for graphic marks
   const styleBlock = (!isWordmark && styleDirection)
-    ? `CRITICAL STYLE REQUIREMENT — you MUST follow this: ${styleDirection.toUpperCase()}. This is the primary design constraint. Every shape, path, and form must reflect this style. Do not default to a generic shape — commit fully to this style direction.\n\n`
+    ? `STYLE DIRECTION — this overrides everything else: ${styleDirection.toUpperCase()}. Every decision about form, curve, angle, and weight must serve this direction. Do not produce a generic shape.\n\n`
     : '';
 
   const systemPrompt = isWordmark
-    ? `You are a senior typographic brand designer specializing in wordmarks for recording studios and audio facilities. You create SVG wordmarks — the studio name rendered as designed, styled lettering. Return ONLY valid SVG markup. No markdown fences, no explanation. Output must start with <svg and end with </svg>.`
-    : `You are a senior brand identity designer with 20 years of experience creating logo marks for professional recording studios and audio facilities. You produce iconic, bold, graphic SVG symbols. Return ONLY valid SVG markup. No markdown fences, no explanation. Output must start with <svg and end with </svg>.`;
+    ? `You are a world-class typographic brand designer. You have designed identity systems for Sony Music, Atlantic Records, and major recording studios. You create SVG wordmarks with the craft of a $15,000 commission — precise letter spacing, intentional weight, considered proportions. Return ONLY valid SVG markup. No markdown, no explanation. Output must start with <svg and end with </svg>.`
+    : `You are a world-class logo designer. Your marks have appeared on album credits, studio walls, and award plaques. You design with the precision of Saul Bass, the boldness of Aaron Draplin, and the craft of a $10,000 identity system. You construct SVG marks using carefully controlled bezier paths, intentional negative space, and optical balance — never defaulting to primitive shapes when a crafted path would be stronger. Return ONLY valid SVG markup. No markdown, no explanation. Output must start with <svg and end with </svg>.`;
 
   const userPrompt = isWordmark
-    ? `Create a wordmark SVG for this audio studio — the studio name as styled lettering:
+    ? `Design a professional wordmark SVG for this recording studio:
 
-Studio name to render as text: "${studioName}"
+Studio name: "${studioName}"
 Color: ${accent} on transparent background
-Style feel: ${themeName} — ${styleDirection || 'professional, bold'}
+Aesthetic: ${themeName}${styleDirection ? ` — ${styleDirection}` : ''}
 
-Technical requirements:
+Specifications:
 - viewBox="0 0 600 200" width="600" height="200"
-- Transparent background — no background rect
-- Render the studio name as large, designed text
-- Use font-family options: serif, sans-serif, or monospace — pick what suits the name and feel
-- Center the text in the viewBox
-- Use ${accent} as the text fill color
-- Add letter-spacing and font-weight that feels intentional, not default
-- You may add a subtle geometric accent element (underline, bracket, dot) but the text must dominate
-- Keep it clean and professional
+- No background fill
+- Render the name as a single <text> element, centered in the viewBox (x="300" y="120" text-anchor="middle")
+- Choose a font stack that suits the name: for bold/strong names use a condensed sans ("Impact, 'Arial Narrow', sans-serif"), for refined names use a serif ("Georgia, 'Times New Roman', serif"), for technical/modern use monospace or geometric sans
+- font-size should fill the width well — typically 72–96px for short names, 48–64px for longer ones
+- letter-spacing: 0.08em to 0.2em for a premium feel (never default 0)
+- fill: ${accent}
+- You may add ONE secondary design element — a thin rule below the text, two bracket marks flanking it, or a single geometric accent — using ${textColor} at low opacity or as a fine line
+- The result should look like it belongs on a studio door plaque, not a Word document
 
-Output a complete, self-contained SVG with the text rendered via <text> elements.`
-    : `${styleBlock}Create a pure graphic logo mark SVG for this audio studio — NO TEXT, symbols and shapes only:
+Output a complete, self-contained SVG.`
 
-Studio name (for inspiration only, do NOT render it): "${studioName}"
-Engineer type: ${typeDesc}
-Color scheme: ${themeName}
-Primary color: ${accent} | Secondary color: ${textColor}
+    : `${styleBlock}Design a sophisticated, professional logo mark for this recording studio. This will be used on a real website, business cards, and studio signage — it must look like it cost thousands to commission.
 
-Technical requirements:
-- viewBox="0 0 400 400" width="400" height="400"
-- Transparent background — no background rect
-- NO text, NO letters, NO words of any kind — if any text appears the output is rejected
-- ALL elements fully inside the viewBox, at least 30px padding on all sides
+Studio: "${studioName}"
+Type: ${typeDesc}
+Color palette: ${themeName}
+Primary: ${accent} | Secondary/accent: ${textColor}
 
-Design:
-- A single strong symbol: geometric badge, abstract audio icon, monogram initial in a shape, or crest
-- Displayed at ~100–120px, so it must read clearly at small sizes
-- Bold, high-contrast — no thin lines or fine detail
-- Engineer type guidance:
-  * Mastering: diamond, square brackets, precision circle, angular crest
-  * Mixing: concentric arcs, stacked EQ bars, waveform shape
-  * Mix+Master: bisected geometric form, circle with rule, bold monogram in frame
-  * Production: triangle/play symbol, microphone silhouette, bold circle
-- Primary fill: ${accent}; secondary/outline: ${textColor} if needed
+Canvas: viewBox="0 0 400 400" width="400" height="400"
+- Transparent background — no rect fill
+- NO text, letters, or words anywhere — pure symbol only
+- All geometry within a 340×340 area centered in the canvas (30px padding)
 
-Keep paths simple. No clipPath. Output a complete, self-contained SVG.`;
+Construction quality requirements — this is where amateurs fail:
+- Use cubic bezier paths (C, c commands) for curves — not just circles and rects
+- Build the mark from 2–4 interlocking or layered elements that create visual tension and interest
+- Design with intentional negative space — the space between shapes is as important as the shapes themselves
+- Optical balance: the mark should feel centered by eye, not just mathematically
+- Stroke weights if used: minimum 3px, maximum 8px — nothing hairline, nothing crude
+- The mark must read clearly at 80px AND look detailed at 300px
+
+What makes a mark feel premium vs. amateur:
+- AMATEUR: a circle with a waveform squiggle on top, a generic triangle, a basic M shape
+- PROFESSIONAL: a carefully constructed geometric form where every angle is intentional, shapes that lock together, a symbol that rewards close inspection
+- Think: a diamond with a precisely cut notch, concentric forms with deliberate gaps, a monogram where the letters fuse into a new unified shape, a crest with internal structure
+
+Engineer type inspiration (go beyond the obvious):
+- Mastering: think precision instruments, calibration marks, the geometry of a lathe, diamond facets, technical drawing symbols
+- Mixing: think signal flow, waveform cross-sections, the arc of a fader, frequency curves as architecture
+- Mix+Master: think duality — two forms that are mirror images or interlocking halves of a whole
+- Production: think the moment of creation, rhythm made visible, the geometry of a kick drum or oscilloscope
+
+Color application:
+- Primary shapes: ${accent}
+- Use ${textColor} for secondary elements, inner details, or negative space cuts — sparingly
+- A single subtle gradient or opacity variation is acceptable if it adds depth, not as decoration
+
+Output a complete, well-constructed SVG. Use as many path points as the design requires — do not simplify at the expense of quality.`;
 
   const message = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 4000,
+    model: 'claude-opus-4-6',
+    max_tokens: 5000,
     system: systemPrompt,
-    messages: [{ role: 'user', content: userPrompt }]
+    messages: [
+      { role: 'user', content: userPrompt }
+    ]
   });
 
-  let svg = message.content[0].text.trim();
+  const textBlock = message.content.find(b => b.type === 'text');
+  if (!textBlock) {
+    return res.status(500).json({ error: 'No SVG output returned. Try again.' });
+  }
+
+  let svg = textBlock.text.trim();
 
   // Strip any accidental markdown fences
   svg = svg.replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/i, '').trim();
 
-  // Basic validation
+  // If there's prose before the SVG, extract just the SVG
+  const svgStart = svg.indexOf('<svg');
+  const svgEnd = svg.lastIndexOf('</svg>');
+  if (svgStart > 0 && svgEnd > svgStart) {
+    svg = svg.slice(svgStart, svgEnd + 6);
+  }
+
   if (!svg.startsWith('<svg') || !svg.includes('</svg>')) {
     return res.status(500).json({ error: 'Generated output was not valid SVG. Try again.' });
   }

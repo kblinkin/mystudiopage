@@ -584,6 +584,10 @@
   .layout-card.selected .layout-name { color: var(--accent); }
   .layout-name { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 8px; background: var(--bg2); text-align: center; border-top: 1px solid var(--border2); color: var(--muted2); }
 
+  /* Generate button nudge */
+  @keyframes btn-nudge { 0%,100% { transform: scale(1); } 40% { transform: scale(1.06); } }
+  .btn-nudge { animation: btn-nudge 0.35s ease; }
+
   /* Logo mode toggle */
   .logo-mode-toggle { display: flex; gap: 0; margin-bottom: 20px; border: 1px solid var(--border2); overflow: hidden; width: fit-content; }
   .logo-mode-btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 8px 18px; background: var(--bg3); border: none; color: var(--muted2); cursor: pointer; transition: all 0.15s; }
@@ -2185,14 +2189,6 @@
         <div class="field-hint" style="margin-top:8px">Claude designs a graphic mark — you just approve it. Regenerate as many times as you like.</div>
       </div>
 
-      <div class="logo-upload-divider">— or —</div>
-      <label class="logo-upload-area" id="logoUploadArea">
-        <input type="file" id="logoUploadInput" accept="image/*" onchange="handleLogoUpload(event)" style="display:none">
-        <div class="logo-upload-icon">↑</div>
-        <div class="logo-upload-label">Upload your own logo</div>
-        <div class="logo-upload-hint">SVG, PNG, or JPG — transparent background recommended</div>
-      </label>
-
       <div id="logoLoadingState" style="display:none">
         <div class="logo-loading-wrap">
           <div class="publish-dots">
@@ -2211,10 +2207,10 @@
           <div class="info-box-text">This mark will appear above your studio name on the site. Download it for social media, business cards, or email signatures too.</div>
         </div>
         <div class="logo-actions">
-          <button class="btn btn-ghost" onclick="generateLogo()">↺ Try Another</button>
-          <button class="btn btn-ghost" onclick="removeLogo()">✕ Remove</button>
-          <button class="btn btn-primary" onclick="downloadLogoSVG()">Download SVG</button>
+          <button class="btn btn-primary" onclick="generateLogo()">↺ Generate Another</button>
+          <button class="btn btn-ghost" onclick="downloadLogoSVG()">Download SVG</button>
           <button class="btn btn-ghost" onclick="downloadLogoPNG()">Download PNG</button>
+          <button class="btn btn-ghost" onclick="removeLogo()">✕ Remove</button>
         </div>
       </div>
 
@@ -2222,6 +2218,14 @@
         <div class="warning-box-label">⚠ Generation failed</div>
         <div class="warning-box-text" id="logoErrorText">Could not connect to the logo API. Make sure <code>/api/generate-logo</code> is deployed.</div>
       </div>
+
+      <div class="logo-upload-divider">— or upload your own —</div>
+      <label class="logo-upload-area" id="logoUploadArea">
+        <input type="file" id="logoUploadInput" accept="image/*" onchange="handleLogoUpload(event)" style="display:none">
+        <div class="logo-upload-icon">↑</div>
+        <div class="logo-upload-label">Upload your own logo</div>
+        <div class="logo-upload-hint">SVG, PNG, or JPG — transparent background recommended</div>
+      </label>
     </div>
 
     <!-- STEP 10: PREVIEW & PUBLISH -->
@@ -2724,6 +2728,15 @@
       document.getElementById('logoLoadingState').style.display = 'none';
       document.getElementById('logoErrorState').style.display = 'none';
     }
+    if (data.logoMode) {
+      logoMode = data.logoMode;
+      const btn = document.querySelector(`.logo-mode-btn[data-mode="${data.logoMode}"]`);
+      if (btn) { document.querySelectorAll('.logo-mode-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+      const hint = document.getElementById('logoModeHint');
+      if (hint) hint.textContent = data.logoMode === 'wordmark'
+        ? 'Your studio name as designed lettering — styled type, not just a font.'
+        : 'A symbol or icon — no text. Sits above your studio name.';
+    }
 
     // 10. Subdomain
     if (data.subdomain) {
@@ -3134,6 +3147,7 @@
     data.customDomain = document.querySelector('#domainBody input[type="text"]')?.value?.trim() || '';
     data.formspreeId = document.querySelector('#formBody input[type="text"]')?.value?.trim() || '';
     data.logoSvg = currentLogoSvg || '';
+    data.logoMode = logoMode || 'mark';
     data.photoDataUrl = currentPhotoDataUrl || '';
     data.credits = creditsList.length > 0 ? [...creditsList] : [];
     data.customCss = customTweaks.map(t => t.css).join('\n');
@@ -3381,9 +3395,8 @@
       document.getElementById('logoPreviewBox').innerHTML = currentLogoSvg;
       document.getElementById('logoLoadingState').style.display = 'none';
       document.getElementById('logoPreviewSection').style.display = 'block';
-      document.getElementById('logoGenerateSection').style.display = 'block';
+      document.getElementById('logoGenerateSection').style.display = 'none';
       document.getElementById('logoUploadArea').style.display = '';
-      document.getElementById('logoGenerateBtn').innerHTML = '↺ Generate Another';
 
     } catch (err) {
       clearInterval(msgInterval);
@@ -3399,9 +3412,23 @@
   }
 
   // ── Style picker ────────────────────────────────────────────────────────
+  function nudgeGenerateBtn() {
+    // If a logo preview is showing, pulse the Generate Another button so the
+    // user knows their new settings will be used on the next click
+    const preview = document.getElementById('logoPreviewSection');
+    if (!preview || preview.style.display === 'none') return;
+    const btns = preview.querySelectorAll('.logo-actions .btn-primary');
+    btns.forEach(b => {
+      b.classList.remove('btn-nudge');
+      void b.offsetWidth; // force reflow to restart animation
+      b.classList.add('btn-nudge');
+    });
+  }
+
   function selectStyle(btn) {
     document.querySelectorAll('#styleChips .style-chip').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
+    nudgeGenerateBtn();
   }
 
   function getSelectedStyle() {
@@ -3429,6 +3456,7 @@
     hint.textContent = logoMode === 'wordmark'
       ? 'Your studio name as designed lettering — styled type, not just a font.'
       : 'A symbol or icon — no text. Sits above your studio name.';
+    nudgeGenerateBtn();
   }
 
   // ── Credits ─────────────────────────────────────────────────────────────
@@ -3542,8 +3570,7 @@
       document.getElementById('logoPreviewBox').innerHTML = currentLogoSvg;
       document.getElementById('logoLoadingState').style.display = 'none';
       document.getElementById('logoPreviewSection').style.display = 'block';
-      document.getElementById('logoGenerateSection').style.display = 'block';
-      document.getElementById('logoGenerateBtn').innerHTML = '↺ Generate Instead';
+      document.getElementById('logoGenerateSection').style.display = 'none';
       // Reset file input so same file can be re-uploaded if needed
       event.target.value = '';
     };

@@ -124,12 +124,15 @@ export function renderSite(data) {
   </nav>`;
 
   // ── HERO ──────────────────────────────────────────────────────────────────
+  const isWordmark = hasLogo && data.logoMode === 'wordmark';
   const heroHtml = `
   <section class="hero" id="hero">
     <div class="hero-inner">
-      ${hasLogo ? `<div class="hero-pre-logo">${data.logoSvg}</div>` : ''}
+      ${hasLogo && !isWordmark ? `<div class="hero-pre-logo">${data.logoSvg}</div>` : ''}
       <div class="hero-eyebrow">${escHtml(typeLabel)}</div>
-      <h1 class="hero-title">${escHtml(studioName)}</h1>
+      ${isWordmark
+        ? `<div class="hero-wordmark">${data.logoSvg}</div>`
+        : `<h1 class="hero-title">${escHtml(studioName)}</h1>`}
       ${data.tagline ? `<p class="hero-tagline">${escHtml(data.tagline)}</p>` : ''}
       <a href="#contact" class="hero-cta">Work With Me</a>
     </div>
@@ -496,6 +499,18 @@ export function renderSite(data) {
 
     @media (max-width: 768px) {
       .hero-pre-logo svg { width: 88px; height: 88px; }
+    }
+
+    .hero-wordmark {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .hero-wordmark svg {
+      max-width: min(600px, 90vw);
+      height: auto;
     }
 
     /* Studio name as large hero text (always rendered) */
