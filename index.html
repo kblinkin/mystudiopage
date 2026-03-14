@@ -147,28 +147,28 @@
   }
 
   .step-nav-item:hover { background: var(--bg3); }
-  .step-nav-item.active { background: var(--accent-dim); border-color: var(--border); }
-  .step-nav-item.completed .step-dot { background: var(--green); }
+  .step-nav-item.active { background: var(--bg3); border-color: rgba(255,255,255,0.1); }
+  .step-nav-item.completed .step-dot { background: var(--green); border-color: var(--green); }
   .step-nav-item.completed .step-dot::after { content: '✓'; font-size: 8px; color: #ffffff; display: flex; align-items: center; justify-content: center; height: 100%; }
 
   .step-dot {
     width: 20px; height: 20px;
     border-radius: 50%;
-    background: var(--bg4);
-    border: 1px solid var(--border2);
+    background: #ffffff;
+    border: 1px solid rgba(255,255,255,0.3);
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'DM Mono', monospace;
     font-size: 9px;
-    color: var(--muted);
+    color: #0c0c0c;
     transition: background 0.2s;
   }
 
   .step-nav-item.active .step-dot {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: #ffffff;
+    border-color: #ffffff;
     color: #0c0c0c;
     font-weight: 500;
   }
