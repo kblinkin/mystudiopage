@@ -23,6 +23,13 @@ const SERVICES_TITLE = {
   production: 'Working Together'
 };
 
+const WORK_TITLE = {
+  mastering:  'Mastering Samples',
+  mixing:     'Mixing Samples',
+  mixmaster:  'Mix + Master Samples',
+  production: 'Production Work'
+};
+
 function escHtml(str) {
   if (!str) return '';
   return String(str)
@@ -159,8 +166,8 @@ export function renderSite(data) {
     workHtml = `
   <section class="work" id="work">
     <div class="work-inner">
-      <div class="section-eyebrow">Work</div>
-      <h2 class="section-heading">Selected Work</h2>
+      <div class="section-eyebrow">Samples</div>
+      <h2 class="section-heading">${WORK_TITLE[data.engineerType] || 'Selected Work'}</h2>
       <div class="tracks-grid">${trackCards}</div>
     </div>
   </section>`;
@@ -1048,8 +1055,8 @@ ${navHtml}
 ${heroHtml}
 ${aboutHtml}
 ${creditsHtml}
-${statsHtml}
 ${workHtml}
+${statsHtml}
 ${servicesHtml}
 ${contactHtml}
 ${footerHtml}

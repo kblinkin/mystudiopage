@@ -1117,6 +1117,32 @@
   .logo-preview-box svg { max-width: 100%; height: auto; }
   .logo-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
+  /* Logo upload */
+  .logo-upload-divider {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-align: center;
+    margin: 20px 0;
+  }
+  .logo-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px dashed var(--border2);
+    padding: 28px 24px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    max-width: 360px;
+  }
+  .logo-upload-area:hover { border-color: var(--border); background: var(--bg3); }
+  .logo-upload-icon { font-size: 20px; color: var(--muted2); }
+  .logo-upload-label { font-size: 13px; color: var(--text); font-weight: 400; }
+  .logo-upload-hint { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: var(--muted); }
+
   /* Style picker */
   .logo-style-picker { margin-bottom: 24px; }
   .style-chips { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -2077,6 +2103,14 @@
           <button class="btn btn-ghost" onclick="skipLogo()">Skip — No Logo</button>
         </div>
         <div class="field-hint" style="margin-top:8px">Claude designs a graphic mark — you just approve it. Regenerate as many times as you like.</div>
+
+        <div class="logo-upload-divider">— or —</div>
+        <label class="logo-upload-area" id="logoUploadArea">
+          <input type="file" id="logoUploadInput" accept="image/*" onchange="handleLogoUpload(event)" style="display:none">
+          <div class="logo-upload-icon">↑</div>
+          <div class="logo-upload-label">Upload your own logo</div>
+          <div class="logo-upload-hint">SVG, PNG, or JPG — transparent background recommended</div>
+        </label>
       </div>
 
       <div id="logoLoadingState" style="display:none">
@@ -3272,6 +3306,26 @@
     container.innerHTML = creditsList.map(n =>
       `<div class="credit-tag">${escAttr(n)}<button onclick="removeCredit(${JSON.stringify(n)})" title="Remove">✕</button></div>`
     ).join('');
+  }
+
+  function handleLogoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      const mime = file.type || 'image/png';
+      // Wrap in SVG so it uses the same display path as AI-generated marks
+      currentLogoSvg = `<svg viewBox="0 0 400 400" width="400" height="400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><image href="${dataUrl}" x="30" y="30" width="340" height="340" preserveAspectRatio="xMidYMid meet"/></svg>`;
+      document.getElementById('logoPreviewBox').innerHTML = currentLogoSvg;
+      document.getElementById('logoLoadingState').style.display = 'none';
+      document.getElementById('logoPreviewSection').style.display = 'block';
+      document.getElementById('logoGenerateSection').style.display = 'block';
+      document.getElementById('logoGenerateBtn').innerHTML = '↺ Generate Instead';
+      // Reset file input so same file can be re-uploaded if needed
+      event.target.value = '';
+    };
+    reader.readAsDataURL(file);
   }
 
   function skipLogo() {
