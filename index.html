@@ -2179,6 +2179,12 @@
         </div>
       </div>
 
+      <div style="margin-bottom:24px">
+        <div class="field-label" style="margin-bottom:6px">Keywords <span style="color:var(--muted);font-size:10px;margin-left:4px">optional — helps inspire the design</span></div>
+        <input type="text" id="logoKeywords" class="form-input" placeholder="e.g. mountain, precision, analog, dark…" style="max-width:400px">
+        <div class="field-hint" style="margin-top:4px">Words that evoke your sound, vibe, or aesthetic. The AI uses these to find a unique visual concept.</div>
+      </div>
+
       <div id="logoGenerateSection">
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <button class="btn btn-primary logo-generate-btn" onclick="generateLogo()" id="logoGenerateBtn">
@@ -2186,7 +2192,7 @@
           </button>
           <button class="btn btn-ghost" onclick="skipLogo()">Skip — No Logo</button>
         </div>
-        <div class="field-hint" style="margin-top:8px">Claude designs a graphic mark — you just approve it. Regenerate as many times as you like.</div>
+        <div class="field-hint" style="margin-top:8px">AI designs a graphic mark — you just approve it. Regenerate as many times as you like.</div>
       </div>
 
       <div id="logoLoadingState" style="display:none">
@@ -3369,6 +3375,7 @@
           textColor: theme.text,
           styleDirection: getSelectedStyle(),
           layoutStyle: selectedLayout || 'default',
+          keywords: document.getElementById('logoKeywords')?.value?.trim() || '',
           logoMode
         })
       });

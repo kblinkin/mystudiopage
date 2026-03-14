@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { studioName, engineerType, typeDesc, themeName, accent, bg, textColor, styleDirection, layoutStyle, logoMode } = req.body;
+  const { studioName, engineerType, typeDesc, themeName, accent, bg, textColor, styleDirection, layoutStyle, keywords, logoMode } = req.body;
 
   if (!studioName) {
     return res.status(400).json({ error: 'studioName is required' });
@@ -106,26 +106,41 @@ Output a complete, self-contained SVG.`
   };
   const engineerConcept = engineerConcepts[engineerType] || 'audio engineering precision';
 
-  // Use Claude Haiku to craft a vivid, specific visual prompt
+  // Use Claude Sonnet to craft a creative, context-aware prompt
   let imagePrompt;
   try {
     const promptMsg = await client.messages.create({
-      model: 'claude-haiku-4-5',
-      max_tokens: 180,
-      system: `You write image generation prompts for a professional logo designer. Describe a single iconic brand mark using ONLY solid filled shapes — no outlines, no thin lines, no sketches. Think Nike swoosh, Apple logo, Mercedes star: bold, flat, immediate. Describe exact shapes and how they form one unified silhouette. Under 80 words. No meta-commentary.`,
+      model: 'claude-sonnet-4-6',
+      max_tokens: 300,
+      system: `You are a world-class brand identity designer. Your job is to invent ONE unexpected, memorable visual concept for a logo mark and describe it as an image generation prompt.
+
+Your process:
+1. Read the studio name and find what it LITERALLY or PHONETICALLY evokes — sounds, textures, objects, places, sensations. This is your raw material.
+2. Find a visual metaphor from the engineer type that avoids clichés (no soundwaves, no headphones, no vinyl records, no musical notes).
+3. If keywords are provided, use them as creative fuel — not literally, but as mood/texture.
+4. Fuse steps 1-3 into ONE geometric symbol that feels inevitable in hindsight.
+5. Apply the style direction to the form.
+
+Output rules:
+- Describe ONLY solid filled shapes — no outlines, no thin lines, no sketches
+- 1-2 shapes maximum, forming a single unified silhouette
+- No text, no letters, no faces, no realistic imagery
+- Be hyper-specific: exact angles, proportions, how shapes relate
+- 80-120 words
+- End with: "Flat vector, solid fills, isolated on white, logo mark style"`,
       messages: [{
         role: 'user',
-        content: `Brand mark for a recording studio.
-Concept: ${engineerConcept}
-Style: ${styleDesc}
-Color: ${accent} on transparent background
+        content: `Studio name: "${studioName}"
+Engineer type: ${typeDesc}
+Style direction: ${styleDesc}
+Color palette: ${themeName} (primary: ${accent})${keywords ? `\nKeywords from the client: "${keywords}"` : ''}
 
-One strong geometric symbol. Solid filled shapes only. Must read instantly as a logo, not an illustration.`
+Design a logo mark concept. Be original — avoid the first obvious idea.`
       }]
     });
     imagePrompt = promptMsg.content[0].text.trim();
   } catch (err) {
-    imagePrompt = `Minimal flat logo mark, solid geometric shapes, ${styleDesc}, ${engineerConcept}, bold silhouette, color ${accent}, isolated on transparent background.`;
+    imagePrompt = `Minimal flat logo mark, solid geometric shapes, ${styleDesc}, ${engineerConcept}. Bold silhouette, color ${accent}. Flat vector, solid fills, isolated on white, logo mark style.`;
   }
 
   // Generate with Recraft v3 vector
