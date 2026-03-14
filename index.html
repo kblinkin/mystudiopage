@@ -3342,9 +3342,9 @@
     document.getElementById('logoUploadArea').style.display = 'none';
 
     const loadingMessages = [
-      'Claude is designing your mark...',
-      'Considering your engineer type...',
-      'Crafting the symbol...',
+      'Crafting your visual prompt...',
+      'Generating your mark...',
+      'Rendering the vector...',
       'Refining the geometry...',
       'Adding finishing touches...'
     ];
@@ -3381,14 +3381,20 @@
 
       const data = await res.json();
 
-      let svgResult = data.svg;
-      if (logoMode !== 'wordmark') {
-        // Strip any text/tspan elements Claude may have snuck in
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(data.svg, 'image/svg+xml');
-        doc.querySelectorAll('text, tspan').forEach(el => el.remove());
-        const serializer = new XMLSerializer();
-        svgResult = serializer.serializeToString(doc.documentElement);
+      let svgResult;
+      if (data.imageUrl && !data.svg) {
+        // Recraft returned a raster URL — wrap in SVG container
+        svgResult = `<svg viewBox="0 0 400 400" width="400" height="400" xmlns="http://www.w3.org/2000/svg"><image href="${data.imageUrl}" x="0" y="0" width="400" height="400" preserveAspectRatio="xMidYMid meet"/></svg>`;
+      } else {
+        svgResult = data.svg;
+        if (logoMode !== 'wordmark' && data.svg) {
+          // Strip any text/tspan elements that snuck in
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data.svg, 'image/svg+xml');
+          doc.querySelectorAll('text, tspan').forEach(el => el.remove());
+          const serializer = new XMLSerializer();
+          svgResult = serializer.serializeToString(doc.documentElement);
+        }
       }
       currentLogoSvg = svgResult;
 
