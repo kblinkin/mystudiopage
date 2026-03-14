@@ -83,7 +83,7 @@ Output a complete, well-constructed SVG. Use as many path points as the design r
 
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 8000,
+    max_tokens: 16000,
     thinking: { type: 'adaptive' },
     system: systemPrompt,
     messages: [
@@ -93,7 +93,8 @@ Output a complete, well-constructed SVG. Use as many path points as the design r
 
   const textBlock = message.content.find(b => b.type === 'text');
   if (!textBlock) {
-    return res.status(500).json({ error: 'No SVG output returned. Try again.' });
+    const blockTypes = message.content.map(b => b.type).join(', ');
+    return res.status(500).json({ error: `No SVG output returned (blocks: ${blockTypes}, stop: ${message.stop_reason}). Try again.` });
   }
 
   let svg = textBlock.text.trim();
