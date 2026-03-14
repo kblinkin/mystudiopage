@@ -1,0 +1,12 @@
+{
+  "name": "mystudiopage",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.55.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

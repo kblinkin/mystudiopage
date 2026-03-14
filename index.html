@@ -933,6 +933,265 @@
   .adv-guide-desc a:hover { text-decoration: underline; }
   .adv-guide-desc strong { color: var(--muted2); font-weight: 500; }
 
+  /* ADD / REMOVE BUTTONS */
+  .remove-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-size: 11px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    flex-shrink: 0;
+    line-height: 1;
+    padding: 0;
+  }
+  .remove-btn:hover { border-color: var(--red); color: var(--red); background: rgba(235,87,87,0.08); }
+
+  .add-field-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 20px;
+    background: transparent;
+    border: 1px dashed var(--border2);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    margin-top: 8px;
+  }
+  .add-field-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+  .stat-field-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0;
+  }
+
+  /* PRIVATE TRACK NOTE */
+  .info-box {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    border-radius: 0 2px 2px 0;
+  }
+  .info-box-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .info-box-text {
+    font-size: 13px;
+    color: var(--muted2);
+    line-height: 1.7;
+  }
+  .info-box-text strong { color: var(--text); font-weight: 500; }
+  .info-box-text a { color: var(--accent); text-decoration: none; }
+  .info-box-text a:hover { text-decoration: underline; }
+
+  .warning-box {
+    background: rgba(235,87,87,0.06);
+    border: 1px solid rgba(235,87,87,0.25);
+    border-left: 3px solid var(--red);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    border-radius: 0 2px 2px 0;
+  }
+  .warning-box-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+  .warning-box-text {
+    font-size: 13px;
+    color: var(--muted2);
+    line-height: 1.6;
+  }
+  .warning-box-text strong { color: var(--text); font-weight: 500; }
+
+  /* LOGO BUILDER */
+  .logo-context-card {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+  }
+  .logo-context-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .logo-context-items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .logo-context-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .lci-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .lci-val {
+    font-size: 14px;
+    color: var(--text);
+  }
+  .logo-generate-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 18px 28px;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+  }
+  .logo-loading-wrap {
+    text-align: center;
+    padding: 32px 0;
+  }
+  .logo-loading-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+  .logo-preview-box {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 32px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+  }
+  .logo-preview-box svg { max-width: 100%; height: auto; }
+  .logo-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .logo-ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    margin-bottom: 20px;
+  }
+
+  /* PUBLISH OVERLAY */
+  .publish-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #0c0c0c;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 40px;
+  }
+  .publish-overlay.active { display: flex; }
+
+  .publish-state { width: 100%; max-width: 520px; }
+
+  .publish-publishing { animation: fadeIn 0.4s ease; }
+  .publish-dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+  .publish-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: dotPulse 1.2s infinite ease-in-out;
+  }
+  .publish-dot:nth-child(2) { animation-delay: 0.2s; }
+  .publish-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dotPulse {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+  .publish-status-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .publish-status-line {
+    font-size: 14px;
+    color: var(--muted2);
+    line-height: 1.6;
+  }
+
+  .publish-success { animation: fadeIn 0.5s ease; display: none; }
+  .publish-success.active { display: block; }
+  .publish-success-icon { font-size: 52px; margin-bottom: 20px; }
+  .publish-success-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    letter-spacing: 0.03em;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .publish-success-subtitle {
+    font-size: 15px;
+    color: var(--muted2);
+    margin-bottom: 32px;
+  }
+  .publish-url-box {
+    background: var(--bg2);
+    border: 1px solid var(--green);
+    padding: 20px 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    color: var(--green);
+    margin-bottom: 24px;
+    display: inline-block;
+    letter-spacing: 0.05em;
+  }
+  .publish-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
   .dns-table {
     margin-top: 12px;
     border: 1px solid var(--border2);
@@ -971,7 +1230,7 @@
 
 <header>
   <div class="logo">mystudiopage <span>/ builder</span></div>
-  <div class="header-step-indicator">Step <span id="headerStepNum">1</span> of 9</div>
+  <div class="header-step-indicator">Step <span id="headerStepNum">1</span> of 10</div>
 </header>
 
 <div class="progress-bar">
@@ -1019,6 +1278,10 @@
         </div>
         <div class="step-nav-item" data-step="9">
           <div class="step-dot">9</div>
+          <span class="step-nav-label">Your Logo</span>
+        </div>
+        <div class="step-nav-item" data-step="10">
+          <div class="step-dot">10</div>
           <span class="step-nav-label">Preview & Publish</span>
         </div>
       </div>
@@ -1071,12 +1334,12 @@
       <div class="input-row">
         <div class="field-group">
           <label class="field-label">Your Name</label>
-          <input type="text" placeholder="e.g. Jordan Lee">
+          <input type="text" id="inputName" placeholder="e.g. Jordan Lee">
           <div class="field-hint">Your real name or the name you go by professionally</div>
         </div>
         <div class="field-group">
           <label class="field-label">Studio / Business Name</label>
-          <input type="text" placeholder="e.g. Black Fox Mastering">
+          <input type="text" id="inputStudio" placeholder="e.g. Black Fox Mastering">
           <div class="field-hint">Leave blank to just use your name</div>
         </div>
       </div>
@@ -1090,7 +1353,7 @@
 
       <div class="field-group">
         <label class="field-label">Tagline</label>
-        <input type="text" placeholder="e.g. Warm, detailed masters for independent artists">
+        <input type="text" id="inputTagline" placeholder="e.g. Warm, detailed masters for independent artists">
         <div class="field-hint">One sentence. What do you do and who do you do it for?</div>
       </div>
 
@@ -1204,17 +1467,32 @@
           <div class="guide-step">
             <div class="guide-step-num">3</div>
             <div class="guide-step-content">
-              <div class="guide-step-title">Copy the track link</div>
-              <div class="guide-step-desc">Once a track is uploaded, click on it and copy the URL from your browser. It'll look like <em>soundcloud.com/blackfoxmastering/midnight-circuit</em>. Paste that below.</div>
+              <div class="guide-step-title">Set privacy &amp; copy the link</div>
+              <div class="guide-step-desc">Once uploaded, click the track. For <strong>public tracks</strong>, copy the URL from your browser bar. For <strong>client work or work-in-progress</strong>, set the track to <em>Private</em> during upload, then click <strong>Share → Embed</strong> and copy the private embed code — it contains a secret token that makes the track playable only where you embed it, without appearing on your public profile or in SoundCloud search.</div>
             </div>
           </div>
           <div class="guide-step">
             <div class="guide-step-num">4</div>
             <div class="guide-step-content">
               <div class="guide-step-title">Come back and paste your links</div>
-              <div class="guide-step-desc">Once you have at least one link ready, fill in the fields below. You can always add more later.</div>
+              <div class="guide-step-desc">Once you have at least one link ready, fill in the fields below. You can always add more later. Secret/private embed links work just like public ones — they'll play fine on your site.</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- PRIVATE TRACK TIP -->
+      <div class="info-box" id="privateTrackTip" style="display:none">
+        <div class="info-box-label">🔒 Private Tracks</div>
+        <div class="info-box-text">
+          Keeping client work off your public profile? Set the track to <strong>Private</strong> on SoundCloud, then go to <strong>Share → Embed</strong> and copy the embed code — it includes a secret token so the track plays only on your site. The URL will look slightly different from a public link but works exactly the same here.
+        </div>
+      </div>
+
+      <div class="warning-box" id="permissionWarning" style="display:none">
+        <div class="warning-box-label">⚠️ Using Someone Else's Work?</div>
+        <div class="warning-box-text">
+          If the track features another artist, producer, or client — <strong>get their permission before posting it publicly</strong>. A quick message saying "mind if I use this on my portfolio?" is usually all it takes. Most artists are happy to say yes, and it keeps your professional relationships solid.
         </div>
       </div>
 
@@ -1273,10 +1551,11 @@
       </div>
 
       <div class="service-fields" id="serviceFields">
-        <div class="service-field">
+        <div class="service-field" id="serviceField1">
           <div class="service-field-header">
             <div class="service-field-num">01</div>
             <div class="service-field-type">Service 1</div>
+            <button class="remove-btn" onclick="removeService(this)" title="Remove service">✕</button>
           </div>
           <div class="service-input-row">
             <div class="field-group" style="margin-bottom:0">
@@ -1293,10 +1572,11 @@
             <textarea style="height:80px" placeholder="What's included? What do they send you? What do they get back?">Optimized for Spotify, Apple Music, Tidal, and all major platforms. LUFS-compliant with maximum perceived loudness.</textarea>
           </div>
         </div>
-        <div class="service-field">
+        <div class="service-field" id="serviceField2">
           <div class="service-field-header">
             <div class="service-field-num">02</div>
             <div class="service-field-type">Service 2</div>
+            <button class="remove-btn" onclick="removeService(this)" title="Remove service">✕</button>
           </div>
           <div class="service-input-row">
             <div class="field-group" style="margin-bottom:0">
@@ -1313,10 +1593,11 @@
             <textarea style="height:80px">Lacquer masters to the highest standard. RIAA curve, side sequencing, and cutting notes included.</textarea>
           </div>
         </div>
-        <div class="service-field">
+        <div class="service-field" id="serviceField3">
           <div class="service-field-header">
             <div class="service-field-num">03</div>
             <div class="service-field-type">Service 3</div>
+            <button class="remove-btn" onclick="removeService(this)" title="Remove service">✕</button>
           </div>
           <div class="service-input-row">
             <div class="field-group" style="margin-bottom:0">
@@ -1334,14 +1615,15 @@
           </div>
         </div>
       </div>
+      <button class="add-field-btn" onclick="addService()">+ Add Another Service</button>
     </div>
 
     <!-- STEP 6: STATS -->
     <div class="step-panel" id="step6">
       <div class="step-header">
         <div class="step-eyebrow">Step 6 of 9</div>
-        <div class="step-title">Your Four<br>Stats</div>
-        <p class="step-desc">Four quick facts that tell clients what working with you looks like. Pick things that are genuinely true and that matter to your clients.</p>
+        <div class="step-title">Your<br>Stats</div>
+        <p class="step-desc">Quick facts that tell clients what working with you looks like. Start with four — add or remove to suit what you actually want to highlight. Pick things that are genuinely true and that matter to your clients.</p>
       </div>
 
       <div class="example-box">
@@ -1354,9 +1636,12 @@
         </div>
       </div>
 
-      <div class="stats-grid">
+      <div class="stats-grid" id="statsGrid">
         <div class="stat-field">
-          <div class="stat-preview" id="statPreview1">—</div>
+          <div class="stat-field-top">
+            <div class="stat-preview" id="statPreview1">—</div>
+            <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
+          </div>
           <div class="field-group" style="margin-bottom:8px">
             <label class="field-label">Value</label>
             <input type="text" placeholder="e.g. 48hr" oninput="updateStatPreview(1, this.value)">
@@ -1367,7 +1652,10 @@
           </div>
         </div>
         <div class="stat-field">
-          <div class="stat-preview" id="statPreview2">—</div>
+          <div class="stat-field-top">
+            <div class="stat-preview" id="statPreview2">—</div>
+            <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
+          </div>
           <div class="field-group" style="margin-bottom:8px">
             <label class="field-label">Value</label>
             <input type="text" placeholder="e.g. ∞" oninput="updateStatPreview(2, this.value)">
@@ -1378,7 +1666,10 @@
           </div>
         </div>
         <div class="stat-field">
-          <div class="stat-preview" id="statPreview3">—</div>
+          <div class="stat-field-top">
+            <div class="stat-preview" id="statPreview3">—</div>
+            <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
+          </div>
           <div class="field-group" style="margin-bottom:8px">
             <label class="field-label">Value</label>
             <input type="text" placeholder="e.g. All" oninput="updateStatPreview(3, this.value)">
@@ -1389,7 +1680,10 @@
           </div>
         </div>
         <div class="stat-field">
-          <div class="stat-preview" id="statPreview4">—</div>
+          <div class="stat-field-top">
+            <div class="stat-preview" id="statPreview4">—</div>
+            <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
+          </div>
           <div class="field-group" style="margin-bottom:8px">
             <label class="field-label">Value</label>
             <input type="text" placeholder="e.g. Free" oninput="updateStatPreview(4, this.value)">
@@ -1400,6 +1694,7 @@
           </div>
         </div>
       </div>
+      <button class="add-field-btn" onclick="addStat()" style="margin-top:8px">+ Add Another Stat</button>
     </div>
 
     <!-- STEP 7: SOCIALS -->
@@ -1519,10 +1814,75 @@
       </div>
     </div>
 
-    <!-- STEP 9: PREVIEW & PUBLISH -->
+    <!-- STEP 9: LOGO BUILDER -->
     <div class="step-panel" id="step9">
       <div class="step-header">
-        <div class="step-eyebrow">Step 9 of 9</div>
+        <div class="step-eyebrow">Step 9 of 10 — Optional</div>
+        <div class="step-title">Build Your<br>Logo</div>
+        <p class="step-desc">Claude AI designs a custom logo using your studio name, engineer type, and color scheme. No prompting needed — it figures out the rest.</p>
+      </div>
+
+      <div class="logo-ai-badge">✦ Powered by Claude Haiku · ~$0.004 per generation</div>
+
+      <div class="logo-context-card">
+        <div class="logo-context-label">What Claude will use</div>
+        <div class="logo-context-items">
+          <div class="logo-context-item">
+            <span class="lci-key">Studio Name</span>
+            <span class="lci-val" id="logoCtxStudio">—</span>
+          </div>
+          <div class="logo-context-item">
+            <span class="lci-key">Engineer Type</span>
+            <span class="lci-val" id="logoCtxType">—</span>
+          </div>
+          <div class="logo-context-item">
+            <span class="lci-key">Color Theme</span>
+            <span class="lci-val" id="logoCtxTheme">—</span>
+          </div>
+          <div class="logo-context-item">
+            <span class="lci-key">Tagline</span>
+            <span class="lci-val" id="logoCtxTagline">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="logoGenerateSection">
+        <button class="btn btn-primary logo-generate-btn" onclick="generateLogo()" id="logoGenerateBtn">
+          ✦ Generate My Logo
+        </button>
+        <div class="field-hint" style="text-align:center;margin-top:8px">Claude designs it — you just approve it. Regenerate as many times as you like.</div>
+      </div>
+
+      <div id="logoLoadingState" style="display:none">
+        <div class="logo-loading-wrap">
+          <div class="publish-dots">
+            <div class="publish-dot"></div>
+            <div class="publish-dot"></div>
+            <div class="publish-dot"></div>
+          </div>
+          <div class="logo-loading-text" id="logoLoadingText">Claude is designing your logo...</div>
+        </div>
+      </div>
+
+      <div id="logoPreviewSection" style="display:none;margin-top:28px">
+        <div class="logo-preview-box" id="logoPreviewBox"></div>
+        <div class="logo-actions">
+          <button class="btn btn-ghost" onclick="generateLogo()">↺ Try Another</button>
+          <button class="btn btn-primary" onclick="downloadLogoSVG()">Download SVG</button>
+          <button class="btn btn-ghost" onclick="downloadLogoPNG()">Download PNG</button>
+        </div>
+      </div>
+
+      <div id="logoErrorState" style="display:none;margin-top:24px" class="warning-box">
+        <div class="warning-box-label">⚠ Generation failed</div>
+        <div class="warning-box-text" id="logoErrorText">Could not connect to the logo API. Make sure <code>/api/generate-logo</code> is deployed.</div>
+      </div>
+    </div>
+
+    <!-- STEP 10: PREVIEW & PUBLISH -->
+    <div class="step-panel" id="step10">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 10 of 10</div>
         <div class="step-title">Almost<br>Live.</div>
         <p class="step-desc">Choose your subdomain and hit Publish. Your site will be live within seconds at your mystudiopage.com address.</p>
       </div>
@@ -1700,6 +2060,34 @@
   </main>
 </div>
 
+<!-- PUBLISH OVERLAY -->
+<div class="publish-overlay" id="publishOverlay">
+  <div class="publish-state">
+
+    <div class="publish-publishing" id="publishingState">
+      <div class="publish-dots">
+        <div class="publish-dot"></div>
+        <div class="publish-dot"></div>
+        <div class="publish-dot"></div>
+      </div>
+      <div class="publish-status-label">Publishing your site</div>
+      <div class="publish-status-line" id="publishStatusLine">Generating your pages...</div>
+    </div>
+
+    <div class="publish-success" id="publishSuccessState">
+      <div class="publish-success-icon">🎛</div>
+      <div class="publish-success-title">You're Live.</div>
+      <div class="publish-success-subtitle">Your site is published and ready to share.</div>
+      <div class="publish-url-box" id="publishedUrlDisplay">yoursite.mystudiopage.com</div>
+      <div class="publish-actions">
+        <button class="btn btn-primary" onclick="copyPublishedUrl()">Copy Link</button>
+        <button class="btn btn-ghost" onclick="closePublishOverlay()">Back to Builder</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="step-nav-buttons">
   <button class="btn btn-ghost" id="btnBack" onclick="goBack()" style="visibility:hidden">← Back</button>
@@ -1709,14 +2097,14 @@
 
 <script>
   let currentStep = 1;
-  const totalSteps = 9;
+  const totalSteps = 10;
   let selectedType = null;
   let selectedTheme = 'dark-gold';
 
   const stepNames = [
     'Engineer Type', 'Basic Info', 'Your Photo',
     'SoundCloud', 'Services & Rates', 'Your Stats',
-    'Socials', 'Color Scheme', 'Preview & Publish'
+    'Socials', 'Color Scheme', 'Your Logo', 'Preview & Publish'
   ];
 
   function goToStep(step) {
@@ -1746,8 +2134,9 @@
     btn.textContent = isLast ? 'Publish My Site 🚀' : 'Continue →';
     btn.className = isLast ? 'btn btn-publish' : 'btn btn-primary';
 
-    // Update summary on step 9
-    if (currentStep === 9) updateSummary();
+    // Update summary on step 10, populate logo context on step 9
+    if (currentStep === 10) updateSummary();
+    if (currentStep === 9) populateLogoContext();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -1795,7 +2184,12 @@
     if (val === 'no') {
       setTimeout(() => {
         document.getElementById('trackFields').style.display = 'flex';
+        document.getElementById('privateTrackTip').style.display = 'block';
+        document.getElementById('permissionWarning').style.display = 'block';
       }, 800);
+    } else {
+      document.getElementById('privateTrackTip').style.display = 'block';
+      document.getElementById('permissionWarning').style.display = 'block';
     }
   }
 
@@ -1830,9 +2224,121 @@
     document.getElementById('summaryType').textContent = selectedType ? typeNames[selectedType] : '—';
   }
 
+  // ── SERVICES ────────────────────────────────────────
+  let serviceCount = 3;
+
+  function addService() {
+    serviceCount++;
+    const n = serviceCount;
+    const num = String(n).padStart(2, '0');
+    const container = document.getElementById('serviceFields');
+    const div = document.createElement('div');
+    div.className = 'service-field';
+    div.id = `serviceField${n}`;
+    div.innerHTML = `
+      <div class="service-field-header">
+        <div class="service-field-num">${num}</div>
+        <div class="service-field-type">Service ${n}</div>
+        <button class="remove-btn" onclick="removeService(this)" title="Remove service">✕</button>
+      </div>
+      <div class="service-input-row">
+        <div class="field-group" style="margin-bottom:0">
+          <label class="field-label">Service Name</label>
+          <input type="text" placeholder="e.g. Stem Master">
+        </div>
+        <div class="field-group" style="margin-bottom:0">
+          <label class="field-label">Price</label>
+          <input type="text" placeholder="e.g. $120 / track">
+        </div>
+      </div>
+      <div class="field-group" style="margin-top:12px;margin-bottom:0">
+        <label class="field-label">Description</label>
+        <textarea style="height:80px" placeholder="What's included? What do they send you? What do they get back?"></textarea>
+      </div>
+    `;
+    container.appendChild(div);
+  }
+
+  function removeService(btn) {
+    const fields = document.querySelectorAll('#serviceFields .service-field');
+    if (fields.length <= 1) return; // keep at least one
+    btn.closest('.service-field').remove();
+  }
+
+  // ── STATS ────────────────────────────────────────────
+  let statCount = 4;
+
+  function addStat() {
+    statCount++;
+    const n = statCount;
+    const grid = document.getElementById('statsGrid');
+    const div = document.createElement('div');
+    div.className = 'stat-field';
+    div.innerHTML = `
+      <div class="stat-field-top">
+        <div class="stat-preview">—</div>
+        <button class="remove-btn" onclick="removeStat(this)" title="Remove stat">✕</button>
+      </div>
+      <div class="field-group" style="margin-bottom:8px">
+        <label class="field-label">Value</label>
+        <input type="text" placeholder="e.g. 24hr" oninput="this.closest('.stat-field').querySelector('.stat-preview').textContent=this.value||'—'">
+      </div>
+      <div class="field-group" style="margin-bottom:0">
+        <label class="field-label">Label</label>
+        <input type="text" placeholder="e.g. Rush Turnaround">
+      </div>
+    `;
+    grid.appendChild(div);
+  }
+
+  function removeStat(btn) {
+    const stats = document.querySelectorAll('#statsGrid .stat-field');
+    if (stats.length <= 1) return; // keep at least one
+    btn.closest('.stat-field').remove();
+  }
+
+  // ── PUBLISH ──────────────────────────────────────────
   function publishSite() {
-    const subdomain = document.getElementById('subdomainInput').value || 'yoursite';
-    alert(`🚀 Publishing ${subdomain}.mystudiopage.com...\n\n(In the real build this triggers site generation and deployment)`);
+    const subdomain = (document.getElementById('subdomainInput').value || 'yoursite').toLowerCase().replace(/[^a-z0-9-]/g, '');
+    const url = `${subdomain || 'yoursite'}.mystudiopage.com`;
+
+    document.getElementById('publishedUrlDisplay').textContent = url;
+    document.getElementById('publishOverlay').classList.add('active');
+    document.getElementById('publishingState').style.display = 'block';
+    document.getElementById('publishSuccessState').classList.remove('active');
+
+    const lines = [
+      'Generating your pages...',
+      'Applying your color scheme...',
+      'Embedding audio players...',
+      'Connecting your domain...',
+      'Almost there...'
+    ];
+    let i = 0;
+    const statusEl = document.getElementById('publishStatusLine');
+    const interval = setInterval(() => {
+      i++;
+      if (i < lines.length) {
+        statusEl.textContent = lines[i];
+      } else {
+        clearInterval(interval);
+        document.getElementById('publishingState').style.display = 'none';
+        document.getElementById('publishSuccessState').classList.add('active');
+      }
+    }, 600);
+  }
+
+  function closePublishOverlay() {
+    document.getElementById('publishOverlay').classList.remove('active');
+  }
+
+  function copyPublishedUrl() {
+    const url = document.getElementById('publishedUrlDisplay').textContent;
+    navigator.clipboard.writeText('https://' + url).then(() => {
+      const btn = document.querySelector('.publish-actions .btn-primary');
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000);
+    });
   }
 
   function toggleAdvanced() {
@@ -1847,6 +2353,147 @@
     const toggle = document.getElementById(`${type}Toggle`);
     body.classList.toggle('open');
     toggle.classList.toggle('open');
+  }
+
+  // ── LOGO BUILDER ─────────────────────────────────────
+  const themeColors = {
+    'dark-gold':  { bg: '#0c0c0c', accent: '#c8a96e', text: '#f0ece4', name: 'Dark Gold' },
+    'dark-blue':  { bg: '#080c12', accent: '#5b9cf6', text: '#e8f0ff', name: 'Midnight Blue' },
+    'warm-cream': { bg: '#f5f0e8', accent: '#8b6f4e', text: '#2c2420', name: 'Warm Cream' },
+    'deep-green': { bg: '#080f0b', accent: '#4caf7d', text: '#e8f5ee', name: 'Deep Green' },
+    'monochrome': { bg: '#0a0a0a', accent: '#f0ece4', text: '#f0ece4', name: 'Monochrome' },
+  };
+
+  function getActiveTheme() {
+    return themeColors[selectedTheme] || themeColors['dark-gold'];
+  }
+
+  function populateLogoContext() {
+    const studio = document.getElementById('inputStudio').value.trim()
+      || document.getElementById('inputName').value.trim()
+      || '—';
+    const tagline = document.getElementById('inputTagline').value.trim() || '—';
+    const typeLabels = {
+      mastering: 'Mastering', mixing: 'Mixing',
+      mixmaster: 'Mix + Master', production: 'Production'
+    };
+    const theme = getActiveTheme();
+    document.getElementById('logoCtxStudio').textContent = studio;
+    document.getElementById('logoCtxType').textContent = selectedType ? typeLabels[selectedType] : '—';
+    document.getElementById('logoCtxTheme').textContent = theme.name;
+    document.getElementById('logoCtxTagline').textContent = tagline;
+  }
+
+  let currentLogoSvg = null;
+
+  async function generateLogo() {
+    populateLogoContext();
+
+    const studio = document.getElementById('inputStudio').value.trim()
+      || document.getElementById('inputName').value.trim()
+      || 'Studio';
+    const tagline = document.getElementById('inputTagline').value.trim();
+    const theme = getActiveTheme();
+    const typeDescriptions = {
+      mastering:  'mastering engineer — precision, clarity, and finality',
+      mixing:     'mixing engineer — balance, depth, and dimension',
+      mixmaster:  'mix and mastering engineer — full process from stems to release',
+      production: 'music producer — creativity, sound design, and arrangement'
+    };
+    const typeDesc = typeDescriptions[selectedType] || 'audio engineer';
+
+    // UI: show loading
+    document.getElementById('logoGenerateSection').style.display = 'none';
+    document.getElementById('logoPreviewSection').style.display = 'none';
+    document.getElementById('logoErrorState').style.display = 'none';
+    document.getElementById('logoLoadingState').style.display = 'block';
+
+    const loadingMessages = [
+      'Claude is designing your logo...',
+      'Considering your engineer type...',
+      'Crafting the typography...',
+      'Refining the layout...',
+      'Adding finishing touches...'
+    ];
+    let msgIdx = 0;
+    const msgEl = document.getElementById('logoLoadingText');
+    const msgInterval = setInterval(() => {
+      msgIdx = (msgIdx + 1) % loadingMessages.length;
+      msgEl.textContent = loadingMessages[msgIdx];
+    }, 1400);
+
+    try {
+      const res = await fetch('/api/generate-logo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studioName: studio,
+          engineerType: selectedType || 'mastering',
+          typeDesc,
+          themeName: theme.name,
+          accent: theme.accent,
+          bg: theme.bg,
+          textColor: theme.text,
+          tagline
+        })
+      });
+
+      clearInterval(msgInterval);
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `API returned ${res.status}`);
+      }
+
+      const data = await res.json();
+      currentLogoSvg = data.svg;
+
+      document.getElementById('logoPreviewBox').innerHTML = currentLogoSvg;
+      document.getElementById('logoLoadingState').style.display = 'none';
+      document.getElementById('logoPreviewSection').style.display = 'block';
+      document.getElementById('logoGenerateSection').style.display = 'block';
+      document.getElementById('logoGenerateBtn').innerHTML = '↺ Generate Another';
+
+    } catch (err) {
+      clearInterval(msgInterval);
+      document.getElementById('logoLoadingState').style.display = 'none';
+      document.getElementById('logoErrorState').style.display = 'block';
+      document.getElementById('logoErrorText').textContent =
+        err.message.includes('fetch') || err.message.includes('Failed')
+          ? 'Could not reach /api/generate-logo. Deploy the Vercel function to use this feature.'
+          : err.message;
+      document.getElementById('logoGenerateSection').style.display = 'block';
+    }
+  }
+
+  function downloadLogoSVG() {
+    if (!currentLogoSvg) return;
+    const studio = (document.getElementById('inputStudio').value || 'logo')
+      .toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const blob = new Blob([currentLogoSvg], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `${studio}-logo.svg`;
+    a.click(); URL.revokeObjectURL(url);
+  }
+
+  function downloadLogoPNG() {
+    if (!currentLogoSvg) return;
+    const studio = (document.getElementById('inputStudio').value || 'logo')
+      .toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const blob = new Blob([currentLogoSvg], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200; canvas.height = 360; // 2× retina
+      canvas.getContext('2d').drawImage(img, 0, 0, 1200, 360);
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = `${studio}-logo.png`;
+      a.click(); URL.revokeObjectURL(url);
+    };
+    img.src = url;
   }
 </script>
 </body>
