@@ -1434,8 +1434,9 @@
 
 <header>
   <div class="logo">mystudiopage <span>/ builder</span></div>
-  <div style="display:flex;align-items:center;gap:20px">
+  <div style="display:flex;align-items:center;gap:16px">
     <div id="authUserBadge"></div>
+    <button id="btnRepublish" class="btn btn-publish" style="display:none;padding:8px 18px;font-size:12px" onclick="publishSite()">↑ Republish</button>
     <div class="header-step-indicator">Step <span id="headerStepNum">1</span> of 10</div>
   </div>
 </header>
@@ -2503,7 +2504,7 @@
     // 10. Subdomain
     if (data.subdomain) {
       const el = document.getElementById('subdomainInput');
-      if (el) { el.value = data.subdomain; updateSubdomainPreview(); }
+      if (el) { el.value = data.subdomain; updateSubdomainPreview(); updateRepublishBtn(); }
     }
 
     // 11. Advanced options
@@ -2577,13 +2578,11 @@
     if (currentStep > 1) goToStep(currentStep - 1);
   }
 
-  // Sidebar nav
+  // Sidebar nav — always clickable
   document.querySelectorAll('.step-nav-item').forEach(item => {
     item.addEventListener('click', function() {
       const step = parseInt(this.dataset.step);
-      if (step < currentStep || this.classList.contains('completed')) {
-        goToStep(step);
-      }
+      goToStep(step);
     });
   });
 
@@ -2625,6 +2624,12 @@
   function updateSubdomainPreview() {
     const val = document.getElementById('subdomainInput').value || 'yourname';
     document.getElementById('urlPreview').innerHTML = `🟢 &nbsp;Your site will be live at: <strong>${val}.mystudiopage.com</strong>`;
+    updateRepublishBtn();
+  }
+
+  function updateRepublishBtn() {
+    const subdomain = document.getElementById('subdomainInput')?.value?.trim();
+    document.getElementById('btnRepublish').style.display = subdomain ? 'inline-flex' : 'none';
   }
 
   function handlePhoto(input) {
