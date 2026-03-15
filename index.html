@@ -2712,6 +2712,13 @@
       renderTweaks();
     }
 
+    // Custom section injections
+    if (data.htmlInjections && data.htmlInjections.length > 0) {
+      customInjections.length = 0;
+      data.htmlInjections.forEach(inj => customInjections.push(inj));
+      renderInjections();
+    }
+
     // Mark all steps completed (they've been through this before)
     document.querySelectorAll('.step-nav-item').forEach(item => {
       const s = parseInt(item.dataset.step);
@@ -3096,7 +3103,7 @@
     data.credits = creditsList.length > 0 ? [...creditsList] : [];
     data.customCss = customTweaks.map(t => t.css).join('\n');
     data.tweaks = [...customTweaks];
-    data.htmlInjections = customInjections.map(inj => ({ insertAfter: inj.insertAfter, html: inj.html }));
+    data.htmlInjections = customInjections.map(inj => ({ prompt: inj.prompt, insertAfter: inj.insertAfter, html: inj.html }));
 
     // Tracks
     const trackFields = document.querySelectorAll('#trackFields .track-field');
