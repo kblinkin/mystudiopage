@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.drupal.org)",
+      "WebFetch(domain:ymlogy.xyz)",
+      "WebFetch(domain:www.famups.com)",
+      "WebFetch(domain:help.soundcloud.com)",
+      "WebFetch(domain:xenforo.com)",
+      "WebFetch(domain:blog.soundcloud.com)",
+      "WebFetch(domain:iframely.com)",
+      "WebFetch(domain:support.proboards.com)",
+      "WebFetch(domain:developers.soundcloud.com)",
+      "WebFetch(domain:groups.google.com)",
+      "WebFetch(domain:github.com)"
+    ]
+  }
+}
