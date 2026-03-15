@@ -1641,6 +1641,20 @@
       </div>
 
       <div class="field-group">
+        <label class="field-label">What Sets You Apart</label>
+        <textarea id="inputEthos" placeholder="e.g. I obsess over low end. After 10 years of mixing, I've built a process that makes kicks and bass translate on every system — from club speakers to earbuds. I work closely with artists throughout the process, not just their files." style="min-height:100px;"></textarea>
+        <div class="field-hint">This appears alongside your rates. Be specific — skip the generic, tell clients what actually makes working with you different.</div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-label">What Sets You Apart — Examples</div>
+        <div class="example-text">
+          <strong>Mastering:</strong> "Every master I deliver translates — headphones, club speakers, car stereos. I've spent years tuning my monitoring chain specifically for that. You'll never get a master from me that sounds great in one place and falls apart in another." <br><br>
+          <strong>Mixing:</strong> "I treat every mix like it's my own record. That means I'm not rushing through it — I'm listening, making decisions, and pushing back if something isn't working. Artists who want a collaborator, not just a set of ears, tend to stick around."
+        </div>
+      </div>
+
+      <div class="field-group">
         <label class="field-label">Contact Email</label>
         <input type="email" id="inputEmail" placeholder="e.g. hello@blackfoxmastering.com">
         <div class="field-hint">This is how clients will reach you. It'll appear on your contact section.</div>
@@ -3072,6 +3086,7 @@
     data.studioName = document.getElementById('inputStudio')?.value?.trim() || '';
     data.tagline = document.getElementById('inputTagline')?.value?.trim() || '';
     data.bio = document.getElementById('inputBio')?.value?.trim() || '';
+    data.ethos = document.getElementById('inputEthos')?.value?.trim() || '';
     data.email = document.getElementById('inputEmail')?.value?.trim() || '';
     data.subdomain = document.getElementById('subdomainInput')?.value?.trim().toLowerCase().replace(/[^a-z0-9-]/g,'') || '';
     data.customDomain = document.querySelector('#domainBody input[type="text"]')?.value?.trim() || '';

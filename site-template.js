@@ -270,18 +270,25 @@ export function renderSite(data) {
     </div>
   </section>`;
   } else if (services.length > 0) {
+    const compact = services.length > 3;
     const serviceCards = services.map(s => `
-      <div class="service-card">
+      <div class="service-card${compact ? ' compact' : ''}">
         <div class="service-name">${escHtml(s.name)}</div>
         ${s.price ? `<div class="service-price">${escHtml(s.price)}</div>` : ''}
         ${s.desc  ? `<p class="service-desc">${escHtml(s.desc)}</p>` : ''}
       </div>`).join('');
+    const ethosHtml = data.ethos ? `<p class="services-ethos-text">${escHtml(data.ethos)}</p>` : '';
     servicesHtml = `
   <section class="services" id="services">
     <div class="services-inner">
       <div class="section-eyebrow">Services</div>
-      <h2 class="section-heading">${escHtml(servicesTitle)}</h2>
-      <div class="services-grid">${serviceCards}</div>
+      <div class="services-layout">
+        <div class="services-cards">${serviceCards}</div>
+        <div class="services-ethos-col">
+          <h2 class="section-heading">${escHtml(servicesTitle)}</h2>
+          ${ethosHtml}
+        </div>
+      </div>
     </div>
   </section>`;
   }
@@ -857,45 +864,78 @@ export function renderSite(data) {
       padding: 0 40px;
     }
 
-    .services-grid {
+    .services-layout {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .services-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .service-card {
       background: var(--bg2);
       border: 1px solid var(--border2);
-      padding: 28px;
+      padding: 24px 28px;
       transition: border-color 0.2s;
+    }
+
+    .service-card.compact {
+      padding: 16px 20px;
     }
 
     .service-card:hover { border-color: var(--border); }
 
     .service-name {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 28px;
+      font-size: 26px;
       letter-spacing: 0.04em;
       color: var(--text);
-      margin-bottom: 10px;
+      margin-bottom: 6px;
       line-height: 1;
+    }
+
+    .service-card.compact .service-name {
+      font-size: 20px;
     }
 
     .service-price {
       font-family: 'DM Mono', monospace;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       color: var(--accent);
-      margin-bottom: 14px;
+      margin-bottom: 10px;
       letter-spacing: 0.05em;
     }
 
     .service-desc {
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--muted2);
       line-height: 1.75;
+    }
+
+    .service-card.compact .service-desc {
+      font-size: 12px;
+    }
+
+    .services-ethos-col {
+      position: sticky;
+      top: 80px;
+    }
+
+    .services-ethos-text {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      font-size: 17px;
+      color: var(--muted2);
+      line-height: 1.9;
+      white-space: pre-line;
     }
 
     /* Production card */
@@ -947,7 +987,8 @@ export function renderSite(data) {
     @media (max-width: 768px) {
       .services { padding: 64px 0; }
       .services-inner { padding: 0 24px; }
-      .services-grid { grid-template-columns: 1fr; }
+      .services-layout { grid-template-columns: 1fr; gap: 40px; }
+      .services-ethos-col { position: static; }
       .production-card-inner { padding: 28px 24px; }
     }
 
