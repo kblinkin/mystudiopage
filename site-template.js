@@ -734,6 +734,10 @@ export function renderSite(data) {
       align-items: start;
     }
 
+    .about-text {
+      align-self: start;
+    }
+
     .about-photo-wrap {
       position: sticky;
       top: 80px;
@@ -759,7 +763,8 @@ export function renderSite(data) {
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
       font-size: 18px;
-      color: var(--muted2);
+      color: var(--text);
+      opacity: 0.85;
       line-height: 1.85;
       margin-bottom: 28px;
     }
