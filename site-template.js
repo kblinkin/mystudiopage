@@ -756,6 +756,7 @@ export function renderSite(data) {
       letter-spacing: 0.03em;
       line-height: 1;
       color: var(--text);
+      margin-top: 0;
       margin-bottom: 20px;
     }
 
