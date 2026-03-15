@@ -285,7 +285,7 @@ export function renderSite(data) {
       <div class="services-layout">
         <div class="services-cards">${serviceCards}</div>
         <div class="services-ethos-col">
-          <h2 class="section-heading">${escHtml(servicesTitle)}</h2>
+          <h2 class="section-heading">My Ethos</h2>
           ${ethosHtml}
         </div>
       </div>
@@ -916,8 +916,9 @@ export function renderSite(data) {
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
       font-size: 13px;
-      color: var(--muted2);
+      color: var(--text);
       line-height: 1.75;
+      opacity: 0.75;
     }
 
     .service-card.compact .service-desc {
@@ -933,7 +934,7 @@ export function renderSite(data) {
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
       font-size: 17px;
-      color: var(--muted2);
+      color: var(--text);
       line-height: 1.9;
       white-space: pre-line;
     }
