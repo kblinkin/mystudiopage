@@ -589,11 +589,6 @@
   @keyframes btn-nudge { 0%,100% { transform: scale(1); } 40% { transform: scale(1.06); } }
   .btn-nudge { animation: btn-nudge 0.35s ease; }
 
-  /* Logo mode toggle */
-  .logo-mode-toggle { display: flex; gap: 0; margin-bottom: 20px; border: 1px solid var(--border2); overflow: hidden; width: fit-content; }
-  .logo-mode-btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 8px 18px; background: var(--bg3); border: none; color: var(--muted2); cursor: pointer; transition: all 0.15s; }
-  .logo-mode-btn.active { background: var(--accent-dim); color: var(--accent); }
-
   /* SOCIALS */
   .social-fields { display: flex; flex-direction: column; gap: 12px; }
 
@@ -1070,61 +1065,7 @@
     margin-bottom: 20px;
   }
 
-  /* LOGO BUILDER */
-  .logo-context-card {
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    padding: 20px 24px;
-    margin-bottom: 28px;
-  }
-  .logo-context-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 14px;
-  }
-  .logo-context-items {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  .logo-context-item {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .lci-key {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .lci-val {
-    font-size: 14px;
-    color: var(--text);
-  }
-  .logo-generate-btn {
-    width: 100%;
-    justify-content: center;
-    padding: 18px 28px;
-    font-size: 13px;
-    letter-spacing: 0.15em;
-    margin-bottom: 4px;
-  }
-  .logo-loading-wrap {
-    text-align: center;
-    padding: 32px 0;
-  }
-  .logo-loading-text {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-top: 12px;
-  }
+  /* LOGO */
   .logo-preview-box {
     background: var(--bg2);
     border: 1px solid var(--border2);
@@ -1138,15 +1079,6 @@
   .logo-preview-box svg { max-width: 100%; height: auto; }
   .logo-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
-  /* Logo upload */
-  .logo-upload-divider {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    text-align: center;
-    margin: 20px 0;
-  }
   .logo-upload-area {
     display: flex;
     flex-direction: column;
@@ -1163,24 +1095,6 @@
   .logo-upload-icon { font-size: 20px; color: var(--muted2); }
   .logo-upload-label { font-size: 13px; color: var(--text); font-weight: 400; }
   .logo-upload-hint { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: var(--muted); }
-
-  /* Style picker */
-  .logo-style-picker { margin-bottom: 24px; }
-  .style-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-  .style-chip {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    color: var(--muted2);
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
-  }
-  .style-chip:hover { border-color: var(--border); color: var(--text); }
-  .style-chip.active { background: var(--accent-dim); border-color: var(--border); color: var(--accent); }
 
   /* Credits */
   .credits-section { margin-top: 40px; padding-top: 32px; border-top: 2px solid var(--border); }
@@ -2129,83 +2043,43 @@
       </div>
     </div>
 
-    <!-- STEP 9: LOGO BUILDER -->
+    <!-- STEP 9: LOGO UPLOAD -->
     <div class="step-panel" id="step9">
       <div class="step-header">
         <div class="step-eyebrow">Step 9 of 10 — Optional</div>
-        <div class="step-title">Logo<br>Maker</div>
-        <p class="step-desc">Generate a custom graphic mark using AI, or upload your own. It appears above your studio name on the published site. Totally optional — skip if you prefer text-only.</p>
+        <div class="step-title">Your<br>Logo</div>
+        <p class="step-desc">Upload your logo and it'll appear above your studio name on the published site. Totally optional — skip if you prefer text-only.</p>
       </div>
 
-      <div class="logo-context-card">
-        <div class="logo-context-label">What we'll use</div>
-        <div class="logo-context-items">
-          <div class="logo-context-item">
-            <span class="lci-key">Studio Name</span>
-            <span class="lci-val" id="logoCtxStudio">—</span>
+      <div style="margin-bottom:28px;padding:20px 24px;border:1px solid var(--border2);background:var(--bg2)">
+        <div class="field-label" style="margin-bottom:14px;color:var(--accent)">Where to build your logo</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div style="padding:14px 16px;border:1px solid var(--border2);background:var(--bg3)">
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Canva</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.05em;color:var(--muted)">canva.com — free tier, easy drag-and-drop</div>
           </div>
-          <div class="logo-context-item">
-            <span class="lci-key">Engineer Type</span>
-            <span class="lci-val" id="logoCtxType">—</span>
+          <div style="padding:14px 16px;border:1px solid var(--border2);background:var(--bg3)">
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Looka</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.05em;color:var(--muted)">looka.com — AI logo generator</div>
           </div>
-          <div class="logo-context-item">
-            <span class="lci-key">Color Theme</span>
-            <span class="lci-val" id="logoCtxTheme">—</span>
+          <div style="padding:14px 16px;border:1px solid var(--border2);background:var(--bg3)">
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Adobe Express</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.05em;color:var(--muted)">adobe.com/express — free, export as PNG/SVG</div>
           </div>
-          <div class="logo-context-item">
-            <span class="lci-key">Tagline</span>
-            <span class="lci-val" id="logoCtxTagline">—</span>
+          <div style="padding:14px 16px;border:1px solid var(--border2);background:var(--bg3)">
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">ChatGPT / Midjourney</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.05em;color:var(--muted)">Generate an image, then remove background</div>
           </div>
         </div>
+        <div class="field-hint">Tip: export as PNG with a transparent background for best results.</div>
       </div>
 
-      <div style="margin-bottom:20px">
-        <div class="field-label" style="margin-bottom:10px">Logo Type</div>
-        <div class="logo-mode-toggle">
-          <button class="logo-mode-btn active" data-mode="mark" onclick="selectLogoMode(this)">Graphic Mark</button>
-          <button class="logo-mode-btn" data-mode="wordmark" onclick="selectLogoMode(this)">Wordmark</button>
-        </div>
-        <div class="field-hint" id="logoModeHint">A symbol or icon — no text. Sits above your studio name.</div>
-      </div>
-
-      <div class="logo-style-picker">
-        <div class="field-label" style="margin-bottom:10px">Style Direction <span style="color:var(--muted);font-size:10px;margin-left:4px">optional</span></div>
-        <div class="style-chips" id="styleChips">
-          <button class="style-chip active" data-style="" onclick="selectStyle(this)">Any</button>
-          <button class="style-chip" data-style="geometric — precise angles, circles, and hard lines" onclick="selectStyle(this)">Geometric</button>
-          <button class="style-chip" data-style="organic — flowing curves and wave-inspired forms" onclick="selectStyle(this)">Organic</button>
-          <button class="style-chip" data-style="minimal — single shape or line, maximum negative space" onclick="selectStyle(this)">Minimal</button>
-          <button class="style-chip" data-style="bold and heavy — thick strokes, filled forms, high contrast" onclick="selectStyle(this)">Bold</button>
-          <button class="style-chip" data-style="crest or badge — circular or shield framing, heraldic feel" onclick="selectStyle(this)">Crest / Badge</button>
-        </div>
-      </div>
-
-      <div style="margin-bottom:24px;padding:16px 18px;border:1px solid var(--accent);border-radius:6px;background:var(--accent-dim)">
-        <div class="field-label" style="margin-bottom:6px;color:var(--accent)">✦ Keywords <span style="color:var(--muted);font-size:10px;margin-left:4px;text-transform:none;letter-spacing:0">the more specific, the better your logo</span></div>
-        <input type="text" id="logoKeywords" class="form-input" placeholder="e.g. mountain, precision, analog, fox, dark…" style="max-width:400px;border-color:var(--border)" oninput="localStorage.setItem('msp_logo_keywords', this.value)">
-        <div class="field-hint" style="margin-top:6px">We search for real visual references based on your keywords before designing the mark.</div>
-      </div>
-
-      <div id="logoGenerateSection">
-        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-primary logo-generate-btn" onclick="generateLogo()" id="logoGenerateBtn">
-            ✦ Generate My Logo
-          </button>
-          <button class="btn btn-ghost" onclick="skipLogo()">Skip — No Logo</button>
-        </div>
-        <div class="field-hint" style="margin-top:8px">AI designs a graphic mark — you just approve it. Regenerate as many times as you like.</div>
-      </div>
-
-      <div id="logoLoadingState" style="display:none">
-        <div class="logo-loading-wrap">
-          <div class="publish-dots">
-            <div class="publish-dot"></div>
-            <div class="publish-dot"></div>
-            <div class="publish-dot"></div>
-          </div>
-          <div class="logo-loading-text" id="logoLoadingText">We're designing your mark...</div>
-        </div>
-      </div>
+      <label class="logo-upload-area" id="logoUploadArea">
+        <input type="file" id="logoUploadInput" accept="image/*" onchange="handleLogoUpload(event)" style="display:none">
+        <div class="logo-upload-icon">↑</div>
+        <div class="logo-upload-label">Upload your logo</div>
+        <div class="logo-upload-hint">SVG, PNG, or JPG — transparent background recommended</div>
+      </label>
 
       <div id="logoPreviewSection" style="display:none;margin-top:28px">
         <div class="logo-preview-box" id="logoPreviewBox"></div>
@@ -2214,25 +2088,15 @@
           <div class="info-box-text">This mark will appear above your studio name on the site. Download it for social media, business cards, or email signatures too.</div>
         </div>
         <div class="logo-actions">
-          <button class="btn btn-primary" onclick="generateLogo()">↺ Generate Another</button>
           <button class="btn btn-ghost" onclick="downloadLogoSVG()">Download SVG</button>
           <button class="btn btn-ghost" onclick="downloadLogoPNG()">Download PNG</button>
           <button class="btn btn-ghost" onclick="removeLogo()">✕ Remove</button>
         </div>
       </div>
 
-      <div id="logoErrorState" style="display:none;margin-top:24px" class="warning-box">
-        <div class="warning-box-label">⚠ Generation failed</div>
-        <div class="warning-box-text" id="logoErrorText">Could not connect to the logo API. Make sure <code>/api/generate-logo</code> is deployed.</div>
+      <div style="margin-top:24px">
+        <button class="btn btn-ghost" onclick="skipLogo()">Skip — No Logo</button>
       </div>
-
-      <div class="logo-upload-divider">— or upload your own —</div>
-      <label class="logo-upload-area" id="logoUploadArea">
-        <input type="file" id="logoUploadInput" accept="image/*" onchange="handleLogoUpload(event)" style="display:none">
-        <div class="logo-upload-icon">↑</div>
-        <div class="logo-upload-label">Upload your own logo</div>
-        <div class="logo-upload-hint">SVG, PNG, or JPG — transparent background recommended</div>
-      </label>
     </div>
 
     <!-- STEP 10: PREVIEW & PUBLISH -->
@@ -2541,9 +2405,6 @@
         const data = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
         loadSavedData(data);
         showDataBanner();
-        // localStorage keywords always take priority over server data
-        const _kw = localStorage.getItem('msp_logo_keywords');
-        if (_kw) { const _el = document.getElementById('logoKeywords'); if (_el) _el.value = _kw; }
       }
     } catch (err) {
       // Silent — no saved data is fine
@@ -2752,25 +2613,8 @@
       currentLogoSvg = data.logoSvg;
       const box = document.getElementById('logoPreviewBox');
       if (box) box.innerHTML = data.logoSvg;
-      document.getElementById('logoGenerateSection').style.display = 'none';
       document.getElementById('logoPreviewSection').style.display = 'block';
-      document.getElementById('logoLoadingState').style.display = 'none';
-      document.getElementById('logoErrorState').style.display = 'none';
     }
-    if (data.logoKeywords) {
-      const kwEl = document.getElementById('logoKeywords');
-      if (kwEl) kwEl.value = data.logoKeywords;
-    }
-    if (data.logoMode) {
-      logoMode = data.logoMode;
-      const btn = document.querySelector(`.logo-mode-btn[data-mode="${data.logoMode}"]`);
-      if (btn) { document.querySelectorAll('.logo-mode-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-      const hint = document.getElementById('logoModeHint');
-      if (hint) hint.textContent = data.logoMode === 'wordmark'
-        ? 'Your studio name as designed lettering — styled type, not just a font.'
-        : 'A symbol or icon — no text. Sits above your studio name.';
-    }
-
     // 10. Subdomain
     if (data.subdomain) {
       const el = document.getElementById('subdomainInput');
@@ -2850,9 +2694,8 @@
     btn.textContent = isLast ? 'Publish My Site 🚀' : 'Continue →';
     btn.className = isLast ? 'btn btn-publish' : 'btn btn-primary';
 
-    // Update summary on step 10, populate logo context on step 9, services on step 5
+    // Update summary on step 10, services on step 5
     if (currentStep === 10) updateSummary();
-    if (currentStep === 9) populateLogoContext();
     if (currentStep === 5) populateServices();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3180,8 +3023,6 @@
     data.customDomain = document.querySelector('#domainBody input[type="text"]')?.value?.trim() || '';
     data.formspreeId = document.querySelector('#formBody input[type="text"]')?.value?.trim() || '';
     data.logoSvg = currentLogoSvg || '';
-    data.logoMode = logoMode || 'mark';
-    data.logoKeywords = document.getElementById('logoKeywords')?.value?.trim() || '';
     data.photoDataUrl = currentPhotoDataUrl || '';
     data.credits = creditsList.length > 0 ? [...creditsList] : [];
     data.customCss = customTweaks.map(t => t.css).join('\n');
@@ -3381,149 +3222,7 @@
     return themeColors[selectedTheme] || themeColors['dark-gold'];
   }
 
-  function populateLogoContext() {
-    const studio = document.getElementById('inputStudio').value.trim()
-      || document.getElementById('inputName').value.trim()
-      || '—';
-    const tagline = document.getElementById('inputTagline').value.trim() || '—';
-    const typeLabels = {
-      mastering: 'Mastering', mixing: 'Mixing',
-      mixmaster: 'Mix + Master', production: 'Production'
-    };
-    const theme = getActiveTheme();
-    document.getElementById('logoCtxStudio').textContent = studio;
-    document.getElementById('logoCtxType').textContent = selectedType ? typeLabels[selectedType] : '—';
-    document.getElementById('logoCtxTheme').textContent = theme.name;
-    document.getElementById('logoCtxTagline').textContent = tagline;
-  }
-
   let currentLogoSvg = null;
-
-  async function generateLogo() {
-    populateLogoContext();
-
-    const studio = document.getElementById('inputStudio').value.trim()
-      || document.getElementById('inputName').value.trim()
-      || 'Studio';
-    const tagline = document.getElementById('inputTagline').value.trim();
-    const theme = getActiveTheme();
-    const typeDescriptions = {
-      mastering:  'mastering engineer — precision, clarity, and finality',
-      mixing:     'mixing engineer — balance, depth, and dimension',
-      mixmaster:  'mix and mastering engineer — full process from stems to release',
-      production: 'music producer — creativity, sound design, and arrangement'
-    };
-    const typeDesc = typeDescriptions[selectedType] || 'audio engineer';
-
-    // UI: show loading
-    document.getElementById('logoGenerateSection').style.display = 'none';
-    document.getElementById('logoPreviewSection').style.display = 'none';
-    document.getElementById('logoErrorState').style.display = 'none';
-    document.getElementById('logoLoadingState').style.display = 'block';
-    document.getElementById('logoUploadArea').style.display = 'none';
-
-    const loadingMessages = [
-      'We\'re researching your visual references...',
-      'We\'re crafting your concept...',
-      'We\'re generating your mark...',
-      'We\'re refining the geometry...',
-      'We\'re adding finishing touches...'
-    ];
-    let msgIdx = 0;
-    const msgEl = document.getElementById('logoLoadingText');
-    const msgInterval = setInterval(() => {
-      msgIdx = (msgIdx + 1) % loadingMessages.length;
-      msgEl.textContent = loadingMessages[msgIdx];
-    }, 1400);
-
-    try {
-      const res = await fetch('/api/generate-logo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          studioName: studio,
-          engineerType: selectedType || 'mastering',
-          typeDesc,
-          themeName: theme.name,
-          accent: theme.accent,
-          bg: theme.bg,
-          textColor: theme.text,
-          styleDirection: getSelectedStyle(),
-          layoutStyle: selectedLayout || 'default',
-          keywords: document.getElementById('logoKeywords')?.value?.trim() || '',
-          logoMode
-        })
-      });
-
-      clearInterval(msgInterval);
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `API returned ${res.status}`);
-      }
-
-      const data = await res.json();
-
-      let svgResult;
-      if (data.imageUrl && !data.svg) {
-        // Recraft returned a raster URL — wrap in SVG container
-        svgResult = `<svg viewBox="0 0 400 400" width="400" height="400" xmlns="http://www.w3.org/2000/svg"><image href="${data.imageUrl}" x="0" y="0" width="400" height="400" preserveAspectRatio="xMidYMid meet"/></svg>`;
-      } else {
-        svgResult = data.svg;
-        if (logoMode !== 'wordmark' && data.svg) {
-          // Strip any text/tspan elements that snuck in
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(data.svg, 'image/svg+xml');
-          doc.querySelectorAll('text, tspan').forEach(el => el.remove());
-          const serializer = new XMLSerializer();
-          svgResult = serializer.serializeToString(doc.documentElement);
-        }
-      }
-      currentLogoSvg = svgResult;
-
-      document.getElementById('logoPreviewBox').innerHTML = currentLogoSvg;
-      document.getElementById('logoLoadingState').style.display = 'none';
-      document.getElementById('logoPreviewSection').style.display = 'block';
-      document.getElementById('logoGenerateSection').style.display = 'none';
-      document.getElementById('logoUploadArea').style.display = '';
-
-    } catch (err) {
-      clearInterval(msgInterval);
-      document.getElementById('logoLoadingState').style.display = 'none';
-      document.getElementById('logoErrorState').style.display = 'block';
-      document.getElementById('logoErrorText').textContent =
-        err.message.includes('fetch') || err.message.includes('Failed')
-          ? 'Could not reach /api/generate-logo. Deploy the Vercel function to use this feature.'
-          : err.message;
-      document.getElementById('logoGenerateSection').style.display = 'block';
-      document.getElementById('logoUploadArea').style.display = '';
-    }
-  }
-
-  // ── Style picker ────────────────────────────────────────────────────────
-  function nudgeGenerateBtn() {
-    // If a logo preview is showing, pulse the Generate Another button so the
-    // user knows their new settings will be used on the next click
-    const preview = document.getElementById('logoPreviewSection');
-    if (!preview || preview.style.display === 'none') return;
-    const btns = preview.querySelectorAll('.logo-actions .btn-primary');
-    btns.forEach(b => {
-      b.classList.remove('btn-nudge');
-      void b.offsetWidth; // force reflow to restart animation
-      b.classList.add('btn-nudge');
-    });
-  }
-
-  function selectStyle(btn) {
-    document.querySelectorAll('#styleChips .style-chip').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    nudgeGenerateBtn();
-  }
-
-  function getSelectedStyle() {
-    const active = document.querySelector('#styleChips .style-chip.active');
-    return active ? active.dataset.style : '';
-  }
 
   // ── Layout style ─────────────────────────────────────────────────────────
   let selectedLayout = 'default';
@@ -3532,20 +3231,6 @@
     document.querySelectorAll('.layout-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     selectedLayout = card.dataset.layout;
-  }
-
-  // ── Logo mode ────────────────────────────────────────────────────────────
-  let logoMode = 'mark';
-
-  function selectLogoMode(btn) {
-    document.querySelectorAll('.logo-mode-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    logoMode = btn.dataset.mode;
-    const hint = document.getElementById('logoModeHint');
-    hint.textContent = logoMode === 'wordmark'
-      ? 'Your studio name as designed lettering — styled type, not just a font.'
-      : 'A symbol or icon — no text. Sits above your studio name.';
-    nudgeGenerateBtn();
   }
 
   // ── Credits ─────────────────────────────────────────────────────────────
@@ -3653,13 +3338,10 @@
     const reader = new FileReader();
     reader.onload = (e) => {
       const dataUrl = e.target.result;
-      const mime = file.type || 'image/png';
-      // Wrap in SVG so it uses the same display path as AI-generated marks
+      // Wrap in SVG so it uses the same display path
       currentLogoSvg = `<svg viewBox="0 0 400 400" width="400" height="400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><image href="${dataUrl}" x="30" y="30" width="340" height="340" preserveAspectRatio="xMidYMid meet"/></svg>`;
       document.getElementById('logoPreviewBox').innerHTML = currentLogoSvg;
-      document.getElementById('logoLoadingState').style.display = 'none';
       document.getElementById('logoPreviewSection').style.display = 'block';
-      document.getElementById('logoGenerateSection').style.display = 'none';
       // Reset file input so same file can be re-uploaded if needed
       event.target.value = '';
     };
@@ -3674,8 +3356,6 @@
   function removeLogo() {
     currentLogoSvg = null;
     document.getElementById('logoPreviewSection').style.display = 'none';
-    document.getElementById('logoGenerateSection').style.display = 'block';
-    document.getElementById('logoGenerateBtn').innerHTML = '✦ Generate My Logo';
   }
 
   function downloadLogoSVG() {
@@ -3719,8 +3399,6 @@
   }
 
   // ── INIT ─────────────────────────────────────────────
-  const _savedKw = localStorage.getItem('msp_logo_keywords');
-  if (_savedKw) { const _kwEl = document.getElementById('logoKeywords'); if (_kwEl) _kwEl.value = _savedKw; }
   checkExistingSession();
 </script>
 </body>
