@@ -1149,21 +1149,6 @@
   .tweak-loading { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
   .tweak-error { font-size: 12px; color: var(--red); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
 
-  .logo-ai-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: var(--accent-dim);
-    border: 1px solid var(--border);
-    padding: 4px 10px;
-    margin-bottom: 20px;
-  }
-
   /* PUBLISH OVERLAY */
   .publish-overlay {
     display: none;
@@ -2088,8 +2073,6 @@
           <div class="info-box-text">This mark will appear above your studio name on the site. Download it for social media, business cards, or email signatures too.</div>
         </div>
         <div class="logo-actions">
-          <button class="btn btn-ghost" onclick="downloadLogoSVG()">Download SVG</button>
-          <button class="btn btn-ghost" onclick="downloadLogoPNG()">Download PNG</button>
           <button class="btn btn-ghost" onclick="removeLogo()">✕ Remove</button>
         </div>
       </div>
@@ -3356,36 +3339,6 @@
   function removeLogo() {
     currentLogoSvg = null;
     document.getElementById('logoPreviewSection').style.display = 'none';
-  }
-
-  function downloadLogoSVG() {
-    if (!currentLogoSvg) return;
-    const studio = (document.getElementById('inputStudio').value || 'logo')
-      .toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-    const blob = new Blob([currentLogoSvg], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `${studio}-logo.svg`;
-    a.click(); URL.revokeObjectURL(url);
-  }
-
-  function downloadLogoPNG() {
-    if (!currentLogoSvg) return;
-    const studio = (document.getElementById('inputStudio').value || 'logo')
-      .toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-    const blob = new Blob([currentLogoSvg], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1200; canvas.height = 360; // 2× retina
-      canvas.getContext('2d').drawImage(img, 0, 0, 1200, 360);
-      const a = document.createElement('a');
-      a.href = canvas.toDataURL('image/png');
-      a.download = `${studio}-logo.png`;
-      a.click(); URL.revokeObjectURL(url);
-    };
-    img.src = url;
   }
 
   // ── PREVIEW SITE ─────────────────────────────────────
