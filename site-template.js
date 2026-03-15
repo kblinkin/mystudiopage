@@ -219,7 +219,10 @@ export function renderSite(data) {
   if (tracks.length > 0) {
     const acHex = accentHex(t.accent);
     const trackCards = tracks.map(tr => {
-      const iframeSrc = `https://w.soundcloud.com/player/?url=${encodeURIComponent(tr.url)}&color=%23${acHex}&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=true`;
+      // If the user pasted a full player URL from the Embed tab, use it directly to avoid double-wrapping
+      const iframeSrc = tr.url.startsWith('https://w.soundcloud.com/player/')
+        ? tr.url
+        : `https://w.soundcloud.com/player/?url=${encodeURIComponent(tr.url)}&color=%23${acHex}&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=true`;
       return `<div class="track-card">
         <div class="track-embed">
           <iframe

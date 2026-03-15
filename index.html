@@ -1154,6 +1154,10 @@
   .tweak-item-remove:hover { color: var(--red); }
   .tweak-loading { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
   .tweak-error { font-size: 12px; color: var(--red); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
+  .sc-url-hint { font-family: 'DM Mono', monospace; font-size: 11px; padding: 5px 0 10px; display: none; }
+  .sc-url-hint.ok { color: #4caf7d; display: block; }
+  .sc-url-hint.warn { color: var(--red); display: block; }
+
   .inject-section { margin-top: 28px; padding-top: 28px; border-top: 2px solid var(--border); }
   .inject-heading { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 0.03em; color: var(--text); line-height: 1; margin-bottom: 6px; }
   .inject-desc { font-size: 13px; color: var(--muted2); line-height: 1.6; margin-bottom: 16px; }
@@ -1763,13 +1767,6 @@
         </div>
       </div>
 
-      <!-- PRIVATE TRACK TIP -->
-      <div class="info-box" id="privateTrackTip" style="display:none">
-        <div class="info-box-label">🔒 Private Tracks</div>
-        <div class="info-box-text">
-          Keeping client work off your public profile? Set the track to <strong>Private</strong> on SoundCloud, then go to <strong>Share → Embed tab</strong>. Copy the URL from the <code style="font-size:12px;">src="..."</code> part of the iframe code — it starts with <code style="font-size:12px;">https://w.soundcloud.com/player/</code>. Paste just that URL here (not the whole embed code). The "Private Share" link on the Share tab looks different and won't embed correctly.
-        </div>
-      </div>
 
       <div class="warning-box" id="permissionWarning" style="display:none">
         <div class="warning-box-label">⚠️ Using Someone Else's Work?</div>
@@ -1787,9 +1784,10 @@
         </div>
         <div class="track-field">
           <div class="track-field-header">Track 1</div>
-          <div class="field-group" style="margin-bottom:12px">
-            <input type="url" placeholder="e.g. https://soundcloud.com/blackfoxmastering/midnight-circuit">
+          <div class="field-group" style="margin-bottom:4px">
+            <input type="url" placeholder="e.g. https://soundcloud.com/blackfoxmastering/midnight-circuit" oninput="validateScUrl(this)" onpaste="setTimeout(()=>validateScUrl(this),0)">
           </div>
+          <div class="sc-url-hint"></div>
           <div class="track-input-row">
             <div>
               <input type="text" placeholder="Track title  e.g. Midnight Circuit — EP">
@@ -1801,9 +1799,10 @@
         </div>
         <div class="track-field">
           <div class="track-field-header">Track 2</div>
-          <div class="field-group" style="margin-bottom:12px">
-            <input type="url" placeholder="e.g. https://soundcloud.com/blackfoxmastering/hollow-road">
+          <div class="field-group" style="margin-bottom:4px">
+            <input type="url" placeholder="e.g. https://soundcloud.com/blackfoxmastering/hollow-road" oninput="validateScUrl(this)" onpaste="setTimeout(()=>validateScUrl(this),0)">
           </div>
+          <div class="sc-url-hint"></div>
           <div class="track-input-row">
             <div><input type="text" placeholder="Track title"></div>
             <div><input type="text" placeholder="Genre"></div>
@@ -1811,9 +1810,10 @@
         </div>
         <div class="track-field">
           <div class="track-field-header">Track 3 <span style="color:var(--muted);font-size:11px;font-family:'DM Mono',monospace;margin-left:6px">optional</span></div>
-          <div class="field-group" style="margin-bottom:12px">
-            <input type="url" placeholder="e.g. https://soundcloud.com/blackfoxmastering/solstice">
+          <div class="field-group" style="margin-bottom:4px">
+            <input type="url" placeholder="e.g. https://soundcloud.com/blackfoxmastering/solstice" oninput="validateScUrl(this)" onpaste="setTimeout(()=>validateScUrl(this),0)">
           </div>
+          <div class="sc-url-hint"></div>
           <div class="track-input-row">
             <div><input type="text" placeholder="Track title"></div>
             <div><input type="text" placeholder="Genre"></div>
@@ -3371,6 +3371,36 @@
     `).join('');
     const undoBtn = document.getElementById('tweakUndoBtn');
     if (undoBtn) undoBtn.style.display = customTweaks.length > 0 ? '' : 'none';
+  }
+
+  // ── SoundCloud URL validation ────────────────────────────────────────────
+  function validateScUrl(input) {
+    const hint = input.closest('.field-group').nextElementSibling;
+    if (!hint || !hint.classList.contains('sc-url-hint')) return;
+    const val = input.value.trim();
+    if (!val) { hint.className = 'sc-url-hint'; return; }
+
+    if (val.startsWith('https://w.soundcloud.com/player/')) {
+      hint.className = 'sc-url-hint ok';
+      hint.textContent = '✓ Embed URL detected — will play directly';
+    } else if (val.startsWith('https://soundcloud.com/') && val.split('/').length >= 5) {
+      hint.className = 'sc-url-hint ok';
+      hint.textContent = '✓ Looks good';
+    } else if (val.includes('soundcloud.app.goo.gl') || val.includes('snd.sc/')) {
+      hint.className = 'sc-url-hint warn';
+      hint.textContent = '✗ Shortened links don\'t work — paste the full soundcloud.com/... URL instead';
+    } else if (val.startsWith('<iframe')) {
+      hint.className = 'sc-url-hint warn';
+      hint.textContent = '✗ Paste just the URL from src="..." inside that code, not the whole embed block';
+    } else if (val.includes('soundcloud.com') && !val.startsWith('https://soundcloud.com/')) {
+      hint.className = 'sc-url-hint warn';
+      hint.textContent = '✗ URL should start with https://soundcloud.com/username/trackname';
+    } else if (!val.includes('soundcloud.com')) {
+      hint.className = 'sc-url-hint warn';
+      hint.textContent = '✗ Doesn\'t look like a SoundCloud URL';
+    } else {
+      hint.className = 'sc-url-hint';
+    }
   }
 
   // ── Add a Section ────────────────────────────────────────────────────────

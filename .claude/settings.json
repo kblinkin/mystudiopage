@@ -12,7 +12,10 @@
       "WebFetch(domain:support.proboards.com)",
       "WebFetch(domain:developers.soundcloud.com)",
       "WebFetch(domain:groups.google.com)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:forum.squarespace.com)",
+      "WebFetch(domain:wordpress.com)",
+      "WebFetch(domain:elementor.com)"
     ]
   }
 }
