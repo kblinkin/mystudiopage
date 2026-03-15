@@ -23,7 +23,9 @@ export default async function handler(req, res) {
 
   const colors = THEME_VARS[theme] || THEME_VARS['dark-gold'];
 
-  const message = await client.messages.create({
+  let message;
+  try {
+    message = await client.messages.create({
     model: 'claude-haiku-4-5',
     max_tokens: 500,
     system: `You are a CSS expert helping users make visual tweaks to their audio engineer portfolio website.
@@ -54,7 +56,10 @@ Return ONLY a valid CSS block — no explanation, no markdown fences, no comment
         content: `Generate CSS to: ${prompt}`
       }
     ]
-  });
+    });
+  } catch (err) {
+    return res.status(500).json({ error: 'AI service unavailable. Please try again in a moment.' });
+  }
 
   let css = message.content[0].text.trim();
 

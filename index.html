@@ -1180,6 +1180,16 @@
   .inject-item-text { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; flex: 1; line-height: 1.4; }
   .inject-item-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0; line-height: 1; transition: color 0.15s; flex-shrink: 0; }
   .inject-item-remove:hover { color: var(--red); }
+  .inject-size-row { display: none; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+  .inject-size-row.visible { display: flex; }
+  .inject-size-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted2); margin-right: 4px; }
+  .size-btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; background: var(--bg3); border: 1px solid var(--border2); color: var(--muted2); padding: 5px 12px; cursor: pointer; transition: all 0.15s; }
+  .size-btn:hover { border-color: var(--border); color: var(--text); }
+  .size-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .inject-item-resize { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: 1px solid var(--border2); color: var(--muted); cursor: pointer; padding: 3px 8px; transition: all 0.15s; flex-shrink: 0; }
+  .inject-item-resize:hover { border-color: var(--border); color: var(--text); }
+  .inject-item-resize-panel { display: none; gap: 6px; padding: 8px 0 4px; flex-wrap: wrap; }
+  .inject-item-resize-panel.open { display: flex; }
 
   /* PUBLISH OVERLAY */
   .publish-overlay {
@@ -2232,6 +2242,14 @@
               <div class="inject-upload-title" id="injectUploadLabel">Optional: upload a photo to include</div>
               <div class="inject-upload-hint">JPG or PNG</div>
             </div>
+          </div>
+
+          <div class="inject-size-row" id="injectSizeRow">
+            <span class="inject-size-label">Photo size</span>
+            <button class="size-btn" data-pct="35" onclick="selectInjectSize(this)">Small</button>
+            <button class="size-btn selected" data-pct="65" onclick="selectInjectSize(this)">Medium</button>
+            <button class="size-btn" data-pct="85" onclick="selectInjectSize(this)">Large</button>
+            <button class="size-btn" data-pct="100" onclick="selectInjectSize(this)">Full Width</button>
           </div>
 
           <textarea class="inject-textarea" id="injectPrompt" placeholder='e.g. "A testimonials section with 3 quotes after the about section" or "A gear list section with my photo after services"'></textarea>
@@ -3396,12 +3414,16 @@
     renderTweaks();
   }
 
+  function esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   function renderTweaks() {
     const list = document.getElementById('tweakList');
     if (!list) return;
     list.innerHTML = customTweaks.map((t, i) => `
       <div class="tweak-item">
-        <span class="tweak-item-text">${t.prompt}</span>
+        <span class="tweak-item-text">${esc(t.prompt)}</span>
         <button class="tweak-item-remove" onclick="removeTweak(${i})" title="Remove">✕</button>
       </div>
     `).join('');
@@ -3448,6 +3470,47 @@
   // ── Add a Section ────────────────────────────────────────────────────────
   const customInjections = [];
   let injectionImageDataUrl = null;
+  let selectedInjectSizePct = 65;
+
+  function applyImageSize(html, pct) {
+    // Set max-width on every <img> in the generated HTML
+    return html.replace(/<img([^>]*?)>/gi, (match, attrs) => {
+      if (attrs.includes('style=')) {
+        // Replace existing max-width value
+        if (/max-width\s*:/i.test(attrs)) {
+          attrs = attrs.replace(/max-width\s*:\s*[^;'"]+/gi, `max-width:${pct}%`);
+        } else {
+          attrs = attrs.replace(/style=["']/, `style="max-width:${pct}%;`);
+        }
+      } else {
+        attrs += ` style="max-width:${pct}%;display:block;margin:0 auto;"`;
+      }
+      return `<img${attrs}>`;
+    });
+  }
+
+  function selectInjectSize(btn) {
+    document.querySelectorAll('#injectSizeRow .size-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedInjectSizePct = parseInt(btn.dataset.pct);
+  }
+
+  function toggleResizePanel(idx) {
+    const panel = document.getElementById(`resizePanel${idx}`);
+    if (panel) panel.classList.toggle('open');
+  }
+
+  function resizeInjection(idx, pct) {
+    const inj = customInjections[idx];
+    if (!inj || !inj.hasImage) return;
+    // Re-apply size to the original HTML (stored before sizing)
+    inj.html = applyImageSize(inj.originalHtml || inj.html, pct);
+    inj.sizePct = pct;
+    renderInjections();
+    // Re-open the panel after re-render
+    const panel = document.getElementById(`resizePanel${idx}`);
+    if (panel) panel.classList.add('open');
+  }
 
   function handleInjectionImage(input) {
     if (!input.files || !input.files[0]) return;
@@ -3467,6 +3530,7 @@
         document.getElementById('injectUploadArea').classList.add('has-image');
         document.getElementById('injectUploadLabel').textContent = file.name;
         document.getElementById('injectClearBtn').style.display = '';
+        document.getElementById('injectSizeRow').classList.add('visible');
       };
       img.src = e.target.result;
     };
@@ -3479,6 +3543,10 @@
     document.getElementById('injectUploadLabel').textContent = 'Optional: upload a photo to include';
     document.getElementById('injectFileInput').value = '';
     document.getElementById('injectClearBtn').style.display = 'none';
+    document.getElementById('injectSizeRow').classList.remove('visible');
+    selectedInjectSizePct = 65;
+    document.querySelectorAll('#injectSizeRow .size-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelector('#injectSizeRow .size-btn[data-pct="65"]').classList.add('selected');
   }
 
   async function applyAddSection() {
@@ -3512,11 +3580,20 @@
 
       // Swap in the real image data URL if one was uploaded
       let html = result.html;
-      if (injectionImageDataUrl) {
+      const hasImage = !!injectionImageDataUrl;
+      if (hasImage) {
         html = html.replace(/\{\{IMAGE_SRC\}\}/g, injectionImageDataUrl);
+        html = applyImageSize(html, selectedInjectSizePct);
       }
 
-      customInjections.push({ prompt, insertAfter: result.insertAfter, html });
+      customInjections.push({
+        prompt,
+        insertAfter: result.insertAfter,
+        html,
+        hasImage,
+        originalHtml: html,
+        sizePct: hasImage ? selectedInjectSizePct : null
+      });
       renderInjections();
 
       document.getElementById('injectPrompt').value = '';
@@ -3539,9 +3616,22 @@
     const list = document.getElementById('injectList');
     if (!list) return;
     list.innerHTML = customInjections.map((inj, i) => `
-      <div class="inject-item">
-        <span class="inject-item-text">${inj.prompt} <span style="color:var(--accent)">${inj.insertAfter}</span></span>
-        <button class="inject-item-remove" onclick="removeInjection(${i})" title="Remove">✕</button>
+      <div class="inject-item" style="flex-direction:column; align-items:stretch;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+          <span class="inject-item-text">${esc(inj.prompt || '')} <span style="color:var(--accent)">${esc(inj.insertAfter || '')}</span></span>
+          <div style="display:flex; gap:6px; flex-shrink:0;">
+            ${inj.hasImage ? `<button class="inject-item-resize" onclick="toggleResizePanel(${i})" title="Resize photo">Resize</button>` : ''}
+            <button class="inject-item-remove" onclick="removeInjection(${i})" title="Remove">✕</button>
+          </div>
+        </div>
+        ${inj.hasImage ? `
+        <div class="inject-item-resize-panel" id="resizePanel${i}">
+          <span class="inject-size-label">Photo size</span>
+          <button class="size-btn${(inj.sizePct||65)===35?' selected':''}" onclick="resizeInjection(${i},35)">Small</button>
+          <button class="size-btn${(inj.sizePct||65)===65?' selected':''}" onclick="resizeInjection(${i},65)">Medium</button>
+          <button class="size-btn${(inj.sizePct||65)===85?' selected':''}" onclick="resizeInjection(${i},85)">Large</button>
+          <button class="size-btn${(inj.sizePct||65)===100?' selected':''}" onclick="resizeInjection(${i},100)">Full Width</button>
+        </div>` : ''}
       </div>
     `).join('');
   }

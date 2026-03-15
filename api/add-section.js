@@ -42,7 +42,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'prompt is required' });
   }
 
-  const message = await client.messages.create({
+  let message;
+  try {
+    message = await client.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 4000,
     system: `You are building custom HTML sections for an audio engineer's portfolio website. Your two jobs are: (1) figure out WHERE to place the section, and (2) generate beautiful HTML that looks native to the site.
@@ -156,7 +158,10 @@ Example:
         content: `Build this section: ${prompt}${hasImage ? '\n\nThe user has uploaded a photo to include — use {{IMAGE_SRC}} as the img src attribute.' : ''}`
       }
     ]
-  });
+    });
+  } catch (err) {
+    return res.status(500).json({ error: 'AI service unavailable. Please try again in a moment.' });
+  }
 
   const raw = message.content[0].text.trim();
   const delimIdx = raw.indexOf('---');
