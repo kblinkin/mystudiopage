@@ -1154,14 +1154,21 @@
   .tweak-item-remove:hover { color: var(--red); }
   .tweak-loading { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
   .tweak-error { font-size: 12px; color: var(--red); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
-  .inject-section { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border2); }
-  .inject-heading { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .inject-section { margin-top: 28px; padding-top: 28px; border-top: 2px solid var(--border); }
+  .inject-heading { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 0.03em; color: var(--text); line-height: 1; margin-bottom: 6px; }
+  .inject-desc { font-size: 13px; color: var(--muted2); line-height: 1.6; margin-bottom: 16px; }
   .inject-upload-area { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer; background: var(--bg3); border: 1px solid var(--border2); padding: 10px 14px; transition: border-color 0.15s; }
   .inject-upload-area:hover { border-color: var(--border); }
   .inject-upload-icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
-  .inject-upload-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted2); }
+  .inject-upload-labels { display: flex; flex-direction: column; gap: 2px; }
+  .inject-upload-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted2); }
+  .inject-upload-hint { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.04em; }
   .inject-upload-area.has-image { border-color: var(--green); }
-  .inject-upload-area.has-image .inject-upload-label { color: var(--text); }
+  .inject-upload-area.has-image .inject-upload-title { color: var(--text); }
+  .inject-textarea { width: 100%; background: var(--bg3); border: 1px solid var(--border2); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300; padding: 12px 14px; outline: none; resize: vertical; min-height: 80px; transition: border-color 0.2s; margin-bottom: 10px; }
+  .inject-textarea:focus { border-color: var(--accent); }
+  .inject-textarea::placeholder { color: var(--muted); font-style: italic; }
+  .inject-action-row { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
   .inject-loading { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
   .inject-error { font-size: 12px; color: var(--red); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
   .inject-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
@@ -2180,19 +2187,26 @@
         <div class="tweak-error" id="tweakError"></div>
         <div class="tweak-list" id="tweakList"></div>
 
-        <!-- IMAGE INJECTION -->
+        <!-- ADD A SECTION -->
         <div class="inject-section">
-          <div class="inject-heading">Insert an Image</div>
+          <div class="inject-heading">Add a Section</div>
+          <p class="inject-desc">Describe any section and we'll build it for you — testimonials, a gear list, press features, a photo gallery, a process breakdown, anything. Optionally upload a photo to include in it.</p>
+
           <div class="inject-upload-area" id="injectUploadArea" onclick="document.getElementById('injectFileInput').click()">
             <input type="file" id="injectFileInput" accept="image/*" style="display:none" onchange="handleInjectionImage(this)">
-            <div class="inject-upload-icon">🖼</div>
-            <div class="inject-upload-label" id="injectUploadLabel">Click to upload an image</div>
+            <div class="inject-upload-icon">📷</div>
+            <div class="inject-upload-labels">
+              <div class="inject-upload-title" id="injectUploadLabel">Optional: upload a photo to include</div>
+              <div class="inject-upload-hint">JPG or PNG</div>
+            </div>
           </div>
-          <div class="tweak-input-row">
-            <input type="text" id="injectPrompt" placeholder='e.g. "Add this photo centered after the about section"' onkeydown="if(event.key==='Enter'){event.preventDefault();applyImageInjection();}">
-            <button class="btn btn-primary" id="injectBtn" onclick="applyImageInjection()">Add</button>
+
+          <textarea class="inject-textarea" id="injectPrompt" placeholder='e.g. "A testimonials section with 3 quotes after the about section" or "A gear list section with my photo after services"'></textarea>
+          <div class="inject-action-row">
+            <button class="btn btn-primary" id="injectBtn" onclick="applyAddSection()">Generate Section</button>
+            <button class="btn btn-ghost" id="injectClearBtn" onclick="clearInjectionImage()" style="display:none">✕ Clear photo</button>
           </div>
-          <div class="inject-loading" id="injectLoading">Placing image…</div>
+          <div class="inject-loading" id="injectLoading">Building your section…</div>
           <div class="inject-error" id="injectError"></div>
           <div class="inject-list" id="injectList"></div>
         </div>
@@ -3354,7 +3368,7 @@
     if (undoBtn) undoBtn.style.display = customTweaks.length > 0 ? '' : 'none';
   }
 
-  // ── Image Injection ──────────────────────────────────────────────────────
+  // ── Add a Section ────────────────────────────────────────────────────────
   const customInjections = [];
   let injectionImageDataUrl = null;
 
@@ -3373,27 +3387,30 @@
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         injectionImageDataUrl = canvas.toDataURL('image/jpeg', 0.85);
-        const area = document.getElementById('injectUploadArea');
-        area.classList.add('has-image');
+        document.getElementById('injectUploadArea').classList.add('has-image');
         document.getElementById('injectUploadLabel').textContent = file.name;
+        document.getElementById('injectClearBtn').style.display = '';
       };
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
 
-  async function applyImageInjection() {
+  function clearInjectionImage() {
+    injectionImageDataUrl = null;
+    document.getElementById('injectUploadArea').classList.remove('has-image');
+    document.getElementById('injectUploadLabel').textContent = 'Optional: upload a photo to include';
+    document.getElementById('injectFileInput').value = '';
+    document.getElementById('injectClearBtn').style.display = 'none';
+  }
+
+  async function applyAddSection() {
     const errorEl = document.getElementById('injectError');
     errorEl.style.display = 'none';
 
-    if (!injectionImageDataUrl) {
-      errorEl.textContent = 'Please upload an image first.';
-      errorEl.style.display = 'block';
-      return;
-    }
     const prompt = document.getElementById('injectPrompt').value.trim();
     if (!prompt) {
-      errorEl.textContent = 'Please describe where to place the image.';
+      errorEl.textContent = 'Describe the section you want to add.';
       errorEl.style.display = 'block';
       return;
     }
@@ -3404,23 +3421,29 @@
     loadingEl.style.display = 'block';
 
     try {
-      const res = await fetch('/api/inject-image', {
+      const res = await fetch('/api/add-section', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
+        body: JSON.stringify({
+          prompt,
+          theme: selectedTheme || 'dark-gold',
+          hasImage: !!injectionImageDataUrl
+        })
       });
       const result = await res.json();
-      if (!res.ok || !result.insertAfter) throw new Error(result.error || 'Could not determine placement.');
+      if (!res.ok || !result.html) throw new Error(result.error || 'Could not generate section.');
 
-      const html = `<div style="text-align:center;padding:40px 20px;"><img src="${injectionImageDataUrl}" style="max-width:100%;max-height:600px;object-fit:contain;" alt="Inserted image"></div>`;
+      // Swap in the real image data URL if one was uploaded
+      let html = result.html;
+      if (injectionImageDataUrl) {
+        html = html.replace(/\{\{IMAGE_SRC\}\}/g, injectionImageDataUrl);
+      }
+
       customInjections.push({ prompt, insertAfter: result.insertAfter, html });
       renderInjections();
 
       document.getElementById('injectPrompt').value = '';
-      injectionImageDataUrl = null;
-      document.getElementById('injectUploadArea').classList.remove('has-image');
-      document.getElementById('injectUploadLabel').textContent = 'Click to upload an image';
-      document.getElementById('injectFileInput').value = '';
+      clearInjectionImage();
     } catch (err) {
       errorEl.textContent = err.message || 'Something went wrong. Try rephrasing.';
       errorEl.style.display = 'block';
