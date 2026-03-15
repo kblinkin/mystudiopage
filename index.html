@@ -1750,7 +1750,7 @@
             <div class="guide-step-num">3</div>
             <div class="guide-step-content">
               <div class="guide-step-title">Set privacy &amp; copy the link</div>
-              <div class="guide-step-desc">Once uploaded, click the track. For <strong>public tracks</strong>, copy the URL from your browser bar. For <strong>private tracks</strong>, set the track to <em>Private</em>, then click <strong>Share → Embed tab</strong> — find the <code style="font-size:12px;">src="..."</code> inside the embed code and copy that URL. It will contain <strong>/s-</strong> in the path, which is the secret token that lets it play on your site without appearing on your public profile.</div>
+              <div class="guide-step-desc">Once uploaded, click the track. For <strong>public tracks</strong>, copy the URL from your browser bar. For <strong>private tracks</strong>, click <strong>Share → Embed tab</strong> — you'll see an iframe code block. Copy the URL from the <code style="font-size:12px;">src="..."</code> attribute — it starts with <code style="font-size:12px;">https://w.soundcloud.com/player/</code>. That's the one to paste here. The "Private Share" link on the Share tab looks different and won't work in an embed player.</div>
             </div>
           </div>
           <div class="guide-step">
@@ -1767,7 +1767,7 @@
       <div class="info-box" id="privateTrackTip" style="display:none">
         <div class="info-box-label">🔒 Private Tracks</div>
         <div class="info-box-text">
-          Keeping client work off your public profile? Set the track to <strong>Private</strong> on SoundCloud, then go to <strong>Share → Embed tab</strong> and find the URL inside the <code style="font-size:12px;">src="..."</code> of the embed code — it contains a <strong>/s-</strong> secret token. Paste that URL here (not the whole embed code, just the URL). It will play fine on your site without appearing on your public SoundCloud profile.
+          Keeping client work off your public profile? Set the track to <strong>Private</strong> on SoundCloud, then go to <strong>Share → Embed tab</strong>. Copy the URL from the <code style="font-size:12px;">src="..."</code> part of the iframe code — it starts with <code style="font-size:12px;">https://w.soundcloud.com/player/</code>. Paste just that URL here (not the whole embed code). The "Private Share" link on the Share tab looks different and won't embed correctly.
         </div>
       </div>
 
@@ -1782,8 +1782,8 @@
       <div class="track-fields" id="trackFields" style="display:none">
         <div style="background:var(--bg3); border:1px solid var(--border2); border-left:3px solid var(--accent); padding:12px 16px; margin-bottom:4px;">
           <div style="font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;">Private tracks</div>
-          <p style="font-family:'DM Sans',sans-serif; font-weight:300; font-size:13px; color:var(--muted2); line-height:1.6; margin:0 0 8px;">For private tracks, the regular link won't work — you need the <strong style="color:var(--text); font-weight:400;">secret link</strong>. On SoundCloud, open the track → click <strong style="color:var(--text); font-weight:400;">Share → Embed tab</strong> → copy the URL inside the <code style="font-family:'DM Mono',monospace; font-size:11px; color:var(--accent);">src="..."</code> attribute of the embed code. That URL contains a secret token and is the one to paste here.</p>
-          <p style="font-family:'DM Sans',sans-serif; font-weight:300; font-size:12px; color:var(--muted); line-height:1.5; margin:0;">The secret URL will look like: <code style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted2);">soundcloud.com/you/trackname/s-XXXXXX</code> — if it doesn't contain <code style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted2);">/s-</code> it won't play.</p>
+          <p style="font-family:'DM Sans',sans-serif; font-weight:300; font-size:13px; color:var(--muted2); line-height:1.6; margin:0 0 8px;">The "Private Share" link from the Share tab won't play in an embed. Instead: open the track → <strong style="color:var(--text); font-weight:400;">Share → Embed tab</strong> → you'll see an iframe code block. Find the part that starts with <code style="font-family:'DM Mono',monospace; font-size:11px; color:var(--accent);">src="https://w.soundcloud.com/player/...</code> and copy everything between the quotes. Paste that full URL here.</p>
+          <p style="font-family:'DM Sans',sans-serif; font-weight:300; font-size:12px; color:var(--muted); line-height:1.5; margin:0;">It will start with <code style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted2);">https://w.soundcloud.com/player/?url=</code> — that's the one that works.</p>
         </div>
         <div class="track-field">
           <div class="track-field-header">Track 1</div>
