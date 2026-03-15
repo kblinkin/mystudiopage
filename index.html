@@ -2614,7 +2614,7 @@
     }
 
     // 2. Basic info
-    const fieldMap = { name:'inputName', studioName:'inputStudio', tagline:'inputTagline', bio:'inputBio', email:'inputEmail' };
+    const fieldMap = { name:'inputName', studioName:'inputStudio', tagline:'inputTagline', bio:'inputBio', ethos:'inputEthos', email:'inputEmail' };
     Object.entries(fieldMap).forEach(([k, id]) => { const el = document.getElementById(id); if (el && data[k]) el.value = data[k]; });
 
     // 3. Photo

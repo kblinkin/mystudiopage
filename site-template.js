@@ -730,6 +730,7 @@ export function renderSite(data) {
 
     .about-grid.has-photo {
       grid-template-columns: 400px 1fr;
+      gap: 72px;
       align-items: start;
     }
 
