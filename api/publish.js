@@ -49,6 +49,40 @@ export default async function handler(req, res) {
     const key = `site:${subdomain}`;
     await kv.set(key, JSON.stringify(data));
 
+    // If a custom domain is provided, save the mapping and register it with Vercel
+    if (data.customDomain) {
+      const rawDomain = data.customDomain.toLowerCase()
+        .replace(/^https?:\/\//, '')
+        .replace(/^www\./, '')
+        .trim();
+      if (rawDomain) {
+        // Save custom domain → subdomain lookup
+        await kv.set(`customdomain:${rawDomain}`, subdomain);
+
+        // Auto-register the domain with this Vercel project so it routes correctly
+        const vercelToken = process.env.VERCEL_TOKEN;
+        const vercelProjectId = process.env.VERCEL_PROJECT_ID;
+        if (vercelToken && vercelProjectId) {
+          const registerDomain = async (name) => {
+            try {
+              await fetch(`https://api.vercel.com/v9/projects/${vercelProjectId}/domains`, {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${vercelToken}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name }),
+              });
+            } catch (e) {
+              console.error('[publish] vercel domain register error:', e);
+            }
+          };
+          await registerDomain(rawDomain);
+          await registerDomain(`www.${rawDomain}`);
+        }
+      }
+    }
+
     // If the user is logged in, save their form data to their account
     const { token } = data;
     if (token) {

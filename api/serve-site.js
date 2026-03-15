@@ -104,9 +104,21 @@ const NOT_FOUND_HTML = `<!DOCTYPE html>
 
 export default async function handler(req, res) {
   // x-forwarded-host preserves the original hostname through Vercel's internal routing
-  const host = req.headers['x-forwarded-host'] || req.headers.host || '';
+  const host = (req.headers['x-forwarded-host'] || req.headers.host || '').toLowerCase();
   const hostSubdomain = host.includes('.mystudiopage.com') ? host.split('.mystudiopage.com')[0] : '';
-  const subdomain = req.query.s || hostSubdomain || '';
+
+  let subdomain = req.query.s || hostSubdomain || '';
+
+  // If the host is a custom domain (not mystudiopage.com), look up its subdomain mapping
+  if (!subdomain && host && !host.endsWith('mystudiopage.com')) {
+    const cleanHost = host.replace(/^www\./, '');
+    try {
+      const mapped = await kv.get(`customdomain:${cleanHost}`);
+      if (mapped) subdomain = mapped;
+    } catch (e) {
+      console.error('[serve-site] custom domain lookup error:', e);
+    }
+  }
 
   // Debug header — check for this in browser Network tab
   res.setHeader('X-Debug-Host', host);
