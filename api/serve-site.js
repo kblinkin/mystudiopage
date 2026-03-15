@@ -131,7 +131,7 @@ export default async function handler(req, res) {
     const html = renderSite(data);
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+    res.setHeader('Cache-Control', 'no-store');
     return res.status(200).send(html);
 
   } catch (err) {
