@@ -13,13 +13,13 @@
     --bg3: #1c1c1c;
     --bg4: #242424;
     --text: #f0ece4;
-    --muted: #686460;
-    --muted2: #908c88;
+    --muted: #928e8a;
+    --muted2: #b8b4b0;
     --accent: #c8a96e;
     --accent2: #e8c98e;
     --accent-dim: rgba(200,169,110,0.12);
     --border: rgba(200,169,110,0.2);
-    --border2: rgba(240,236,228,0.07);
+    --border2: rgba(240,236,228,0.11);
     --green: #7857C0;
     --green-dim: rgba(120,87,192,0.12);
     --red: #eb5757;
@@ -73,9 +73,9 @@
 
   .header-step-indicator {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--muted2);
   }
 
   .header-step-indicator span { color: var(--accent); }
@@ -122,8 +122,8 @@
 
   .sidebar-label {
     font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
+    font-size: 11px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 12px;
@@ -162,7 +162,7 @@
     align-items: center;
     justify-content: center;
     font-family: 'DM Mono', monospace;
-    font-size: 9px;
+    font-size: 10px;
     color: #0c0c0c;
     transition: background 0.2s;
   }
@@ -180,7 +180,7 @@
     transition: color 0.15s;
   }
 
-  .step-nav-item.active .step-nav-label { color: var(--text); font-weight: 400; }
+  .step-nav-item.active .step-nav-label { color: var(--text); font-weight: 500; }
   .step-nav-item.completed .step-nav-label { color: var(--muted2); }
 
   /* MAIN CONTENT */
@@ -206,8 +206,8 @@
 
   .step-eyebrow {
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.2em;
+    font-size: 11px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--accent);
     margin-bottom: 12px;
@@ -233,11 +233,12 @@
 
   .step-desc {
     font-size: 15px;
-    color: var(--muted2);
+    color: var(--text);
     line-height: 1.7;
     max-width: 560px;
     word-break: normal;
     overflow-wrap: normal;
+    opacity: 0.75;
   }
 
   /* EXAMPLE BOX */
@@ -252,18 +253,19 @@
 
   .example-label {
     font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
+    font-size: 11px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--accent);
     margin-bottom: 8px;
   }
 
   .example-text {
-    font-size: 13px;
-    color: var(--muted2);
+    font-size: 14px;
+    color: var(--text);
     line-height: 1.7;
     font-style: italic;
+    opacity: 0.7;
   }
 
   .example-text strong { color: var(--text); font-style: normal; font-weight: 400; }
@@ -274,16 +276,17 @@
   .field-label {
     display: block;
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
+    font-size: 11px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--muted2);
+    color: var(--text);
     margin-bottom: 8px;
+    opacity: 0.85;
   }
 
   .field-hint {
-    font-size: 12px;
-    color: var(--muted);
+    font-size: 13px;
+    color: var(--muted2);
     margin-top: 6px;
     line-height: 1.5;
   }
@@ -373,8 +376,8 @@
   }
 
   .type-desc {
-    font-size: 12px;
-    color: var(--muted);
+    font-size: 13px;
+    color: var(--muted2);
     line-height: 1.6;
   }
 
@@ -400,7 +403,7 @@
 
   .sc-option-icon { font-size: 28px; margin-bottom: 10px; }
   .sc-option-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.05em; margin-bottom: 6px; }
-  .sc-option-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .sc-option-desc { font-size: 13px; color: var(--muted2); line-height: 1.5; }
 
   .sc-guide {
     display: none;
@@ -444,7 +447,7 @@
 
   .guide-step-content { flex: 1; padding-top: 4px; }
   .guide-step-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; color: var(--text); }
-  .guide-step-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .guide-step-desc { font-size: 13px; color: var(--muted2); line-height: 1.6; }
   .guide-step-desc a { color: var(--accent); text-decoration: none; }
   .guide-step-desc a:hover { text-decoration: underline; }
 
@@ -453,8 +456,8 @@
     align-items: center;
     gap: 6px;
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
+    font-size: 11px;
+    letter-spacing: 0.08em;
     color: var(--green);
     background: var(--green-dim);
     padding: 4px 10px;
@@ -472,10 +475,10 @@
 
   .track-field-header {
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
+    font-size: 11px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--muted2);
     margin-bottom: 12px;
   }
 
@@ -509,8 +512,8 @@
 
   .service-field-type {
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
+    font-size: 11px;
+    letter-spacing: 0.08em;
     color: var(--accent);
     background: var(--accent-dim);
     padding: 4px 10px;
@@ -558,8 +561,8 @@
 
   .theme-name {
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
+    font-size: 11px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 8px;
     background: var(--bg2);
@@ -577,13 +580,13 @@
 
   /* LAYOUT STYLES */
   .layout-section { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--border2); }
-  .layout-section-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text2); margin-bottom: 12px; }
+  .layout-section-label { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted2); margin-bottom: 12px; }
   .layout-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
   .layout-card { cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; overflow: hidden; }
   .layout-card.selected { border-color: var(--accent); }
   .layout-preview { height: 80px; background: #111; position: relative; padding: 10px; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
   .layout-card.selected .layout-name { color: var(--accent); }
-  .layout-name { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 8px; background: var(--bg2); text-align: center; border-top: 1px solid var(--border2); color: var(--muted2); }
+  .layout-name { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px; background: var(--bg2); text-align: center; border-top: 1px solid var(--border2); color: var(--muted2); }
 
   /* Generate button nudge */
   @keyframes btn-nudge { 0%,100% { transform: scale(1); } 40% { transform: scale(1.06); } }
@@ -611,7 +614,7 @@
     padding: 14px 16px;
     border-right: 1px solid var(--border2);
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.05em;
     color: var(--muted2);
     background: var(--bg3);
@@ -709,8 +712,8 @@
 
   .photo-tip-label {
     font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
+    font-size: 11px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     margin-bottom: 6px;
   }
@@ -718,7 +721,7 @@
   .photo-tip.good .photo-tip-label { color: var(--green); }
   .photo-tip.bad .photo-tip-label { color: var(--red); }
 
-  .photo-tip-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .photo-tip-text { font-size: 13px; color: var(--muted2); line-height: 1.5; }
 
   /* DIVIDER */
   .divider {
@@ -732,7 +735,7 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 24px;
     letter-spacing: 0.05em;
-    color: var(--muted2);
+    color: var(--text);
     margin-bottom: 20px;
   }
 
@@ -791,9 +794,9 @@
 
   .step-progress-text {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
+    font-size: 12px;
+    color: var(--muted2);
+    letter-spacing: 0.08em;
   }
 
   /* ADVANCED OPTIONS */
@@ -815,8 +818,8 @@
 
   .advanced-badge {
     font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
+    font-size: 10px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: #0c0c0c;
     background: var(--muted2);
@@ -831,8 +834,8 @@
   }
 
   .advanced-header-desc {
-    font-size: 12px;
-    color: var(--muted);
+    font-size: 13px;
+    color: var(--muted2);
     margin-top: 2px;
   }
 
@@ -879,8 +882,8 @@
   }
 
   .advanced-option-subtitle {
-    font-size: 12px;
-    color: var(--muted);
+    font-size: 13px;
+    color: var(--muted2);
   }
 
   .advanced-option-toggle {
@@ -901,7 +904,7 @@
   .advanced-option-body.open { display: block; }
 
   .advanced-option-intro {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--muted2);
     line-height: 1.7;
     margin-bottom: 24px;
@@ -940,8 +943,8 @@
   }
 
   .adv-guide-desc {
-    font-size: 12px;
-    color: var(--muted);
+    font-size: 13px;
+    color: var(--muted2);
     line-height: 1.7;
   }
 
@@ -976,10 +979,10 @@
     padding: 14px 20px;
     background: transparent;
     border: 1px dashed var(--border2);
-    color: var(--muted);
+    color: var(--muted2);
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.1em;
+    font-size: 12px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
     transition: border-color 0.2s, color 0.2s, background 0.2s;
@@ -1006,16 +1009,17 @@
   }
   .info-box-label {
     font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
+    font-size: 11px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--accent);
     margin-bottom: 8px;
   }
   .info-box-text {
-    font-size: 13px;
-    color: var(--muted2);
+    font-size: 14px;
+    color: var(--text);
     line-height: 1.7;
+    opacity: 0.8;
   }
   .info-box-text strong { color: var(--text); font-weight: 500; }
   .info-box-text a { color: var(--accent); text-decoration: none; }
@@ -1031,16 +1035,17 @@
   }
   .warning-box-label {
     font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
+    font-size: 11px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--red);
     margin-bottom: 6px;
   }
   .warning-box-text {
-    font-size: 13px;
-    color: var(--muted2);
+    font-size: 14px;
+    color: var(--text);
     line-height: 1.6;
+    opacity: 0.8;
   }
   .warning-box-text strong { color: var(--text); font-weight: 500; }
 
@@ -1059,10 +1064,11 @@
     margin-bottom: 10px;
   }
   .production-quote-body {
-    font-size: 14px;
-    color: var(--muted2);
+    font-size: 15px;
+    color: var(--text);
     line-height: 1.75;
     margin-bottom: 20px;
+    opacity: 0.8;
   }
 
   /* LOGO */
