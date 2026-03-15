@@ -1154,6 +1154,21 @@
   .tweak-item-remove:hover { color: var(--red); }
   .tweak-loading { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
   .tweak-error { font-size: 12px; color: var(--red); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
+  .inject-section { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border2); }
+  .inject-heading { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .inject-upload-area { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer; background: var(--bg3); border: 1px solid var(--border2); padding: 10px 14px; transition: border-color 0.15s; }
+  .inject-upload-area:hover { border-color: var(--border); }
+  .inject-upload-icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .inject-upload-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted2); }
+  .inject-upload-area.has-image { border-color: var(--green); }
+  .inject-upload-area.has-image .inject-upload-label { color: var(--text); }
+  .inject-loading { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
+  .inject-error { font-size: 12px; color: var(--red); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
+  .inject-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .inject-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; background: var(--bg3); border: 1px solid var(--border2); padding: 10px 14px; }
+  .inject-item-text { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; flex: 1; line-height: 1.4; }
+  .inject-item-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0; line-height: 1; transition: color 0.15s; flex-shrink: 0; }
+  .inject-item-remove:hover { color: var(--red); }
 
   /* PUBLISH OVERLAY */
   .publish-overlay {
@@ -2164,6 +2179,23 @@
         <div class="tweak-loading" id="tweakLoading">Generating CSS tweak…</div>
         <div class="tweak-error" id="tweakError"></div>
         <div class="tweak-list" id="tweakList"></div>
+
+        <!-- IMAGE INJECTION -->
+        <div class="inject-section">
+          <div class="inject-heading">Insert an Image</div>
+          <div class="inject-upload-area" id="injectUploadArea" onclick="document.getElementById('injectFileInput').click()">
+            <input type="file" id="injectFileInput" accept="image/*" style="display:none" onchange="handleInjectionImage(this)">
+            <div class="inject-upload-icon">🖼</div>
+            <div class="inject-upload-label" id="injectUploadLabel">Click to upload an image</div>
+          </div>
+          <div class="tweak-input-row">
+            <input type="text" id="injectPrompt" placeholder='e.g. "Add this photo centered after the about section"' onkeydown="if(event.key==='Enter'){event.preventDefault();applyImageInjection();}">
+            <button class="btn btn-primary" id="injectBtn" onclick="applyImageInjection()">Add</button>
+          </div>
+          <div class="inject-loading" id="injectLoading">Placing image…</div>
+          <div class="inject-error" id="injectError"></div>
+          <div class="inject-list" id="injectList"></div>
+        </div>
       </div>
 
       <div class="divider"></div>
@@ -3016,6 +3048,7 @@
     data.credits = creditsList.length > 0 ? [...creditsList] : [];
     data.customCss = customTweaks.map(t => t.css).join('\n');
     data.tweaks = [...customTweaks];
+    data.htmlInjections = customInjections.map(inj => ({ insertAfter: inj.insertAfter, html: inj.html }));
 
     // Tracks
     const trackFields = document.querySelectorAll('#trackFields .track-field');
@@ -3319,6 +3352,98 @@
     `).join('');
     const undoBtn = document.getElementById('tweakUndoBtn');
     if (undoBtn) undoBtn.style.display = customTweaks.length > 0 ? '' : 'none';
+  }
+
+  // ── Image Injection ──────────────────────────────────────────────────────
+  const customInjections = [];
+  let injectionImageDataUrl = null;
+
+  function handleInjectionImage(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 1200;
+        let w = img.width, h = img.height;
+        if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+        else if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        injectionImageDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        const area = document.getElementById('injectUploadArea');
+        area.classList.add('has-image');
+        document.getElementById('injectUploadLabel').textContent = file.name;
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function applyImageInjection() {
+    const errorEl = document.getElementById('injectError');
+    errorEl.style.display = 'none';
+
+    if (!injectionImageDataUrl) {
+      errorEl.textContent = 'Please upload an image first.';
+      errorEl.style.display = 'block';
+      return;
+    }
+    const prompt = document.getElementById('injectPrompt').value.trim();
+    if (!prompt) {
+      errorEl.textContent = 'Please describe where to place the image.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const btn = document.getElementById('injectBtn');
+    const loadingEl = document.getElementById('injectLoading');
+    btn.disabled = true;
+    loadingEl.style.display = 'block';
+
+    try {
+      const res = await fetch('/api/inject-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+      const result = await res.json();
+      if (!res.ok || !result.insertAfter) throw new Error(result.error || 'Could not determine placement.');
+
+      const html = `<div style="text-align:center;padding:40px 20px;"><img src="${injectionImageDataUrl}" style="max-width:100%;max-height:600px;object-fit:contain;" alt="Inserted image"></div>`;
+      customInjections.push({ prompt, insertAfter: result.insertAfter, html });
+      renderInjections();
+
+      document.getElementById('injectPrompt').value = '';
+      injectionImageDataUrl = null;
+      document.getElementById('injectUploadArea').classList.remove('has-image');
+      document.getElementById('injectUploadLabel').textContent = 'Click to upload an image';
+      document.getElementById('injectFileInput').value = '';
+    } catch (err) {
+      errorEl.textContent = err.message || 'Something went wrong. Try rephrasing.';
+      errorEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      loadingEl.style.display = 'none';
+    }
+  }
+
+  function removeInjection(idx) {
+    customInjections.splice(idx, 1);
+    renderInjections();
+  }
+
+  function renderInjections() {
+    const list = document.getElementById('injectList');
+    if (!list) return;
+    list.innerHTML = customInjections.map((inj, i) => `
+      <div class="inject-item">
+        <span class="inject-item-text">${inj.prompt} <span style="color:var(--accent)">${inj.insertAfter}</span></span>
+        <button class="inject-item-remove" onclick="removeInjection(${i})" title="Remove">✕</button>
+      </div>
+    `).join('');
   }
 
   function handleLogoUpload(event) {

@@ -1135,6 +1135,14 @@ export function renderSite(data) {
     }
   `;
 
+  // ── HTML Injections ───────────────────────────────────────────────────────
+  const htmlInjections = Array.isArray(data.htmlInjections) ? data.htmlInjections : [];
+  function withInjections(sectionHtml, sectionId) {
+    if (!sectionHtml) return sectionHtml;
+    const matches = htmlInjections.filter(inj => inj.insertAfter === sectionId);
+    return sectionHtml + matches.map(inj => inj.html).join('');
+  }
+
   // ── Full document ─────────────────────────────────────────────────────────
   return `<!DOCTYPE html>
 <html lang="en">
@@ -1151,13 +1159,13 @@ export function renderSite(data) {
 </head>
 <body>
 ${navHtml}
-${heroHtml}
-${aboutHtml}
-${creditsHtml}
-${workHtml}
-${servicesHtml}
+${withInjections(heroHtml, '#hero')}
+${withInjections(aboutHtml, '#about')}
+${withInjections(creditsHtml, '#credits')}
+${withInjections(workHtml, '#work')}
+${withInjections(servicesHtml, '#services')}
 ${statsHtml}
-${contactHtml}
+${withInjections(contactHtml, '#contact')}
 ${footerHtml}
 </body>
 </html>`;
