@@ -189,7 +189,7 @@ export function renderSite(data) {
       return `<div class="stat-block"><div class="stat-text">${escHtml(text)}</div></div>${sep}`;
     }).join('');
     statsHtml = `
-  <section class="stats-band" aria-label="Quick stats">
+  <section class="stats-band" id="stats" aria-label="Quick stats">
     <div class="stats-inner">${statItems}</div>
   </section>`;
   }
@@ -1164,7 +1164,7 @@ ${withInjections(aboutHtml, '#about')}
 ${withInjections(creditsHtml, '#credits')}
 ${withInjections(workHtml, '#work')}
 ${withInjections(servicesHtml, '#services')}
-${statsHtml}
+${withInjections(statsHtml, '#stats')}
 ${withInjections(contactHtml, '#contact')}
 ${footerHtml}
 </body>
