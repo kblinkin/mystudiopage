@@ -458,7 +458,7 @@
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.08em;
-    color: var(--green);
+    color: var(--text);
     background: var(--green-dim);
     padding: 4px 10px;
     margin-bottom: 20px;
@@ -670,7 +670,7 @@
   .url-live {
     font-family: 'DM Mono', monospace;
     font-size: 13px;
-    color: var(--green);
+    color: var(--text);
     background: var(--green-dim);
     padding: 10px 16px;
     display: inline-flex;
@@ -718,7 +718,7 @@
     margin-bottom: 6px;
   }
 
-  .photo-tip.good .photo-tip-label { color: var(--green); }
+  .photo-tip.good .photo-tip-label { color: var(--accent); }
   .photo-tip.bad .photo-tip-label { color: var(--red); }
 
   .photo-tip-text { font-size: 13px; color: var(--muted2); line-height: 1.5; }
@@ -1212,7 +1212,7 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 52px;
     letter-spacing: 0.03em;
-    color: var(--green);
+    color: var(--accent);
     margin-bottom: 8px;
   }
   .publish-success-subtitle {
@@ -1226,7 +1226,7 @@
     padding: 20px 28px;
     font-family: 'DM Mono', monospace;
     font-size: 18px;
-    color: var(--green);
+    color: var(--accent);
     margin-bottom: 24px;
     display: inline-block;
     letter-spacing: 0.05em;
@@ -1384,7 +1384,7 @@
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.1em;
-    color: var(--green);
+    color: var(--text);
     align-items: center;
     gap: 8px;
     transition: opacity 0.5s ease;
@@ -2525,7 +2525,7 @@
       currentPhotoDataUrl = data.photoDataUrl;
       const area = document.querySelector('.photo-upload');
       if (area) {
-        area.innerHTML = `<div class="photo-upload-icon">📷</div><div class="photo-upload-title" style="color:var(--green)">✓ Photo loaded from your account</div><div class="photo-upload-hint">Click to replace it with a different photo</div><input type="file" accept="image/*" style="display:none" onchange="handlePhoto(this)">`;
+        area.innerHTML = `<div class="photo-upload-icon">📷</div><div class="photo-upload-title" style="color:var(--accent)">✓ Photo loaded from your account</div><div class="photo-upload-hint">Click to replace it with a different photo</div><input type="file" accept="image/*" style="display:none" onchange="handlePhoto(this)">`;
       }
     }
 
