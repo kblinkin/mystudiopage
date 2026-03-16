@@ -1506,9 +1506,12 @@
 
 <header>
   <div class="logo">mystudiopage <span>/ builder</span></div>
-  <div style="display:flex;align-items:center;gap:16px">
+  <div style="display:flex;align-items:center;gap:12px">
     <div id="authUserBadge"></div>
     <button id="btnRepublish" class="btn btn-publish" style="display:none;padding:8px 18px;font-size:12px" onclick="publishSite()">↑ Republish</button>
+    <button id="undoBtn" onclick="undoLastAction()" disabled title="Nothing to undo" style="display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;background:none;border:1px solid var(--border2);color:var(--muted2);padding:5px 10px;cursor:pointer;transition:all 0.15s;opacity:0.4;pointer-events:none;">
+      ↩ Undo <span id="undoCount" style="background:var(--bg3);border:1px solid var(--border2);border-radius:2px;padding:1px 5px;font-size:10px;display:none">0</span>
+    </button>
     <div class="header-step-indicator">Step <span id="headerStepNum">1</span> of 10</div>
   </div>
 </header>
@@ -2780,6 +2783,7 @@
   ];
 
   function goToStep(step) {
+    takeSnapshot();
     // Mark current as completed
     document.querySelector(`.step-nav-item[data-step="${currentStep}"]`).classList.add('completed');
 
@@ -2834,12 +2838,14 @@
   });
 
   function selectType(card) {
+    takeSnapshot();
     document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     selectedType = card.dataset.type;
   }
 
   function selectTheme(card) {
+    takeSnapshot();
     document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     selectedTheme = card.dataset.theme;
@@ -2881,6 +2887,7 @@
 
   function handlePhoto(input) {
     if (input.files && input.files[0]) {
+      takeSnapshot();
       const uploadEl = input.closest('.photo-upload');
       uploadEl.querySelector('.photo-upload-icon').textContent = '✅';
       uploadEl.querySelector('.photo-upload-title').textContent = input.files[0].name;
@@ -3060,6 +3067,7 @@
   let serviceCount = 0;
 
   function addService() {
+    takeSnapshot();
     serviceCount++;
     const n = serviceCount;
     const num = String(n).padStart(2, '0');
@@ -3093,7 +3101,8 @@
 
   function removeService(btn) {
     const fields = document.querySelectorAll('#serviceFields .service-field');
-    if (fields.length <= 1) return; // keep at least one
+    if (fields.length <= 1) return;
+    takeSnapshot(); // keep at least one
     btn.closest('.service-field').remove();
   }
 
@@ -3101,6 +3110,7 @@
   let statCount = 2;
 
   function addStat() {
+    takeSnapshot();
     statCount++;
     const grid = document.getElementById('statsGrid');
     const div = document.createElement('div');
@@ -3116,7 +3126,8 @@
 
   function removeStat(btn) {
     const stats = document.querySelectorAll('#statsGrid .stat-field');
-    if (stats.length <= 1) return; // keep at least one
+    if (stats.length <= 1) return;
+    takeSnapshot();
     btn.closest('.stat-field').remove();
   }
 
@@ -3345,9 +3356,69 @@
   let selectedLayout = 'default';
 
   function selectLayout(card) {
+    takeSnapshot();
     document.querySelectorAll('.layout-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     selectedLayout = card.dataset.layout;
+  }
+
+  // ── Undo System ─────────────────────────────────────────────────────────
+  const undoHistory = [];
+  let _undoing = false;
+
+  function takeSnapshot() {
+    if (_undoing) return;
+    const snapshot = { step: currentStep, data: collectFormData() };
+    // Skip if identical to the last snapshot
+    const last = undoHistory[undoHistory.length - 1];
+    if (last && last.step === snapshot.step && JSON.stringify(last.data) === JSON.stringify(snapshot.data)) return;
+    undoHistory.push(snapshot);
+    if (undoHistory.length > 10) undoHistory.shift();
+    updateUndoBtn();
+  }
+
+  function updateUndoBtn() {
+    const btn = document.getElementById('undoBtn');
+    const badge = document.getElementById('undoCount');
+    if (!btn) return;
+    const count = undoHistory.length;
+    if (count === 0) {
+      btn.disabled = true;
+      btn.style.opacity = '0.4';
+      btn.style.pointerEvents = 'none';
+      btn.title = 'Nothing to undo';
+      badge.style.display = 'none';
+    } else {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = '';
+      btn.title = `Undo last action (${count} available)`;
+      badge.textContent = count;
+      badge.style.display = '';
+    }
+  }
+
+  function undoLastAction() {
+    if (undoHistory.length === 0) return;
+    _undoing = true;
+    const snapshot = undoHistory.pop();
+    restoreSnapshot(snapshot.data, snapshot.step);
+    updateUndoBtn();
+    _undoing = false;
+  }
+
+  function restoreSnapshot(data, step) {
+    // Rebuild dynamic service fields before calling loadSavedData
+    if (data.services) {
+      const container = document.getElementById('serviceFields');
+      if (container) {
+        container.innerHTML = '';
+        serviceCount = 0;
+        data.services.forEach(() => addService());
+      }
+    }
+    loadSavedData(data);
+    if (step && step !== currentStep) goToStep(step);
   }
 
   // ── Rich Text Formatting ────────────────────────────────────────────────
@@ -3425,6 +3496,7 @@
     const input = document.getElementById('creditsInput');
     const name = input.value.trim();
     if (!name || creditsList.includes(name)) { input.value = ''; return; }
+    takeSnapshot();
     creditsList.push(name);
     input.value = '';
     renderCredits();
@@ -3432,7 +3504,9 @@
 
   function removeCredit(name) {
     const idx = creditsList.indexOf(name);
-    if (idx !== -1) creditsList.splice(idx, 1);
+    if (idx === -1) return;
+    takeSnapshot();
+    creditsList.splice(idx, 1);
     renderCredits();
   }
 
@@ -3478,6 +3552,7 @@
       const result = await res.json();
       if (!res.ok || (!result.css && !result.html)) throw new Error(result.error || 'Could not generate change. Try rephrasing.');
 
+      takeSnapshot();
       if (result.css) {
         customTweaks.push({ prompt, css: result.css });
         lastCustomizationTarget = 'css';
@@ -3513,6 +3588,7 @@
   }
 
   function removeTweak(idx) {
+    takeSnapshot();
     customTweaks.splice(idx, 1);
     renderCustomizations();
   }
@@ -3688,6 +3764,7 @@
   }
 
   function removeInjection(idx) {
+    takeSnapshot();
     customInjections.splice(idx, 1);
     renderCustomizations();
   }
@@ -3695,6 +3772,7 @@
   function handleLogoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
+    takeSnapshot();
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
@@ -3742,6 +3820,7 @@
   }
 
   function removeLogo() {
+    takeSnapshot();
     currentLogoSvg = null;
     document.getElementById('logoPreviewSection').style.display = 'none';
   }
