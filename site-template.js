@@ -40,27 +40,21 @@ function escHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
-// Renders bio/ethos text: allows <strong> and <em>, converts newlines to paragraphs
-function formatRichText(raw, size) {
-  if (!raw) return '';
-  // Escape all HTML first
-  let text = String(raw)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-  // Restore only allowed tags: <strong>, </strong>, <em>, </em>
-  text = text
-    .replace(/&lt;strong&gt;/g, '<strong>')
-    .replace(/&lt;\/strong&gt;/g, '</strong>')
-    .replace(/&lt;em&gt;/g, '<em>')
-    .replace(/&lt;\/em&gt;/g, '</em>');
-  // Split on double newlines into paragraphs
+// Renders bio/ethos: content is sanitized HTML from contenteditable (b, strong, i, em, br allowed)
+function formatRichText(html, size) {
+  if (!html) return '';
   const sizeMap = { small: '15px', medium: '18px', large: '22px' };
   const fontSize = sizeMap[size] || '18px';
-  const paragraphs = text.split(/\n\n+/);
-  return paragraphs
-    .map(p => `<p style="font-size:${fontSize};margin-bottom:1.2em;line-height:1.85;">${p.replace(/\n/g, '<br>')}</p>`)
-    .join('');
+  // Split on double <br> into paragraphs
+  const paragraphs = html.split(/<br\s*\/?>\s*<br\s*\/?>/i);
+  if (paragraphs.length > 1) {
+    return paragraphs
+      .map(p => p.trim())
+      .filter(p => p)
+      .map(p => `<p style="font-size:${fontSize};margin:0 0 1.2em;line-height:1.85;">${p}</p>`)
+      .join('');
+  }
+  return `<p style="font-size:${fontSize};margin:0;line-height:1.85;">${html}</p>`;
 }
 
 function accentHex(color) {

@@ -327,6 +327,16 @@
   .rte-size-btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; background: var(--bg3); border: 1px solid var(--border2); color: var(--muted2); padding: 3px 7px; cursor: pointer; transition: all 0.15s; }
   .rte-size-btn:hover { border-color: var(--border); color: var(--text); }
   .rte-size-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .rte-field {
+    width: 100%; min-height: 140px; background: var(--bg2); border: 1px solid var(--border2);
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 300;
+    padding: 14px 18px; outline: none; transition: border-color 0.2s, background 0.2s;
+    line-height: 1.6; box-sizing: border-box; cursor: text; overflow-y: auto;
+  }
+  .rte-field:focus { border-color: var(--accent); background: var(--bg3); }
+  .rte-field:empty:before { content: attr(data-placeholder); color: var(--muted); font-style: italic; pointer-events: none; display: block; }
+  .rte-field b, .rte-field strong { font-weight: 600; }
+  .rte-field i, .rte-field em { font-style: italic; }
 
   .input-row {
     display: grid;
@@ -1642,16 +1652,16 @@
         <div class="rte-label-row">
           <label class="field-label">Your Bio</label>
           <div class="rte-toolbar">
-            <button class="rte-btn" type="button" onclick="insertFormat('inputBio','strong')" title="Bold">B</button>
-            <button class="rte-btn" type="button" onclick="insertFormat('inputBio','em')" title="Italic" style="font-style:italic">I</button>
+            <button class="rte-btn" type="button" onclick="insertFormat('inputBio','bold')" title="Bold">B</button>
+            <button class="rte-btn" type="button" onclick="insertFormat('inputBio','italic')" title="Italic" style="font-style:italic">I</button>
             <div class="rte-sep"></div>
             <button class="rte-size-btn selected" data-field="bio" data-size="small" onclick="setBioSize('bio',this)">S</button>
             <button class="rte-size-btn" data-field="bio" data-size="medium" onclick="setBioSize('bio',this)">M</button>
             <button class="rte-size-btn" data-field="bio" data-size="large" onclick="setBioSize('bio',this)">L</button>
           </div>
         </div>
-        <textarea id="inputBio" placeholder="Write 2–3 sentences about your experience, your approach, and who you work with... Use double line breaks for paragraph spacing."></textarea>
-        <div class="field-hint">Select text and click B or I to format. Double line break = new paragraph. S / M / L sets the text size on your site.</div>
+        <div id="inputBio" class="rte-field" contenteditable="true" data-placeholder="Write 2–3 sentences about your experience, your approach, and who you work with..."></div>
+        <div class="field-hint">Select text then click B or I to format. Press Enter twice for a new paragraph. S / M / L sets the text size on your live site.</div>
       </div>
 
       <div class="example-box">
@@ -1665,16 +1675,16 @@
         <div class="rte-label-row">
           <label class="field-label">What Sets You Apart</label>
           <div class="rte-toolbar">
-            <button class="rte-btn" type="button" onclick="insertFormat('inputEthos','strong')" title="Bold">B</button>
-            <button class="rte-btn" type="button" onclick="insertFormat('inputEthos','em')" title="Italic" style="font-style:italic">I</button>
+            <button class="rte-btn" type="button" onclick="insertFormat('inputEthos','bold')" title="Bold">B</button>
+            <button class="rte-btn" type="button" onclick="insertFormat('inputEthos','italic')" title="Italic" style="font-style:italic">I</button>
             <div class="rte-sep"></div>
             <button class="rte-size-btn selected" data-field="ethos" data-size="small" onclick="setBioSize('ethos',this)">S</button>
             <button class="rte-size-btn" data-field="ethos" data-size="medium" onclick="setBioSize('ethos',this)">M</button>
             <button class="rte-size-btn" data-field="ethos" data-size="large" onclick="setBioSize('ethos',this)">L</button>
           </div>
         </div>
-        <textarea id="inputEthos" placeholder="e.g. I obsess over low end. After 10 years of mixing, I've built a process that makes kicks and bass translate on every system — from club speakers to earbuds. I work closely with artists throughout the process, not just their files." style="min-height:100px;"></textarea>
-        <div class="field-hint">Select text and click B or I to format. Double line break = new paragraph. S / M / L sets the text size on your site.</div>
+        <div id="inputEthos" class="rte-field" contenteditable="true" data-placeholder="e.g. I obsess over low end. After 10 years of mixing, I've built a process that makes kicks and bass translate on every system — from club speakers to earbuds." style="min-height:100px;"></div>
+        <div class="field-hint">Select text then click B or I to format. Press Enter twice for a new paragraph. S / M / L sets the text size on your live site.</div>
       </div>
 
       <div class="example-box">
@@ -2624,8 +2634,10 @@
     }
 
     // 2. Basic info
-    const fieldMap = { name:'inputName', studioName:'inputStudio', tagline:'inputTagline', bio:'inputBio', ethos:'inputEthos', email:'inputEmail' };
+    const fieldMap = { name:'inputName', studioName:'inputStudio', tagline:'inputTagline', email:'inputEmail' };
     Object.entries(fieldMap).forEach(([k, id]) => { const el = document.getElementById(id); if (el && data[k]) el.value = data[k]; });
+    const bioEl = document.getElementById('inputBio'); if (bioEl && data.bio) bioEl.innerHTML = data.bio;
+    const ethosEl = document.getElementById('inputEthos'); if (ethosEl && data.ethos) ethosEl.innerHTML = data.ethos;
     if (data.bioSize) setBioSizeByValue('bio', data.bioSize);
     if (data.ethosSize) setBioSizeByValue('ethos', data.ethosSize);
 
@@ -3122,9 +3134,9 @@
     data.name = document.getElementById('inputName')?.value?.trim() || '';
     data.studioName = document.getElementById('inputStudio')?.value?.trim() || '';
     data.tagline = document.getElementById('inputTagline')?.value?.trim() || '';
-    data.bio = document.getElementById('inputBio')?.value?.trim() || '';
+    data.bio = sanitizeRteHtml(document.getElementById('inputBio')?.innerHTML || '');
     data.bioSize = document.querySelector('[data-field="bio"].rte-size-btn.selected')?.dataset.size || 'small';
-    data.ethos = document.getElementById('inputEthos')?.value?.trim() || '';
+    data.ethos = sanitizeRteHtml(document.getElementById('inputEthos')?.innerHTML || '');
     data.ethosSize = document.querySelector('[data-field="ethos"].rte-size-btn.selected')?.dataset.size || 'small';
     data.email = document.getElementById('inputEmail')?.value?.trim() || '';
     data.subdomain = document.getElementById('subdomainInput')?.value?.trim().toLowerCase().replace(/[^a-z0-9-]/g,'') || '';
@@ -3343,34 +3355,35 @@
   }
 
   // ── Rich Text Formatting ────────────────────────────────────────────────
-  function insertFormat(fieldId, tag) {
+  function insertFormat(fieldId, command) {
     const el = document.getElementById(fieldId);
     if (!el) return;
-    const start = el.selectionStart;
-    const end = el.selectionEnd;
-    const selected = el.value.substring(start, end);
-    const open = `<${tag}>`, close = `</${tag}>`;
-    // Toggle: if already wrapped, unwrap; otherwise wrap
-    if (selected.startsWith(open) && selected.endsWith(close)) {
-      const inner = selected.slice(open.length, -close.length);
-      el.value = el.value.substring(0, start) + inner + el.value.substring(end);
-      el.setSelectionRange(start, start + inner.length);
-    } else {
-      const replacement = open + selected + close;
-      el.value = el.value.substring(0, start) + replacement + el.value.substring(end);
-      el.setSelectionRange(start + open.length, start + open.length + selected.length);
-    }
     el.focus();
+    document.execCommand(command, false, null);
   }
 
   function setBioSize(field, btn) {
     document.querySelectorAll(`[data-field="${field}"].rte-size-btn`).forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
+    const sizeMap = { small: '15px', medium: '18px', large: '22px' };
+    const el = document.getElementById(field === 'bio' ? 'inputBio' : 'inputEthos');
+    if (el) el.style.fontSize = sizeMap[btn.dataset.size] || '15px';
   }
 
   function setBioSizeByValue(field, size) {
     const btn = document.querySelector(`[data-field="${field}"][data-size="${size}"].rte-size-btn`);
     if (btn) setBioSize(field, btn);
+  }
+
+  function sanitizeRteHtml(html) {
+    if (!html) return '';
+    // Normalize Chrome div/p line breaks to <br>
+    html = html.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
+    html = html.replace(/<p>/gi, '').replace(/<\/p>/gi, '<br>');
+    // Strip all tags except b, strong, i, em, br
+    html = html.replace(/<(?!\/?(b|strong|i|em)(?:\s[^>]*)?>|br\s*\/?>)[^>]+>/gi, '');
+    // Trim leading/trailing <br>
+    return html.trim().replace(/^(<br\s*\/?>)+|(<br\s*\/?>)+$/gi, '').trim();
   }
 
   // ── Credits ─────────────────────────────────────────────────────────────
