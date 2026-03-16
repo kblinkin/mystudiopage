@@ -317,6 +317,17 @@
   input::placeholder, textarea::placeholder { color: var(--muted); font-style: italic; }
   textarea { height: 140px; resize: vertical; }
 
+  /* Rich text toolbar */
+  .rte-label-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  .rte-label-row .field-label { margin-bottom: 0; }
+  .rte-toolbar { display: flex; align-items: center; gap: 4px; }
+  .rte-btn { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700; background: var(--bg3); border: 1px solid var(--border2); color: var(--muted2); padding: 3px 8px; cursor: pointer; transition: all 0.15s; line-height: 1.4; }
+  .rte-btn:hover { border-color: var(--border); color: var(--text); }
+  .rte-sep { width: 1px; height: 16px; background: var(--border2); margin: 0 4px; }
+  .rte-size-btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; background: var(--bg3); border: 1px solid var(--border2); color: var(--muted2); padding: 3px 7px; cursor: pointer; transition: all 0.15s; }
+  .rte-size-btn:hover { border-color: var(--border); color: var(--text); }
+  .rte-size-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
   .input-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1137,59 +1148,49 @@
   }
   .credit-tag button:hover { color: var(--red); }
 
-  /* Tweak Bot */
-  .tweak-bot-section { margin-top: 40px; padding-top: 32px; border-top: 2px solid var(--border); }
-  .tweak-bot-heading { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 0.03em; color: var(--text); line-height: 1; margin-bottom: 6px; }
-  .tweak-bot-desc { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 16px; }
-  .tweak-bot-examples { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-  .tweak-example { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.04em; color: var(--muted2); background: var(--bg3); border: 1px solid var(--border2); padding: 5px 10px; cursor: pointer; transition: all 0.15s; }
-  .tweak-example:hover { border-color: var(--border); color: var(--text); }
-  .tweak-input-row { display: flex; gap: 8px; margin-bottom: 16px; }
-  .tweak-input-row input { flex: 1; }
-  .tweak-input-row button { flex-shrink: 0; min-width: 80px; }
-  .tweak-list { display: flex; flex-direction: column; gap: 8px; }
-  .tweak-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; background: var(--bg3); border: 1px solid var(--border2); padding: 10px 14px; }
-  .tweak-item-text { font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace; flex: 1; line-height: 1.4; }
-  .tweak-item-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0; line-height: 1; transition: color 0.15s; flex-shrink: 0; }
-  .tweak-item-remove:hover { color: var(--red); }
-  .tweak-loading { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
-  .tweak-error { font-size: 12px; color: var(--red); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
-  .sc-url-hint { font-family: 'DM Mono', monospace; font-size: 11px; padding: 5px 0 10px; display: none; }
-  .sc-url-hint.ok { color: #4caf7d; display: block; }
-  .sc-url-hint.warn { color: var(--red); display: block; }
-
-  .inject-section { margin-top: 28px; padding-top: 28px; border-top: 2px solid var(--border); }
-  .inject-heading { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 0.03em; color: var(--text); line-height: 1; margin-bottom: 6px; }
-  .inject-desc { font-size: 13px; color: var(--muted2); line-height: 1.6; margin-bottom: 16px; }
-  .inject-upload-area { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer; background: var(--bg3); border: 1px solid var(--border2); padding: 10px 14px; transition: border-color 0.15s; }
-  .inject-upload-area:hover { border-color: var(--border); }
-  .inject-upload-icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
-  .inject-upload-labels { display: flex; flex-direction: column; gap: 2px; }
-  .inject-upload-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted2); }
-  .inject-upload-hint { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.04em; }
-  .inject-upload-area.has-image { border-color: var(--green); }
-  .inject-upload-area.has-image .inject-upload-title { color: var(--text); }
-  .inject-textarea { width: 100%; background: var(--bg3); border: 1px solid var(--border2); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300; padding: 12px 14px; outline: none; resize: vertical; min-height: 80px; transition: border-color 0.2s; margin-bottom: 10px; }
-  .inject-textarea:focus { border-color: var(--accent); }
-  .inject-textarea::placeholder { color: var(--muted); font-style: italic; }
-  .inject-action-row { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
-  .inject-loading { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
-  .inject-error { font-size: 12px; color: var(--red); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
-  .inject-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-  .inject-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; background: var(--bg3); border: 1px solid var(--border2); padding: 10px 14px; }
-  .inject-item-text { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; flex: 1; line-height: 1.4; }
-  .inject-item-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0; line-height: 1; transition: color 0.15s; flex-shrink: 0; }
-  .inject-item-remove:hover { color: var(--red); }
+  /* Customize */
+  .customize-section { margin-top: 40px; padding-top: 32px; border-top: 2px solid var(--border); }
+  .customize-heading { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 0.03em; color: var(--text); line-height: 1; margin-bottom: 6px; }
+  .customize-desc { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 16px; }
+  .customize-examples { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .customize-example { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.04em; color: var(--muted2); background: var(--bg3); border: 1px solid var(--border2); padding: 5px 10px; cursor: pointer; transition: all 0.15s; }
+  .customize-example:hover { border-color: var(--border); color: var(--text); }
+  .customize-upload-area { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer; background: var(--bg3); border: 1px solid var(--border2); padding: 10px 14px; transition: border-color 0.15s; }
+  .customize-upload-area:hover { border-color: var(--border); }
+  .customize-upload-area.has-image { border-color: var(--green); }
+  .customize-upload-area.has-image .customize-upload-title { color: var(--text); }
+  .customize-upload-icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .customize-upload-labels { display: flex; flex-direction: column; gap: 2px; }
+  .customize-upload-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted2); }
+  .customize-upload-hint { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.04em; }
   .inject-size-row { display: none; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
   .inject-size-row.visible { display: flex; }
   .inject-size-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted2); margin-right: 4px; }
   .size-btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; background: var(--bg3); border: 1px solid var(--border2); color: var(--muted2); padding: 5px 12px; cursor: pointer; transition: all 0.15s; }
   .size-btn:hover { border-color: var(--border); color: var(--text); }
   .size-btn.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
-  .inject-item-resize { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: 1px solid var(--border2); color: var(--muted); cursor: pointer; padding: 3px 8px; transition: all 0.15s; flex-shrink: 0; }
-  .inject-item-resize:hover { border-color: var(--border); color: var(--text); }
-  .inject-item-resize-panel { display: none; gap: 6px; padding: 8px 0 4px; flex-wrap: wrap; }
+  .customize-textarea { width: 100%; background: var(--bg3); border: 1px solid var(--border2); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300; padding: 12px 14px; outline: none; resize: vertical; min-height: 72px; transition: border-color 0.2s; margin-bottom: 10px; box-sizing: border-box; }
+  .customize-textarea:focus { border-color: var(--accent); }
+  .customize-textarea::placeholder { color: var(--muted); font-style: italic; }
+  .customize-action-row { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+  .customize-loading { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
+  .customize-error { font-size: 12px; color: var(--red); font-family: 'DM Mono', monospace; padding: 10px 0; display: none; }
+  .customize-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .custom-item { display: flex; align-items: flex-start; gap: 8px; background: var(--bg3); border: 1px solid var(--border2); padding: 10px 14px; flex-wrap: wrap; }
+  .custom-item-badge { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 6px; border: 1px solid; flex-shrink: 0; margin-top: 1px; }
+  .custom-item-badge.css-badge { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+  .custom-item-badge.html-badge { color: #5b9cf6; border-color: #5b9cf6; background: rgba(91,156,246,0.08); }
+  .custom-item-text { font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace; flex: 1; line-height: 1.4; min-width: 0; }
+  .custom-item-actions { display: flex; gap: 6px; flex-shrink: 0; margin-left: auto; }
+  .custom-item-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0; line-height: 1; transition: color 0.15s; }
+  .custom-item-remove:hover { color: var(--red); }
+  .custom-item-resize { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: 1px solid var(--border2); color: var(--muted); cursor: pointer; padding: 3px 8px; transition: all 0.15s; }
+  .custom-item-resize:hover { border-color: var(--border); color: var(--text); }
+  .inject-item-resize-panel { display: none; gap: 6px; padding: 8px 0 4px; flex-wrap: wrap; width: 100%; }
   .inject-item-resize-panel.open { display: flex; }
+  .sc-url-hint { font-family: 'DM Mono', monospace; font-size: 11px; padding: 5px 0 10px; display: none; }
+  .sc-url-hint.ok { color: #4caf7d; display: block; }
+  .sc-url-hint.warn { color: var(--red); display: block; }
 
   /* PUBLISH OVERLAY */
   .publish-overlay {
@@ -1638,9 +1639,19 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label">Your Bio</label>
-        <textarea id="inputBio" placeholder="Write 2–3 sentences about your experience, your approach, and who you work with..."></textarea>
-        <div class="field-hint">Keep it personal and specific. Clients want to know there's a real person on the other side.</div>
+        <div class="rte-label-row">
+          <label class="field-label">Your Bio</label>
+          <div class="rte-toolbar">
+            <button class="rte-btn" type="button" onclick="insertFormat('inputBio','strong')" title="Bold">B</button>
+            <button class="rte-btn" type="button" onclick="insertFormat('inputBio','em')" title="Italic" style="font-style:italic">I</button>
+            <div class="rte-sep"></div>
+            <button class="rte-size-btn selected" data-field="bio" data-size="small" onclick="setBioSize('bio',this)">S</button>
+            <button class="rte-size-btn" data-field="bio" data-size="medium" onclick="setBioSize('bio',this)">M</button>
+            <button class="rte-size-btn" data-field="bio" data-size="large" onclick="setBioSize('bio',this)">L</button>
+          </div>
+        </div>
+        <textarea id="inputBio" placeholder="Write 2–3 sentences about your experience, your approach, and who you work with... Use double line breaks for paragraph spacing."></textarea>
+        <div class="field-hint">Select text and click B or I to format. Double line break = new paragraph. S / M / L sets the text size on your site.</div>
       </div>
 
       <div class="example-box">
@@ -1651,9 +1662,19 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label">What Sets You Apart</label>
+        <div class="rte-label-row">
+          <label class="field-label">What Sets You Apart</label>
+          <div class="rte-toolbar">
+            <button class="rte-btn" type="button" onclick="insertFormat('inputEthos','strong')" title="Bold">B</button>
+            <button class="rte-btn" type="button" onclick="insertFormat('inputEthos','em')" title="Italic" style="font-style:italic">I</button>
+            <div class="rte-sep"></div>
+            <button class="rte-size-btn selected" data-field="ethos" data-size="small" onclick="setBioSize('ethos',this)">S</button>
+            <button class="rte-size-btn" data-field="ethos" data-size="medium" onclick="setBioSize('ethos',this)">M</button>
+            <button class="rte-size-btn" data-field="ethos" data-size="large" onclick="setBioSize('ethos',this)">L</button>
+          </div>
+        </div>
         <textarea id="inputEthos" placeholder="e.g. I obsess over low end. After 10 years of mixing, I've built a process that makes kicks and bass translate on every system — from club speakers to earbuds. I work closely with artists throughout the process, not just their files." style="min-height:100px;"></textarea>
-        <div class="field-hint">This appears alongside your rates. Be specific — skip the generic, tell clients what actually makes working with you different.</div>
+        <div class="field-hint">Select text and click B or I to format. Double line break = new paragraph. S / M / L sets the text size on your site.</div>
       </div>
 
       <div class="example-box">
@@ -2209,58 +2230,47 @@
         </div>
       </div>
 
-      <!-- TWEAK BOT -->
-      <div class="tweak-bot-section">
-        <div class="tweak-bot-heading">Visual Tweaks</div>
-        <p class="tweak-bot-desc">Describe a visual change and we'll apply it to your site. Good for things the builder doesn't expose — spacing, font sizes, button styles, section height, and more. Each tweak is saved and applied every time you publish.</p>
-        <div class="tweak-bot-examples">
-          <span class="tweak-example" onclick="setTweakPrompt(this.textContent)">"Make the hero section taller"</span>
-          <span class="tweak-example" onclick="setTweakPrompt(this.textContent)">"Make my studio name smaller"</span>
-          <span class="tweak-example" onclick="setTweakPrompt(this.textContent)">"Make the CTA button rounded"</span>
-          <span class="tweak-example" onclick="setTweakPrompt(this.textContent)">"Add more space between sections"</span>
-          <span class="tweak-example" onclick="setTweakPrompt(this.textContent)">"Make the nav stick to the top"</span>
-          <span class="tweak-example" onclick="setTweakPrompt(this.textContent)">"Make the bio text bigger"</span>
+      <!-- CUSTOMIZE -->
+      <div class="customize-section">
+        <div class="customize-heading">Customize</div>
+        <p class="customize-desc">Describe any change — visual or content — and the AI will apply it. Style tweaks, new sections, spacing fixes, testimonials, gear lists, paragraph edits, anything. Optionally upload a photo to include.</p>
+        <div class="customize-examples">
+          <span class="customize-example" onclick="setCustomizePrompt(this.textContent)">"Add a testimonials section after services"</span>
+          <span class="customize-example" onclick="setCustomizePrompt(this.textContent)">"Add a gear list section after my bio"</span>
+          <span class="customize-example" onclick="setCustomizePrompt(this.textContent)">"Add a press / features section"</span>
+          <span class="customize-example" onclick="setCustomizePrompt(this.textContent)">"Make the hero section taller"</span>
+          <span class="customize-example" onclick="setCustomizePrompt(this.textContent)">"Add more space between sections"</span>
+          <span class="customize-example" onclick="setCustomizePrompt(this.textContent)">"Make the CTA button rounded"</span>
+          <span class="customize-example" onclick="setCustomizePrompt(this.textContent)">"Make the nav stick to the top"</span>
+          <span class="customize-example" onclick="setCustomizePrompt(this.textContent)">"Make my studio name smaller"</span>
         </div>
-        <div class="tweak-input-row">
-          <input type="text" id="tweakInput" placeholder="Describe a visual change…" onkeydown="if(event.key==='Enter'){event.preventDefault();applyTweak();}">
-          <button class="btn btn-primary" id="tweakBtn" onclick="applyTweak()">Apply</button>
-          <button class="btn btn-ghost" id="tweakUndoBtn" onclick="undoLastTweak()" style="display:none">↩ Undo</button>
+
+        <div class="customize-upload-area" id="customizeUploadArea" onclick="document.getElementById('customizeFileInput').click()">
+          <input type="file" id="customizeFileInput" accept="image/*" style="display:none" onchange="handleInjectionImage(this)">
+          <div class="customize-upload-icon">📷</div>
+          <div class="customize-upload-labels">
+            <div class="customize-upload-title" id="customizeUploadLabel">Optional: upload a photo to include</div>
+            <div class="customize-upload-hint">JPG or PNG</div>
+          </div>
         </div>
-        <div class="tweak-loading" id="tweakLoading">Generating CSS tweak…</div>
-        <div class="tweak-error" id="tweakError"></div>
-        <div class="tweak-list" id="tweakList"></div>
 
-        <!-- ADD A SECTION -->
-        <div class="inject-section">
-          <div class="inject-heading">Add a Section</div>
-          <p class="inject-desc">Describe any section and we'll build it for you — testimonials, a gear list, press features, a photo gallery, a process breakdown, anything. Optionally upload a photo to include in it.</p>
-
-          <div class="inject-upload-area" id="injectUploadArea" onclick="document.getElementById('injectFileInput').click()">
-            <input type="file" id="injectFileInput" accept="image/*" style="display:none" onchange="handleInjectionImage(this)">
-            <div class="inject-upload-icon">📷</div>
-            <div class="inject-upload-labels">
-              <div class="inject-upload-title" id="injectUploadLabel">Optional: upload a photo to include</div>
-              <div class="inject-upload-hint">JPG or PNG</div>
-            </div>
-          </div>
-
-          <div class="inject-size-row" id="injectSizeRow">
-            <span class="inject-size-label">Photo size</span>
-            <button class="size-btn" data-pct="35" onclick="selectInjectSize(this)">Small</button>
-            <button class="size-btn selected" data-pct="65" onclick="selectInjectSize(this)">Medium</button>
-            <button class="size-btn" data-pct="85" onclick="selectInjectSize(this)">Large</button>
-            <button class="size-btn" data-pct="100" onclick="selectInjectSize(this)">Full Width</button>
-          </div>
-
-          <textarea class="inject-textarea" id="injectPrompt" placeholder='e.g. "A testimonials section with 3 quotes after the about section" or "A gear list section with my photo after services"'></textarea>
-          <div class="inject-action-row">
-            <button class="btn btn-primary" id="injectBtn" onclick="applyAddSection()">Generate Section</button>
-            <button class="btn btn-ghost" id="injectClearBtn" onclick="clearInjectionImage()" style="display:none">✕ Clear photo</button>
-          </div>
-          <div class="inject-loading" id="injectLoading">Building your section…</div>
-          <div class="inject-error" id="injectError"></div>
-          <div class="inject-list" id="injectList"></div>
+        <div class="inject-size-row" id="injectSizeRow">
+          <span class="inject-size-label">Photo size</span>
+          <button class="size-btn" data-pct="35" onclick="selectInjectSize(this)">Small</button>
+          <button class="size-btn selected" data-pct="65" onclick="selectInjectSize(this)">Medium</button>
+          <button class="size-btn" data-pct="85" onclick="selectInjectSize(this)">Large</button>
+          <button class="size-btn" data-pct="100" onclick="selectInjectSize(this)">Full Width</button>
         </div>
+
+        <textarea class="customize-textarea" id="customizeInput" placeholder='e.g. "Make the hero taller", "Add a testimonials section after services", "Add a line break after my intro sentence"'></textarea>
+        <div class="customize-action-row">
+          <button class="btn btn-primary" id="customizeBtn" onclick="applyCustomization()">Apply</button>
+          <button class="btn btn-ghost" id="customizeClearBtn" onclick="clearInjectionImage()" style="display:none">✕ Clear photo</button>
+          <button class="btn btn-ghost" id="customizeUndoBtn" onclick="undoLastCustomization()" style="display:none">↩ Undo</button>
+        </div>
+        <div class="customize-loading" id="customizeLoading">Working on it…</div>
+        <div class="customize-error" id="customizeError"></div>
+        <div class="customize-list" id="customizeList"></div>
       </div>
 
       <div class="divider"></div>
@@ -2616,6 +2626,8 @@
     // 2. Basic info
     const fieldMap = { name:'inputName', studioName:'inputStudio', tagline:'inputTagline', bio:'inputBio', ethos:'inputEthos', email:'inputEmail' };
     Object.entries(fieldMap).forEach(([k, id]) => { const el = document.getElementById(id); if (el && data[k]) el.value = data[k]; });
+    if (data.bioSize) setBioSizeByValue('bio', data.bioSize);
+    if (data.ethosSize) setBioSizeByValue('ethos', data.ethosSize);
 
     // 3. Photo
     if (data.photoDataUrl) {
@@ -2727,14 +2739,14 @@
     if (data.tweaks && data.tweaks.length > 0) {
       customTweaks.length = 0;
       data.tweaks.forEach(t => customTweaks.push(t));
-      renderTweaks();
+      renderCustomizations();
     }
 
     // Custom section injections
     if (data.htmlInjections && data.htmlInjections.length > 0) {
       customInjections.length = 0;
       data.htmlInjections.forEach(inj => customInjections.push(inj));
-      renderInjections();
+      renderCustomizations();
     }
 
     // Mark all steps completed (they've been through this before)
@@ -3111,7 +3123,9 @@
     data.studioName = document.getElementById('inputStudio')?.value?.trim() || '';
     data.tagline = document.getElementById('inputTagline')?.value?.trim() || '';
     data.bio = document.getElementById('inputBio')?.value?.trim() || '';
+    data.bioSize = document.querySelector('[data-field="bio"].rte-size-btn.selected')?.dataset.size || 'small';
     data.ethos = document.getElementById('inputEthos')?.value?.trim() || '';
+    data.ethosSize = document.querySelector('[data-field="ethos"].rte-size-btn.selected')?.dataset.size || 'small';
     data.email = document.getElementById('inputEmail')?.value?.trim() || '';
     data.subdomain = document.getElementById('subdomainInput')?.value?.trim().toLowerCase().replace(/[^a-z0-9-]/g,'') || '';
     data.customDomain = document.querySelector('#domainBody input[type="text"]')?.value?.trim() || '';
@@ -3328,6 +3342,37 @@
     selectedLayout = card.dataset.layout;
   }
 
+  // ── Rich Text Formatting ────────────────────────────────────────────────
+  function insertFormat(fieldId, tag) {
+    const el = document.getElementById(fieldId);
+    if (!el) return;
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const selected = el.value.substring(start, end);
+    const open = `<${tag}>`, close = `</${tag}>`;
+    // Toggle: if already wrapped, unwrap; otherwise wrap
+    if (selected.startsWith(open) && selected.endsWith(close)) {
+      const inner = selected.slice(open.length, -close.length);
+      el.value = el.value.substring(0, start) + inner + el.value.substring(end);
+      el.setSelectionRange(start, start + inner.length);
+    } else {
+      const replacement = open + selected + close;
+      el.value = el.value.substring(0, start) + replacement + el.value.substring(end);
+      el.setSelectionRange(start + open.length, start + open.length + selected.length);
+    }
+    el.focus();
+  }
+
+  function setBioSize(field, btn) {
+    document.querySelectorAll(`[data-field="${field}"].rte-size-btn`).forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  function setBioSizeByValue(field, size) {
+    const btn = document.querySelector(`[data-field="${field}"][data-size="${size}"].rte-size-btn`);
+    if (btn) setBioSize(field, btn);
+  }
+
   // ── Credits ─────────────────────────────────────────────────────────────
   const creditsList = [];
 
@@ -3361,22 +3406,27 @@
     ).join('');
   }
 
-  // ── Tweak Bot ────────────────────────────────────────────────────────────
+  // ── Customize (CSS + HTML) ───────────────────────────────────────────────
   const customTweaks = [];
+  let lastCustomizationTarget = null;
 
-  function setTweakPrompt(text) {
-    document.getElementById('tweakInput').value = text.replace(/^"|"$/g, '');
-    document.getElementById('tweakInput').focus();
+  function esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  async function applyTweak() {
-    const input = document.getElementById('tweakInput');
+  function setCustomizePrompt(text) {
+    document.getElementById('customizeInput').value = text.replace(/^"|"$/g, '');
+    document.getElementById('customizeInput').focus();
+  }
+
+  async function applyCustomization() {
+    const input = document.getElementById('customizeInput');
     const prompt = input.value.trim();
     if (!prompt) return;
 
-    const btn = document.getElementById('tweakBtn');
-    const loadingEl = document.getElementById('tweakLoading');
-    const errorEl = document.getElementById('tweakError');
+    const btn = document.getElementById('customizeBtn');
+    const loadingEl = document.getElementById('customizeLoading');
+    const errorEl = document.getElementById('customizeError');
 
     btn.disabled = true;
     loadingEl.style.display = 'block';
@@ -3386,13 +3436,35 @@
       const res = await fetch('/api/customize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, theme: selectedTheme || 'dark-gold' })
+        body: JSON.stringify({ prompt, theme: selectedTheme || 'dark-gold', hasImage: !!injectionImageDataUrl })
       });
       const result = await res.json();
-      if (!res.ok || !result.css) throw new Error(result.error || 'No CSS returned');
+      if (!res.ok || (!result.css && !result.html)) throw new Error(result.error || 'Could not generate change. Try rephrasing.');
 
-      customTweaks.push({ prompt, css: result.css });
-      renderTweaks();
+      if (result.css) {
+        customTweaks.push({ prompt, css: result.css });
+        lastCustomizationTarget = 'css';
+      }
+      if (result.html) {
+        let html = result.html;
+        const hasImage = !!injectionImageDataUrl;
+        if (hasImage) {
+          html = html.replace(/\{\{IMAGE_SRC\}\}/g, injectionImageDataUrl);
+          html = applyImageSize(html, selectedInjectSizePct);
+        }
+        customInjections.push({
+          prompt,
+          insertAfter: result.insertAfter,
+          html,
+          hasImage,
+          originalHtml: html,
+          sizePct: hasImage ? selectedInjectSizePct : null
+        });
+        lastCustomizationTarget = 'html';
+        if (hasImage) clearInjectionImage();
+      }
+
+      renderCustomizations();
       input.value = '';
     } catch (err) {
       errorEl.textContent = err.message || 'Something went wrong. Try rephrasing.';
@@ -3405,30 +3477,59 @@
 
   function removeTweak(idx) {
     customTweaks.splice(idx, 1);
-    renderTweaks();
+    renderCustomizations();
   }
 
-  function undoLastTweak() {
-    if (customTweaks.length === 0) return;
-    customTweaks.pop();
-    renderTweaks();
+  function undoLastCustomization() {
+    if (lastCustomizationTarget === 'html' && customInjections.length > 0) {
+      customInjections.pop();
+    } else if (customTweaks.length > 0) {
+      customTweaks.pop();
+    } else if (customInjections.length > 0) {
+      customInjections.pop();
+    }
+    renderCustomizations();
   }
 
-  function esc(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function renderTweaks() {
-    const list = document.getElementById('tweakList');
+  function renderCustomizations() {
+    const list = document.getElementById('customizeList');
     if (!list) return;
-    list.innerHTML = customTweaks.map((t, i) => `
-      <div class="tweak-item">
-        <span class="tweak-item-text">${esc(t.prompt)}</span>
-        <button class="tweak-item-remove" onclick="removeTweak(${i})" title="Remove">✕</button>
-      </div>
-    `).join('');
-    const undoBtn = document.getElementById('tweakUndoBtn');
-    if (undoBtn) undoBtn.style.display = customTweaks.length > 0 ? '' : 'none';
+    let items = '';
+
+    customTweaks.forEach((t, i) => {
+      items += `
+        <div class="custom-item">
+          <span class="custom-item-badge css-badge">CSS</span>
+          <span class="custom-item-text">${esc(t.prompt)}</span>
+          <div class="custom-item-actions">
+            <button class="custom-item-remove" onclick="removeTweak(${i})" title="Remove">✕</button>
+          </div>
+        </div>`;
+    });
+
+    customInjections.forEach((inj, i) => {
+      items += `
+        <div class="custom-item" style="flex-wrap:wrap;">
+          <span class="custom-item-badge html-badge">HTML</span>
+          <span class="custom-item-text">${esc(inj.prompt || '')}${inj.insertAfter ? ` <span style="color:var(--accent)">${esc(inj.insertAfter)}</span>` : ''}</span>
+          <div class="custom-item-actions">
+            ${inj.hasImage ? `<button class="custom-item-resize" onclick="toggleResizePanel(${i})" title="Resize photo">Resize</button>` : ''}
+            <button class="custom-item-remove" onclick="removeInjection(${i})" title="Remove">✕</button>
+          </div>
+          ${inj.hasImage ? `
+          <div class="inject-item-resize-panel" id="resizePanel${i}">
+            <span class="inject-size-label">Photo size</span>
+            <button class="size-btn${(inj.sizePct||65)===35?' selected':''}" onclick="resizeInjection(${i},35)">Small</button>
+            <button class="size-btn${(inj.sizePct||65)===65?' selected':''}" onclick="resizeInjection(${i},65)">Medium</button>
+            <button class="size-btn${(inj.sizePct||65)===85?' selected':''}" onclick="resizeInjection(${i},85)">Large</button>
+            <button class="size-btn${(inj.sizePct||65)===100?' selected':''}" onclick="resizeInjection(${i},100)">Full Width</button>
+          </div>` : ''}
+        </div>`;
+    });
+
+    list.innerHTML = items;
+    const undoBtn = document.getElementById('customizeUndoBtn');
+    if (undoBtn) undoBtn.style.display = (customTweaks.length + customInjections.length) > 0 ? '' : 'none';
   }
 
   // ── SoundCloud URL validation + embed code parsing ───────────────────────
@@ -3467,7 +3568,7 @@
     }
   }
 
-  // ── Add a Section ────────────────────────────────────────────────────────
+  // ── Inject (used by Customize) ───────────────────────────────────────────
   const customInjections = [];
   let injectionImageDataUrl = null;
   let selectedInjectSizePct = 65;
@@ -3506,7 +3607,7 @@
     // Re-apply size to the original HTML (stored before sizing)
     inj.html = applyImageSize(inj.originalHtml || inj.html, pct);
     inj.sizePct = pct;
-    renderInjections();
+    renderCustomizations();
     // Re-open the panel after re-render
     const panel = document.getElementById(`resizePanel${idx}`);
     if (panel) panel.classList.add('open');
@@ -3527,9 +3628,9 @@
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         injectionImageDataUrl = canvas.toDataURL('image/jpeg', 0.85);
-        document.getElementById('injectUploadArea').classList.add('has-image');
-        document.getElementById('injectUploadLabel').textContent = file.name;
-        document.getElementById('injectClearBtn').style.display = '';
+        document.getElementById('customizeUploadArea').classList.add('has-image');
+        document.getElementById('customizeUploadLabel').textContent = file.name;
+        document.getElementById('customizeClearBtn').style.display = '';
         document.getElementById('injectSizeRow').classList.add('visible');
       };
       img.src = e.target.result;
@@ -3539,101 +3640,19 @@
 
   function clearInjectionImage() {
     injectionImageDataUrl = null;
-    document.getElementById('injectUploadArea').classList.remove('has-image');
-    document.getElementById('injectUploadLabel').textContent = 'Optional: upload a photo to include';
-    document.getElementById('injectFileInput').value = '';
-    document.getElementById('injectClearBtn').style.display = 'none';
+    document.getElementById('customizeUploadArea').classList.remove('has-image');
+    document.getElementById('customizeUploadLabel').textContent = 'Optional: upload a photo to include';
+    document.getElementById('customizeFileInput').value = '';
+    document.getElementById('customizeClearBtn').style.display = 'none';
     document.getElementById('injectSizeRow').classList.remove('visible');
     selectedInjectSizePct = 65;
     document.querySelectorAll('#injectSizeRow .size-btn').forEach(b => b.classList.remove('selected'));
     document.querySelector('#injectSizeRow .size-btn[data-pct="65"]').classList.add('selected');
   }
 
-  async function applyAddSection() {
-    const errorEl = document.getElementById('injectError');
-    errorEl.style.display = 'none';
-
-    const prompt = document.getElementById('injectPrompt').value.trim();
-    if (!prompt) {
-      errorEl.textContent = 'Describe the section you want to add.';
-      errorEl.style.display = 'block';
-      return;
-    }
-
-    const btn = document.getElementById('injectBtn');
-    const loadingEl = document.getElementById('injectLoading');
-    btn.disabled = true;
-    loadingEl.style.display = 'block';
-
-    try {
-      const res = await fetch('/api/add-section', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt,
-          theme: selectedTheme || 'dark-gold',
-          hasImage: !!injectionImageDataUrl
-        })
-      });
-      const result = await res.json();
-      if (!res.ok || !result.html) throw new Error(result.error || 'Could not generate section.');
-
-      // Swap in the real image data URL if one was uploaded
-      let html = result.html;
-      const hasImage = !!injectionImageDataUrl;
-      if (hasImage) {
-        html = html.replace(/\{\{IMAGE_SRC\}\}/g, injectionImageDataUrl);
-        html = applyImageSize(html, selectedInjectSizePct);
-      }
-
-      customInjections.push({
-        prompt,
-        insertAfter: result.insertAfter,
-        html,
-        hasImage,
-        originalHtml: html,
-        sizePct: hasImage ? selectedInjectSizePct : null
-      });
-      renderInjections();
-
-      document.getElementById('injectPrompt').value = '';
-      clearInjectionImage();
-    } catch (err) {
-      errorEl.textContent = err.message || 'Something went wrong. Try rephrasing.';
-      errorEl.style.display = 'block';
-    } finally {
-      btn.disabled = false;
-      loadingEl.style.display = 'none';
-    }
-  }
-
   function removeInjection(idx) {
     customInjections.splice(idx, 1);
-    renderInjections();
-  }
-
-  function renderInjections() {
-    const list = document.getElementById('injectList');
-    if (!list) return;
-    list.innerHTML = customInjections.map((inj, i) => `
-      <div class="inject-item" style="flex-direction:column; align-items:stretch;">
-        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
-          <span class="inject-item-text">${esc(inj.prompt || '')} <span style="color:var(--accent)">${esc(inj.insertAfter || '')}</span></span>
-          <div style="display:flex; gap:6px; flex-shrink:0;">
-            ${inj.hasImage ? `<button class="inject-item-resize" onclick="toggleResizePanel(${i})" title="Resize photo">Resize</button>` : ''}
-            <button class="inject-item-remove" onclick="removeInjection(${i})" title="Remove">✕</button>
-          </div>
-        </div>
-        ${inj.hasImage ? `
-        <div class="inject-item-resize-panel" id="resizePanel${i}">
-          <span class="inject-size-label">Photo size</span>
-          <button class="size-btn${(inj.sizePct||65)===35?' selected':''}" onclick="resizeInjection(${i},35)">Small</button>
-          <button class="size-btn${(inj.sizePct||65)===65?' selected':''}" onclick="resizeInjection(${i},65)">Medium</button>
-          <button class="size-btn${(inj.sizePct||65)===85?' selected':''}" onclick="resizeInjection(${i},85)">Large</button>
-          <button class="size-btn${(inj.sizePct||65)===100?' selected':''}" onclick="resizeInjection(${i},100)">Full Width</button>
-        </div>` : ''}
-      </div>
-    `).join('');
+    renderCustomizations();
   }
 
   function handleLogoUpload(event) {

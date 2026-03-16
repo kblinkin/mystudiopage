@@ -40,6 +40,29 @@ function escHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
+// Renders bio/ethos text: allows <strong> and <em>, converts newlines to paragraphs
+function formatRichText(raw, size) {
+  if (!raw) return '';
+  // Escape all HTML first
+  let text = String(raw)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  // Restore only allowed tags: <strong>, </strong>, <em>, </em>
+  text = text
+    .replace(/&lt;strong&gt;/g, '<strong>')
+    .replace(/&lt;\/strong&gt;/g, '</strong>')
+    .replace(/&lt;em&gt;/g, '<em>')
+    .replace(/&lt;\/em&gt;/g, '</em>');
+  // Split on double newlines into paragraphs
+  const sizeMap = { small: '15px', medium: '18px', large: '22px' };
+  const fontSize = sizeMap[size] || '18px';
+  const paragraphs = text.split(/\n\n+/);
+  return paragraphs
+    .map(p => `<p style="font-size:${fontSize};margin-bottom:1.2em;line-height:1.85;">${p.replace(/\n/g, '<br>')}</p>`)
+    .join('');
+}
+
 function accentHex(color) {
   // Strip leading # for use in URLs
   return (color || '#c8a96e').replace(/^#/, '');
@@ -207,7 +230,7 @@ export function renderSite(data) {
         ${photoEl}
         <div class="about-text">
           <h2 class="about-studio-name">${escHtml(studioName)}</h2>
-          <p class="about-bio">${escHtml(data.bio || '')}</p>
+          <div class="about-bio">${formatRichText(data.bio || '', data.bioSize)}</div>
           <div class="about-badge">${escHtml(typeLabel)}</div>
         </div>
       </div>
@@ -277,7 +300,7 @@ export function renderSite(data) {
         ${s.price ? `<div class="service-price">${escHtml(s.price)}</div>` : ''}
         ${s.desc  ? `<p class="service-desc">${escHtml(s.desc)}</p>` : ''}
       </div>`).join('');
-    const ethosHtml = data.ethos ? `<p class="services-ethos-text">${escHtml(data.ethos)}</p>` : '';
+    const ethosHtml = data.ethos ? `<div class="services-ethos-text">${formatRichText(data.ethos, data.ethosSize)}</div>` : '';
     servicesHtml = `
   <section class="services" id="services">
     <div class="services-inner">
@@ -763,12 +786,14 @@ export function renderSite(data) {
     .about-bio {
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
-      font-size: 18px;
       color: var(--text);
       opacity: 0.85;
       line-height: 1.85;
       margin-bottom: 28px;
     }
+    .about-bio p { margin: 0; }
+    .about-bio strong { font-weight: 600; }
+    .about-bio em { font-style: italic; }
 
     .about-badge {
       display: inline-flex;
@@ -940,11 +965,12 @@ export function renderSite(data) {
     .services-ethos-text {
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
-      font-size: 17px;
       color: var(--text);
       line-height: 1.9;
-      white-space: pre-line;
     }
+    .services-ethos-text p { margin: 0; }
+    .services-ethos-text strong { font-weight: 600; }
+    .services-ethos-text em { font-style: italic; }
 
     /* Production card */
     .production-card {
