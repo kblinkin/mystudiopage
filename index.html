@@ -2224,31 +2224,6 @@
 
       <div class="divider"></div>
 
-      <button class="btn btn-ghost" onclick="previewSite()" style="margin-bottom:32px;width:100%;justify-content:center;">
-        Preview Your Site →
-      </button>
-
-      <div class="section-title">Summary</div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:40px" id="summaryGrid">
-        <div style="background:var(--bg2);border:1px solid var(--border2);padding:20px;">
-          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Engineer Type</div>
-          <div style="font-size:15px;color:var(--text)" id="summaryType">—</div>
-        </div>
-        <div style="background:var(--bg2);border:1px solid var(--border2);padding:20px;">
-          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Color Scheme</div>
-          <div style="font-size:15px;color:var(--text)" id="summaryTheme">Dark Gold</div>
-        </div>
-        <div style="background:var(--bg2);border:1px solid var(--border2);padding:20px;">
-          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Studio Name</div>
-          <div style="font-size:15px;color:var(--text)" id="summaryName">—</div>
-        </div>
-        <div style="background:var(--bg2);border:1px solid var(--border2);padding:20px;">
-          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Contact Email</div>
-          <div style="font-size:15px;color:var(--text)" id="summaryEmail">—</div>
-        </div>
-      </div>
-
       <div class="example-box">
         <div class="example-label">What happens when you publish</div>
         <div class="example-text">
@@ -3396,15 +3371,43 @@
     if (btn) setBioSize(field, btn);
   }
 
-  function sanitizeRteHtml(html) {
-    if (!html) return '';
-    // Normalize Chrome div/p line breaks to <br>
-    html = html.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
-    html = html.replace(/<p>/gi, '').replace(/<\/p>/gi, '<br>');
-    // Strip all tags except b, strong, i, em, br
-    html = html.replace(/<(?!\/?(b|strong|i|em)(?:\s[^>]*)?>|br\s*\/?>)[^>]+>/gi, '');
+  function sanitizeRteHtml(innerHTML) {
+    if (!innerHTML) return '';
+    // Parse into DOM so we handle all browser variations reliably
+    const root = document.createElement('div');
+    root.innerHTML = innerHTML;
+
+    function serialize(node) {
+      if (node.nodeType === Node.TEXT_NODE) return node.textContent;
+      if (node.nodeType !== Node.ELEMENT_NODE) return '';
+      const tag = node.tagName.toLowerCase();
+      const children = () => Array.from(node.childNodes).map(serialize).join('');
+
+      if (tag === 'br') return '<br>';
+      if (tag === 'strong' || tag === 'em') return `<${tag}>${children()}</${tag}>`;
+
+      // Normalize <b> → <strong>, <i> → <em>
+      if (tag === 'b') return `<strong>${children()}</strong>`;
+      if (tag === 'i') return `<em>${children()}</em>`;
+
+      // Normalize styled spans produced by execCommand
+      if (tag === 'span') {
+        const style = node.getAttribute('style') || '';
+        if (/font-weight\s*:\s*(bold|[6-9]\d\d|1000)/i.test(style)) return `<strong>${children()}</strong>`;
+        if (/font-style\s*:\s*italic/i.test(style)) return `<em>${children()}</em>`;
+        return children(); // unwrap span, keep content
+      }
+
+      // Block elements become line breaks
+      if (tag === 'div' || tag === 'p') return children() + '<br>';
+
+      // Everything else: just pass through children
+      return children();
+    }
+
+    let result = Array.from(root.childNodes).map(serialize).join('');
     // Trim leading/trailing <br>
-    return html.trim().replace(/^(<br\s*\/?>)+|(<br\s*\/?>)+$/gi, '').trim();
+    return result.trim().replace(/^(<br\s*\/?>)+|(<br\s*\/?>)+$/gi, '').trim();
   }
 
   // ── Credits ─────────────────────────────────────────────────────────────

@@ -790,8 +790,8 @@ export function renderSite(data) {
       margin-bottom: 28px;
     }
     .about-bio p { margin: 0; }
-    .about-bio strong { font-weight: 600; }
-    .about-bio em { font-style: italic; }
+    .about-bio strong, .about-bio b { font-weight: 700; }
+    .about-bio em, .about-bio i { font-style: italic; }
 
     .about-badge {
       display: inline-flex;
@@ -967,8 +967,8 @@ export function renderSite(data) {
       line-height: 1.9;
     }
     .services-ethos-text p { margin: 0; }
-    .services-ethos-text strong { font-weight: 600; }
-    .services-ethos-text em { font-style: italic; }
+    .services-ethos-text strong, .services-ethos-text b { font-weight: 700; }
+    .services-ethos-text em, .services-ethos-text i { font-style: italic; }
 
     /* Production card */
     .production-card {
