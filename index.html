@@ -2170,9 +2170,25 @@
 
       <div id="logoPreviewSection" style="display:none;margin-top:28px">
         <div class="logo-preview-box" id="logoPreviewBox"></div>
+
+        <div style="margin-bottom:20px;">
+          <div class="field-label" style="margin-bottom:10px;">Logo Size on Site</div>
+          <div style="display:flex;gap:8px;">
+            <button class="logo-size-btn" data-size="small" onclick="setLogoSize(this)" style="flex:1;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;background:var(--bg3);border:1px solid var(--border2);color:var(--muted2);padding:10px 0;cursor:pointer;transition:all 0.15s;">
+              Small<br><span style="font-size:9px;opacity:0.6">Subtle mark</span>
+            </button>
+            <button class="logo-size-btn selected" data-size="medium" onclick="setLogoSize(this)" style="flex:1;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);padding:10px 0;cursor:pointer;transition:all 0.15s;">
+              Medium<br><span style="font-size:9px;opacity:0.6">Balanced</span>
+            </button>
+            <button class="logo-size-btn" data-size="large" onclick="setLogoSize(this)" style="flex:1;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;background:var(--bg3);border:1px solid var(--border2);color:var(--muted2);padding:10px 0;cursor:pointer;transition:all 0.15s;">
+              Large<br><span style="font-size:9px;opacity:0.6">Logo leads</span>
+            </button>
+          </div>
+        </div>
+
         <div class="info-box" style="margin-bottom:20px">
           <div class="info-box-label">✓ Added to your site</div>
-          <div class="info-box-text">This mark will appear above your studio name on the site. Download it for social media, business cards, or email signatures too.</div>
+          <div class="info-box-text">This mark will appear above your studio name on the site.</div>
         </div>
         <div class="logo-actions">
           <button class="btn btn-ghost" onclick="removeLogo()">✕ Remove</button>
@@ -2724,6 +2740,10 @@
       const box = document.getElementById('logoPreviewBox');
       if (box) box.innerHTML = data.logoSvg;
       document.getElementById('logoPreviewSection').style.display = 'block';
+      if (data.logoSize) {
+        const sizeBtn = document.querySelector(`.logo-size-btn[data-size="${data.logoSize}"]`);
+        if (sizeBtn) setLogoSize(sizeBtn);
+      }
     }
     // 10. Subdomain
     if (data.subdomain) {
@@ -3143,6 +3163,7 @@
     data.customDomain = document.querySelector('#domainBody input[type="text"]')?.value?.trim() || '';
     data.formspreeId = document.querySelector('#formBody input[type="text"]')?.value?.trim() || '';
     data.logoSvg = currentLogoSvg || '';
+    data.logoSize = document.querySelector('.logo-size-btn.selected')?.dataset.size || 'medium';
     data.photoDataUrl = currentPhotoDataUrl || '';
     data.credits = creditsList.length > 0 ? [...creditsList] : [];
     data.customCss = customTweaks.map(t => t.css).join('\n');
@@ -3692,6 +3713,24 @@
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
+  }
+
+  function setLogoSize(btn) {
+    document.querySelectorAll('.logo-size-btn').forEach(b => {
+      b.classList.remove('selected');
+      b.style.background = 'var(--bg3)';
+      b.style.borderColor = 'var(--border2)';
+      b.style.color = 'var(--muted2)';
+    });
+    btn.classList.add('selected');
+    btn.style.background = 'var(--accent-dim)';
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.color = 'var(--accent)';
+    // Update preview box to reflect size visually
+    const previewSizes = { small: '72px', medium: '120px', large: '180px' };
+    const px = previewSizes[btn.dataset.size] || '120px';
+    const svg = document.querySelector('#logoPreviewBox svg');
+    if (svg) { svg.style.width = px; svg.style.height = px; }
   }
 
   function skipLogo() {

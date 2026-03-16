@@ -166,7 +166,11 @@ export function renderSite(data) {
   const heroHtml = `
   <section class="hero" id="hero">
     <div class="hero-inner">
-      ${hasLogo && !isWordmark ? `<div class="hero-pre-logo">${logoSvg}</div>` : ''}
+      ${hasLogo && !isWordmark ? (() => {
+        const sizes = { small: ['72px','52px'], medium: ['120px','88px'], large: ['180px','130px'] };
+        const [d, m] = sizes[data.logoSize] || sizes.medium;
+        return `<div class="hero-pre-logo" style="--logo-size:${d};--logo-size-mobile:${m};">${logoSvg}</div>`;
+      })() : ''}
       <div class="hero-eyebrow">${escHtml(typeLabel)}</div>
       ${isWordmark
         ? `<div class="hero-wordmark">${logoSvg}</div>`
@@ -542,12 +546,12 @@ export function renderSite(data) {
     }
 
     .hero-pre-logo svg {
-      width: 120px;
-      height: 120px;
+      width: var(--logo-size, 120px);
+      height: var(--logo-size, 120px);
     }
 
     @media (max-width: 768px) {
-      .hero-pre-logo svg { width: 88px; height: 88px; }
+      .hero-pre-logo svg { width: var(--logo-size-mobile, 88px); height: var(--logo-size-mobile, 88px); }
     }
 
     .hero-wordmark {
