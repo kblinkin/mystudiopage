@@ -167,13 +167,16 @@ export function renderSite(data) {
   <section class="hero" id="hero">
     <div class="hero-inner">
       ${hasLogo && !isWordmark ? (() => {
-        const sizes = { small: ['72px','52px'], medium: ['120px','88px'], large: ['180px','130px'] };
+        const sizes = { small: ['80px','60px'], medium: ['120px','88px'], large: ['200px','150px'] };
         const [d, m] = sizes[data.logoSize] || sizes.medium;
         return `<div class="hero-pre-logo" style="--logo-size:${d};--logo-size-mobile:${m};">${logoSvg}</div>`;
       })() : ''}
       <div class="hero-eyebrow">${escHtml(typeLabel)}</div>
-      ${isWordmark
-        ? `<div class="hero-wordmark">${logoSvg}</div>`
+      ${isWordmark ? (() => {
+        const wWidths = { narrow: 'min(550px,50vw)', wide: 'min(825px,75vw)', full: 'min(990px,90vw)' };
+        const w = wWidths[data.wordmarkSize] || wWidths.wide;
+        return `<div class="hero-wordmark" style="--wordmark-width:${w};">${logoSvg}</div>`;
+      })()
         : `<h1 class="hero-title">${escHtml(studioName)}</h1>`}
       ${data.tagline ? `<p class="hero-tagline">${escHtml(data.tagline)}</p>` : ''}
       <a href="#contact" class="hero-cta">Work With Me</a>
@@ -562,7 +565,8 @@ export function renderSite(data) {
     }
 
     .hero-wordmark svg {
-      max-width: min(600px, 90vw);
+      max-width: var(--wordmark-width, min(825px, 75vw));
+      width: 100%;
       height: auto;
     }
 

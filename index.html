@@ -2174,7 +2174,21 @@
       <div id="logoPreviewSection" style="display:none;margin-top:28px">
         <div class="logo-preview-box" id="logoPreviewBox"></div>
 
+        <!-- Display mode -->
         <div style="margin-bottom:20px;">
+          <div class="field-label" style="margin-bottom:10px;">Display Mode</div>
+          <div style="display:flex;gap:8px;">
+            <button class="logo-mode-btn selected" data-mode="mark" onclick="setLogoMode(this)" style="flex:1;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);padding:10px 0;cursor:pointer;transition:all 0.15s;">
+              Logo Mark<br><span style="font-size:9px;opacity:0.6">Above studio name</span>
+            </button>
+            <button class="logo-mode-btn" data-mode="wordmark" onclick="setLogoMode(this)" style="flex:1;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;background:var(--bg3);border:1px solid var(--border2);color:var(--muted2);padding:10px 0;cursor:pointer;transition:all 0.15s;">
+              Wordmark<br><span style="font-size:9px;opacity:0.6">Replaces name</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mark size (visible in logo mark mode) -->
+        <div id="markSizeRow" style="margin-bottom:20px;">
           <div class="field-label" style="margin-bottom:10px;">Logo Size on Site</div>
           <div style="display:flex;gap:8px;">
             <button class="logo-size-btn" data-size="small" onclick="setLogoSize(this)" style="flex:1;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;background:var(--bg3);border:1px solid var(--border2);color:var(--muted2);padding:10px 0;cursor:pointer;transition:all 0.15s;">
@@ -2189,9 +2203,25 @@
           </div>
         </div>
 
+        <!-- Wordmark size (visible in wordmark mode) -->
+        <div id="wordmarkSizeRow" style="display:none;margin-bottom:20px;">
+          <div class="field-label" style="margin-bottom:10px;">Wordmark Width</div>
+          <div style="display:flex;gap:8px;">
+            <button class="wordmark-size-btn" data-wsize="narrow" onclick="setWordmarkSize(this)" style="flex:1;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;background:var(--bg3);border:1px solid var(--border2);color:var(--muted2);padding:10px 0;cursor:pointer;transition:all 0.15s;">
+              Narrow<br><span style="font-size:9px;opacity:0.6">~50% wide</span>
+            </button>
+            <button class="wordmark-size-btn selected" data-wsize="wide" onclick="setWordmarkSize(this)" style="flex:1;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);padding:10px 0;cursor:pointer;transition:all 0.15s;">
+              Wide<br><span style="font-size:9px;opacity:0.6">~75% wide</span>
+            </button>
+            <button class="wordmark-size-btn" data-wsize="full" onclick="setWordmarkSize(this)" style="flex:1;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;background:var(--bg3);border:1px solid var(--border2);color:var(--muted2);padding:10px 0;cursor:pointer;transition:all 0.15s;">
+              Full<br><span style="font-size:9px;opacity:0.6">~90% wide</span>
+            </button>
+          </div>
+        </div>
+
         <div class="info-box" style="margin-bottom:20px">
           <div class="info-box-label">✓ Added to your site</div>
-          <div class="info-box-text">This mark will appear above your studio name on the site.</div>
+          <div class="info-box-text" id="logoInfoText">This mark will appear above your studio name on the site.</div>
         </div>
         <div class="logo-actions">
           <button class="btn btn-ghost" onclick="removeLogo()">✕ Remove</button>
@@ -2718,6 +2748,14 @@
       const box = document.getElementById('logoPreviewBox');
       if (box) box.innerHTML = data.logoSvg;
       document.getElementById('logoPreviewSection').style.display = 'block';
+      if (data.logoMode) {
+        const modeBtn = document.querySelector(`.logo-mode-btn[data-mode="${data.logoMode}"]`);
+        if (modeBtn) setLogoMode(modeBtn);
+      }
+      if (data.wordmarkSize) {
+        const wBtn = document.querySelector(`.wordmark-size-btn[data-wsize="${data.wordmarkSize}"]`);
+        if (wBtn) setWordmarkSize(wBtn);
+      }
       if (data.logoSize) {
         const sizeBtn = document.querySelector(`.logo-size-btn[data-size="${data.logoSize}"]`);
         if (sizeBtn) setLogoSize(sizeBtn);
@@ -3149,7 +3187,9 @@
     data.customDomain = document.querySelector('#domainBody input[type="text"]')?.value?.trim() || '';
     data.formspreeId = document.querySelector('#formBody input[type="text"]')?.value?.trim() || '';
     data.logoSvg = currentLogoSvg || '';
+    data.logoMode = currentLogoMode || 'mark';
     data.logoSize = document.querySelector('.logo-size-btn.selected')?.dataset.size || 'medium';
+    data.wordmarkSize = currentWordmarkSize || 'wide';
     data.photoDataUrl = currentPhotoDataUrl || '';
     data.credits = creditsList.length > 0 ? [...creditsList] : [];
     data.customCss = customTweaks.map(t => t.css).join('\n');
@@ -3233,6 +3273,17 @@
         try {
           // Include auth token so the server can save data to the user's account
           if (authToken) data.token = authToken;
+
+          // Guard against oversized payloads (Vercel limit is 6MB)
+          const payloadBytes = new TextEncoder().encode(JSON.stringify(data)).length;
+          if (payloadBytes > 5 * 1024 * 1024) {
+            document.getElementById('publishingState').style.display = 'none';
+            document.getElementById('publishSuccessState').classList.add('active');
+            document.getElementById('publishedUrlDisplay').textContent = 'Your site data is too large to publish. Try removing some custom images or sections, then try again.';
+            document.getElementById('publishedUrlDisplay').style.color = 'var(--red)';
+            clearInterval(interval);
+            return;
+          }
 
           const res = await fetch('/api/publish', {
             method: 'POST',
@@ -3351,6 +3402,8 @@
   }
 
   let currentLogoSvg = null;
+  let currentLogoMode = 'mark'; // 'mark' | 'wordmark'
+  let currentWordmarkSize = 'wide'; // 'narrow' | 'wide' | 'full'
 
   // ── Layout style ─────────────────────────────────────────────────────────
   let selectedLayout = 'default';
@@ -3734,7 +3787,7 @@
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX = 1200;
+        const MAX = 800;
         let w = img.width, h = img.height;
         if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
         else if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
@@ -3785,7 +3838,12 @@
         const canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        // Adaptive compression: reduce quality until under 150KB
+        let dataUrl, quality = 0.85;
+        do {
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+          quality -= 0.15;
+        } while (dataUrl.length > 150 * 1024 * 1.37 && quality > 0.2);
         currentLogoSvg = `<svg viewBox="0 0 400 400" width="400" height="400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><image href="${dataUrl}" x="30" y="30" width="340" height="340" preserveAspectRatio="xMidYMid meet"/></svg>`;
         document.getElementById('logoPreviewBox').innerHTML = currentLogoSvg;
         document.getElementById('logoPreviewSection').style.display = 'block';
@@ -3796,8 +3854,8 @@
     reader.readAsDataURL(file);
   }
 
-  function setLogoSize(btn) {
-    document.querySelectorAll('.logo-size-btn').forEach(b => {
+  function _selectBtn(group, btn) {
+    document.querySelectorAll(group).forEach(b => {
       b.classList.remove('selected');
       b.style.background = 'var(--bg3)';
       b.style.borderColor = 'var(--border2)';
@@ -3807,8 +3865,44 @@
     btn.style.background = 'var(--accent-dim)';
     btn.style.borderColor = 'var(--accent)';
     btn.style.color = 'var(--accent)';
-    // Update preview box to reflect size visually
-    const previewSizes = { small: '72px', medium: '120px', large: '180px' };
+  }
+
+  function setLogoMode(btn) {
+    _selectBtn('.logo-mode-btn', btn);
+    currentLogoMode = btn.dataset.mode;
+    const isWordmark = currentLogoMode === 'wordmark';
+    document.getElementById('markSizeRow').style.display = isWordmark ? 'none' : '';
+    document.getElementById('wordmarkSizeRow').style.display = isWordmark ? '' : 'none';
+    document.getElementById('logoInfoText').textContent = isWordmark
+      ? 'Your logo will replace the studio name and span the full hero section.'
+      : 'This mark will appear above your studio name on the site.';
+    // Reset preview box size
+    const svg = document.querySelector('#logoPreviewBox svg');
+    if (svg) {
+      if (isWordmark) {
+        const wSizes = { narrow: '50%', wide: '75%', full: '90%' };
+        svg.style.width = wSizes[currentWordmarkSize] || '75%';
+        svg.style.height = 'auto';
+      } else {
+        const mSizes = { small: '80px', medium: '120px', large: '200px' };
+        const sel = document.querySelector('.logo-size-btn.selected')?.dataset.size || 'medium';
+        svg.style.width = mSizes[sel];
+        svg.style.height = mSizes[sel];
+      }
+    }
+  }
+
+  function setWordmarkSize(btn) {
+    _selectBtn('.wordmark-size-btn', btn);
+    currentWordmarkSize = btn.dataset.wsize;
+    const wSizes = { narrow: '50%', wide: '75%', full: '90%' };
+    const svg = document.querySelector('#logoPreviewBox svg');
+    if (svg) { svg.style.width = wSizes[currentWordmarkSize] || '75%'; svg.style.height = 'auto'; }
+  }
+
+  function setLogoSize(btn) {
+    _selectBtn('.logo-size-btn', btn);
+    const previewSizes = { small: '80px', medium: '120px', large: '200px' };
     const px = previewSizes[btn.dataset.size] || '120px';
     const svg = document.querySelector('#logoPreviewBox svg');
     if (svg) { svg.style.width = px; svg.style.height = px; }
