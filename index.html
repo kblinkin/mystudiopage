@@ -2534,6 +2534,7 @@
       if (res.ok && result.data) {
         const data = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
         loadSavedData(data);
+        autosaveLocal(); // keep localStorage in sync with server
         showDataBanner();
       }
     } catch (err) {
@@ -3428,6 +3429,20 @@
     undoHistory.push(snapshot);
     if (undoHistory.length > 10) undoHistory.shift();
     updateUndoBtn();
+    autosaveLocal();
+  }
+
+  function autosaveLocal() {
+    try {
+      localStorage.setItem('msp_builder_data', JSON.stringify(collectFormData()));
+    } catch(e) {} // storage full — ignore
+  }
+
+  function tryRestoreLocalData() {
+    try {
+      const raw = localStorage.getItem('msp_builder_data');
+      if (raw) loadSavedData(JSON.parse(raw));
+    } catch(e) {}
   }
 
   function updateUndoBtn() {
@@ -3930,6 +3945,7 @@
   }
 
   // ── INIT ─────────────────────────────────────────────
+  tryRestoreLocalData();
   checkExistingSession();
 </script>
 </body>
