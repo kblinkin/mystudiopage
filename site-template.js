@@ -126,7 +126,7 @@ export function renderSite(data) {
   const tracks      = Array.isArray(data.tracks)   ? data.tracks.filter(tr => tr && tr.url)   : [];
   const services    = Array.isArray(data.services) ? data.services.filter(s => s && (s.name || s.desc)) : [];
   const stats       = Array.isArray(data.stats)    ? data.stats.filter(s => s && s.value)     : [];
-  const credits     = Array.isArray(data.credits)  ? data.credits.filter(Boolean)              : [];
+  const credits     = Array.isArray(data.credits)  ? data.credits.filter(c => c && String(c).trim()) : [];
   const socials     = data.socials || {};
   const hasPhoto    = !!data.photoDataUrl;
   const hasLogo     = !!data.logoSvg;

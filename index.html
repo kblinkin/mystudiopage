@@ -2734,13 +2734,14 @@
     }
 
     // 8b. Credits
-    if (data.credits && data.credits.length > 0) {
+    if (data.credits) {
       creditsList.length = 0;
-      data.credits.forEach(c => { if (c) creditsList.push(c); });
+      data.credits.forEach(c => { if (c && c.trim()) creditsList.push(c.trim()); });
       renderCredits();
-      // Show the credits area so user can see them
-      document.getElementById('creditsArea').style.display = 'block';
-      document.getElementById('creditsToggleIcon').classList.add('open');
+      if (creditsList.length > 0) {
+        document.getElementById('creditsArea').style.display = 'block';
+        document.getElementById('creditsToggleIcon').classList.add('open');
+      }
     }
 
     // 9. Logo
