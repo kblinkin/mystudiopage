@@ -3842,8 +3842,24 @@
     const file = event.target.files[0];
     if (!file) return;
     takeSnapshot();
+    const isPng = file.type === 'image/png' || file.name.toLowerCase().endsWith('.png');
+    const isSvg = file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
     const reader = new FileReader();
     reader.onload = (e) => {
+      // SVG files: use directly without re-encoding
+      if (isSvg) {
+        const svgText = e.target.result;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svgText, 'image/svg+xml');
+        const svgEl = doc.querySelector('svg');
+        if (svgEl) {
+          currentLogoSvg = svgEl.outerHTML;
+          document.getElementById('logoPreviewBox').innerHTML = currentLogoSvg;
+          document.getElementById('logoPreviewSection').style.display = 'block';
+        }
+        event.target.value = '';
+        return;
+      }
       const img = new Image();
       img.onload = () => {
         // Resize to max 600px (SVG viewBox is 400px — no benefit going larger)
@@ -3854,12 +3870,19 @@
         const canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        // Adaptive compression: reduce quality until under 150KB
-        let dataUrl, quality = 0.85;
-        do {
-          dataUrl = canvas.toDataURL('image/jpeg', quality);
-          quality -= 0.15;
-        } while (dataUrl.length > 150 * 1024 * 1.37 && quality > 0.2);
+        let dataUrl;
+        if (isPng) {
+          // Prefer WebP — supports transparency and is ~30% smaller than PNG
+          const webp = canvas.toDataURL('image/webp', 0.90);
+          dataUrl = webp.startsWith('data:image/webp') ? webp : canvas.toDataURL('image/png');
+        } else {
+          // JPEG/other: adaptive compression, no transparency needed
+          let quality = 0.85;
+          do {
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+            quality -= 0.15;
+          } while (dataUrl.length > 150 * 1024 * 1.37 && quality > 0.2);
+        }
         currentLogoSvg = `<svg viewBox="0 0 400 400" width="400" height="400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><image href="${dataUrl}" x="30" y="30" width="340" height="340" preserveAspectRatio="xMidYMid meet"/></svg>`;
         document.getElementById('logoPreviewBox').innerHTML = currentLogoSvg;
         document.getElementById('logoPreviewSection').style.display = 'block';
@@ -3867,7 +3890,11 @@
       };
       img.src = e.target.result;
     };
-    reader.readAsDataURL(file);
+    if (isSvg) {
+      reader.readAsText(file);
+    } else {
+      reader.readAsDataURL(file);
+    }
   }
 
   function _selectBtn(group, btn) {
