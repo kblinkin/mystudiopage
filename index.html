@@ -1603,6 +1603,16 @@
           <div class="type-name">Production</div>
           <p class="type-desc">You create the music from scratch — beats, arrangements, full instrumentals. Artists come to you to build their sound.</p>
         </div>
+        <div class="type-card" data-type="songwriter" onclick="selectType(this)">
+          <div class="type-icon">✍️</div>
+          <div class="type-name">Songwriter</div>
+          <p class="type-desc">You write songs — lyrics, melodies, toplining, or full compositions. Artists and labels come to you to craft their next hit.</p>
+        </div>
+        <div class="type-card" data-type="artist" onclick="selectType(this)">
+          <div class="type-icon">🎤</div>
+          <div class="type-name">Artist</div>
+          <p class="type-desc">You perform and release your own music. Your page is your portfolio — showcasing your sound, your story, and your work.</p>
+        </div>
       </div>
     </div>
 
@@ -2690,7 +2700,7 @@
     }
 
     // 5. Services — stored for populateServices() to pick up
-    if (data.engineerType !== 'production' && data.services && data.services.length > 0) {
+    if (!['production','songwriter','artist'].includes(data.engineerType) && data.services && data.services.length > 0) {
       window._savedServices = data.services;
     }
 
@@ -2959,7 +2969,9 @@
       mixing: 'Mixing Engineer',
       mixmaster: 'Mix + Master Engineer',
       production: 'Producer',
-      producer_mixer: 'Producer + Mixing Engineer'
+      producer_mixer: 'Producer + Mixing Engineer',
+      songwriter: 'Songwriter',
+      artist: 'Artist'
     };
     document.getElementById('summaryType').textContent = selectedType ? typeNames[selectedType] : '—';
   }
@@ -2990,7 +3002,9 @@
         { name: 'Album Package',  pricePlaceholder: 'e.g. From $2,000',    desc: 'Complete mix and master for a full project. Cohesive sound across all tracks, DDP delivery, and streaming and CD-ready files.' }
       ]
     },
-    production: null
+    production: null,
+    songwriter: null,
+    artist: null
   };
 
   function populateServices() {
@@ -3046,17 +3060,32 @@
 
     const template = serviceTemplates[type];
 
-    if (type === 'production') {
+    if (['production','songwriter','artist'].includes(type)) {
       guidanceBox.style.display = 'none';
       addBtn.style.display = 'none';
+      const quoteMessages = {
+        production: {
+          body1: 'Every production is different — the scope, the timeline, what\'s needed. Rather than a fixed price list, I work with each artist to scope out the project and quote based on what it actually requires.',
+          body2: 'The best way to start is a free 15-minute intro call. We talk through your project, see if it\'s a good fit, and go from there. No commitment needed.'
+        },
+        songwriter: {
+          body1: 'Every song is different — the style, the scope, the level of collaboration. Rather than a fixed price list, I work with each client to understand their vision and quote based on what the project actually requires.',
+          body2: 'The best way to start is a free intro call. We talk through your project, see if we\'re a good fit, and go from there. No commitment needed.'
+        },
+        artist: {
+          body1: 'Every project is unique — whether it\'s a feature, a sync placement, or a collaboration. Rather than a fixed price list, let\'s talk about what you have in mind.',
+          body2: 'The best way to start is a quick conversation. Reach out and let\'s see if it\'s a good fit. No commitment needed.'
+        }
+      };
+      const msg = quoteMessages[type];
       container.innerHTML = `
         <div class="production-quote-card">
           <div class="production-quote-title">Project-Based Pricing</div>
           <div class="production-quote-body">
-            Every production is different — the scope, the timeline, what's needed. Rather than a fixed price list, I work with each artist to scope out the project and quote based on what it actually requires.
+            ${msg.body1}
           </div>
           <div class="production-quote-body" style="margin-bottom:0">
-            The best way to start is a free 15-minute intro call. We talk through your project, see if it's a good fit, and go from there. No commitment needed.
+            ${msg.body2}
           </div>
           <div class="field-group" style="margin-top:20px;margin-bottom:0">
             <label class="field-label">Booking / contact link <span style="color:var(--muted);font-size:10px;font-family:'DM Mono',monospace;margin-left:4px">optional</span></label>
@@ -3218,9 +3247,10 @@
       data.services = window._savedServices;
     }
     // Also handle production quote card
-    if (data.services.length === 0 && data.engineerType === 'production') {
+    if (data.services.length === 0 && ['production','songwriter','artist'].includes(data.engineerType)) {
       const urlInput = document.querySelector('.production-quote-card input[type="url"]');
-      data.services = [{ name: 'Production', price: '', desc: 'Project-based pricing. Get in touch for a free consultation.', bookingUrl: urlInput?.value?.trim()||'' }];
+      const labelMap = { production: 'Production', songwriter: 'Songwriting', artist: 'Collaboration' };
+      data.services = [{ name: labelMap[data.engineerType] || 'Services', price: '', desc: 'Project-based pricing. Get in touch for a free consultation.', bookingUrl: urlInput?.value?.trim()||'' }];
     }
 
     // Stats

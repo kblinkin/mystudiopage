@@ -13,21 +13,27 @@ const TYPE_LABELS = {
   mastering:  'Mastering Engineer',
   mixing:     'Mixing Engineer',
   mixmaster:  'Mix + Master Engineer',
-  production: 'Music Producer'
+  production: 'Music Producer',
+  songwriter: 'Songwriter',
+  artist:     'Artist'
 };
 
 const SERVICES_TITLE = {
   mastering:  'Rates & Services',
   mixing:     'Mixing Prices',
   mixmaster:  'Prices',
-  production: 'Working Together'
+  production: 'Working Together',
+  songwriter: 'Working Together',
+  artist:     'Working Together'
 };
 
 const WORK_TITLE = {
   mastering:  'Mastering Samples',
   mixing:     'Mixing Samples',
   mixmaster:  'Mix + Master Samples',
-  production: 'Production Work'
+  production: 'Production Work',
+  songwriter: 'Songwriting Portfolio',
+  artist:     'My Music'
 };
 
 function escHtml(str) {
@@ -140,7 +146,7 @@ export function renderSite(data) {
     .replace(/\bfill=["'](?!none|transparent)[^"']+["']/gi, `fill="${logoFill}"`)
     .replace(/\bfill\s*:\s*(?!none|transparent)[^;}"']+/gi, `fill:${logoFill}`)
     : null;
-  const isProduction = data.engineerType === 'production';
+  const isProduction = ['production','songwriter','artist'].includes(data.engineerType);
 
   // Social link labels
   const socialLinks = [
