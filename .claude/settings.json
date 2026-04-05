@@ -16,7 +16,10 @@
       "WebFetch(domain:forum.squarespace.com)",
       "WebFetch(domain:wordpress.com)",
       "WebFetch(domain:elementor.com)",
-      "Bash(grep -r \"5\\\\|6\\\\|10\\\\|MB\\\\|bytes\\\\|limit\" /Users/calebloveless/Documents/GitHub/mystudiopage --include=*.md --include=*.txt --include=*.json)"
+      "Bash(grep -r \"5\\\\|6\\\\|10\\\\|MB\\\\|bytes\\\\|limit\" /Users/calebloveless/Documents/GitHub/mystudiopage --include=*.md --include=*.txt --include=*.json)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
